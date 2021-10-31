@@ -1,4 +1,4 @@
-## FAQ
+## FAQ - Frequently Asked Questions
 
 Q: Can I invite Hyper to my Discord server? \
 A: Hyper is developed for private use. For information on the posibilities, please [contact us](mailto:info@fluxpuck.com)
