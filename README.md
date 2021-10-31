@@ -1,6 +1,5 @@
-<img align="right" alt="PNG" height="160px" src="https://cdn.discordapp.com/emojis/766678280945270836.png" />
-
 # Hyper
+<img align="right" alt="PNG" height="96px" src="https://cdn.discordapp.com/emojis/766678280945270836.png" />
 Welcome to Hyper's Repository. Hyper is a comprehensive Discord chatbot, developed for private use. The bot is fully custom and allows for basic moderation, logging events, custom commands, timed messages, and more!
 
 ## Features
