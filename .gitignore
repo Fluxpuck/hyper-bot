@@ -28,3 +28,4 @@ assets
 .DS_STORE
 package.json
 yarn.lock
+FAQ.md
