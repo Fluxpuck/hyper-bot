@@ -12,7 +12,7 @@ Hyper is developed on Discord.js v13.3.0 and Discord Rest API v9, and features t
 
 ## Want to contribute?
 * Visit [our website]() for more information!
-* If you want to help us improve, visit [our Discord server](https://discord.com/) and take a minute to read the [Contribution Guidlines](https://github.com) first.
+* If you want to help us improve, visit [our Discord server](https://discord.com/) and take a minute to read the [Contribution Guidelines](https://github.com/Fluxpuck/Hyper/tree/main/.github/ISSUE_TEMPLATE) first.
 * If you find a problem, please [open an issue](https://github.com).
 
 ## Contributors

@@ -2,6 +2,15 @@
 *.log
 npm-debug.log*
 
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # Preferences
 .env
 package-lock.json
@@ -9,7 +18,14 @@ package-lock.json
 
 # Folders
 node_modules
+config
+database
 assets
+.yarn
+.github
 
 # Misc
 .DS_STORE
+package.json
+yarn.lock
+FAQ.md
