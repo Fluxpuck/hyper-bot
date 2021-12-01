@@ -1,10 +1,10 @@
 ## FAQ - Frequently Asked Questions
 
 Q: Can I invite Hyper to my Discord server? \
-A: Hyper is developed for private use. For information on the posibilities, please [contact us](mailto:info@fluxpuck.com)
+A: Hyper is developed for private use. For information on the posibilities, please [contact us](mailto:info@fluxpuck.com).
 
 Q: Can I contribute to the development of Hyper? \
-A: If you want to help us improve, visit [our Discord server](https://discord.com/) and take a minute to read the [Contribution Guidlines](https://github.com) first.
+A: If you want to help us improve, visit [our Discord server](https://discord.com/) and take a minute to read the [Contribution Guidlines](https://github.com/Fluxpuck/Hyper/tree/main/.github/ISSUE_TEMPLATE) first.
 
 Q: I found an issue with Hyper, what should I do? \
-A: If you find a problem, please [open an issue](https://github.com).
+A: If you find a problem, please [open an issue](https://github.com/Fluxpuck/Hyper/tree/main/.github/ISSUE_TEMPLATE).
