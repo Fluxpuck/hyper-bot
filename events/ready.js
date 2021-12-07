@@ -1,5 +1,5 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
-    This component is triggers by Discord and does processing of data  */
+    This event is triggers by Discord and does processing of data  */
 
 //load required modules
 const { join } = require('path');
@@ -20,8 +20,14 @@ module.exports = async (client) => {
         }
     }
 
-    //go through all folders and setup the commands
+    //get and initialize client commands
     await ClientManager.getClientCommands(commandFolder, { dealerFunction: fileLoader })
+
+    //get and initialize interactive commands  
+    //SLASH COMMANDS!!
+
+    //get and initialize per guild permissions
+    //INITIALIZE PERMISSIONS (PREFIX, COMMAND PERMISSIONS, ETC.)!!
 
     //set client activity
     await ClientManager.setClientActivity(client);

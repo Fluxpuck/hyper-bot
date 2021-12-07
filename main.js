@@ -18,6 +18,7 @@ const client = new Client({
 //set Client dependencies 
 client.commands = new Collection();
 client.events = new Collection();
+client.guild = new Collection();
 client.dependencies = require('./package.json').dependencies
 client.version = require('./package.json').version
 

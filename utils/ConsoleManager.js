@@ -3,8 +3,7 @@
 
 module.exports = {
 
-    /** Initial welcome message to the console
-     */
+    /** Initial welcome message to the console */
     WelcomeMessage() {
         return console.log(`
 ...............................................
@@ -15,7 +14,7 @@ module.exports = {
 ...██║..██║...██║...██║.....███████╗██║..██║...
 ...╚═╝..╚═╝...╚═╝...╚═╝.....╚══════╝╚═╝..╚═╝...
 ...............................................
-        `)
+Startup > ${new Date().toUTCString()}`)
     },
 
     /** Table log all Events
