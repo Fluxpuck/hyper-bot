@@ -11,13 +11,18 @@ function isDir(filePath) {
 
 module.exports = {
 
-    //setup client Activity status
+    /** setup client Activity status
+     * @param {Collection} client 
+     */
     async setClientActivity(client) {
         // Set the client user's presence
         client.user.setPresence({ activities: [{ type: 'PLAYING', name: 'hyperbot.cc' }], status: 'online' });
     },
 
-    //go through all folders and setup client commands
+    /** go through all folders and setup client commands
+     * @param {String} filePath 
+     * @param {String} options 
+     */
     async getClientCommands(filePath, options = {}) {
 
         if (!options.hasOwnProperty("dealerFunction")) Object.assign(options, { dealerFunction: 0 })
@@ -31,7 +36,7 @@ module.exports = {
 
         if (options.initialDirectoryCheck && !initCheck) throw new Error(`File path provided (${filePath}) is not a folder / directory.`)
 
-        if (initCheck) // Checks whether the path is a folder
+        if (initCheck) //checks whether the path is a folder
         {
             fs.readdirSync(filePath).forEach(file_in_folder => { // Through each file in the folder
                 let new_path = `${filePath}/${file_in_folder}` // Construct a new path
@@ -43,7 +48,7 @@ module.exports = {
                 }
             })
         }
-        else // If not, fileLoader
+        else //if not, fileLoader
         {
             if (options.print) console.log(filePath)
             else options.dealerFunction(filePath)
