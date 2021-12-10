@@ -8,6 +8,8 @@ const commandFolder = join(__dirname, '..', 'commands');
 //require Managers
 const ClientConsole = require('../utils/ConsoleManager');
 const ClientManager = require('../utils/ClientManager');
+const PermissionManager = require('../utils/PermissionManager');
+const { initiateGuildPrefixes } = require('../utils/PermissionManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -26,8 +28,14 @@ module.exports = async (client) => {
     //get and initialize interactive commands  
     //SLASH COMMANDS!!
 
+    //initialize all guild prefixes
+    await initiateGuildPrefixes(client);
+
     //get and initialize per guild permissions
-    //INITIALIZE PERMISSIONS (PREFIX, COMMAND PERMISSIONS, ETC.)!!
+    Array.from(client.guilds.cache.values()).forEach(async guild => {
+
+
+    })
 
     //set client activity
     await ClientManager.setClientActivity(client);

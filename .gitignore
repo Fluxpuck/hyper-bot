@@ -23,6 +23,7 @@ database
 assets
 .yarn
 .github
+PermissionManager.js
 
 # Misc
 .DS_STORE

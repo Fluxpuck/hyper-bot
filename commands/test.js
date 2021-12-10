@@ -2,7 +2,7 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //require packages
-const { sqlQuery } = require('../database/connection');
+const { getGuildPrefix } = require('../database/QueryManager');
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -13,8 +13,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     // console.log(permissions)
 
     // console.log(await sqlQuery(`SELECT prefix FROM global_guildinformation WHERE guildId = ${message.guild.id}`))
-
-    console.log(client.permissions)
+    console.log(await getGuildPrefix(message.guild.id))
 
 }
 

@@ -1,9 +1,9 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This event is triggers by Discord and does processing of data  */
 
-//require Managers
+//require packages
+const { getGuildPrefix } = require("../utils/PermissionManager");
 // const CommandManager = require('../utils/CommandManager');
-const { getUsersFromMentions } = require('../utils/Resolver');
 
 //exports "message" event
 module.exports = async (client, message) => {
@@ -13,7 +13,7 @@ module.exports = async (client, message) => {
     if (message.author.bot) return
 
     //get prefix  
-    let prefix = 'h.'
+    const prefix = await getGuildPrefix(message.guild);
 
     /** Message Handler
      * filter message content into workable elements */
