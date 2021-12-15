@@ -2,8 +2,7 @@
     This event is triggers by Discord and does processing of data  */
 
 //require packages
-const { getGuildPrefix } = require("../utils/PermissionManager");
-// const CommandManager = require('../utils/CommandManager');
+const { getGuildPrefix, getCommandPermissions, checkCommandPermissions } = require("../utils/PermissionManager");
 
 //exports "message" event
 module.exports = async (client, message) => {
@@ -32,12 +31,13 @@ module.exports = async (client, message) => {
 
         //if a commandFile has been found, check permissions and execute
         if (commandFile) {
-
             //get command permissions from cache
-            //check command permissions, else return
+            const permissions = await getCommandPermissions(message.guild, messageCommand);
+            const verification = await checkCommandPermissions(message, messageCommand, permissions)
 
-            //execute commandfile
-            commandFile.run(client, message, messageArgs, prefix, 'permissions');
+            //execute commandfile if user has permission
+            if (verification.status === true) commandFile.run(client, message, messageArgs, prefix, 'permissions');
+            // else message.reply(verification.message)
         }
 
     }
