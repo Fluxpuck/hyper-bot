@@ -8,6 +8,8 @@ const commandFolder = join(__dirname, '..', 'commands');
 //require Managers
 const ClientConsole = require('../utils/ConsoleManager');
 const ClientManager = require('../utils/ClientManager');
+const DbManager = require('../database/DbManager');
+const PermissionManager = require('../utils/PermissionManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -26,8 +28,18 @@ module.exports = async (client) => {
     //get and initialize interactive commands  
     //SLASH COMMANDS!!
 
-    //get and initialize per guild permissions
-    //INITIALIZE PERMISSIONS (PREFIX, COMMAND PERMISSIONS, ETC.)!!
+    //check and update all database tables
+    Array.from(client.guilds.cache.values()).forEach(async guild => {
+        await DbManager.UpdateGuildTable(); //update (global) guild information table
+        await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
+        await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands
+        await DbManager.UpdateLogTable(guild.id); //update (guild) log tables
+        await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
+    });
+
+    //get and cache guild prefix and command permissions
+    await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
+    await PermissionManager.loadCommandPermissions(client);
 
     //set client activity
     await ClientManager.setClientActivity(client);

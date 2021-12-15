@@ -15,10 +15,9 @@ const client = new Client({
     ws: { properties: { $browser: 'Discord Android' } }
 });
 
-//set Client dependencies 
+//set Client information 
 client.commands = new Collection();
 client.events = new Collection();
-client.guild = new Collection();
 client.dependencies = require('./package.json').dependencies
 client.version = require('./package.json').version
 
