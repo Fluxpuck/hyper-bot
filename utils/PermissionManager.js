@@ -52,7 +52,7 @@ module.exports = {
 
     //check command permissions
     async checkCommandPermissions(message, command, permissions) {
-        function commandValidation(commandName, status, rolePerms, channelPerms, adminPerms, message) {
+        function commandPermissions(commandName, status, rolePerms, channelPerms, adminPerms, message) {
             this.commandName = commandName;
             this.status = status;
             this.rolePermValidation = rolePerms;
@@ -77,19 +77,20 @@ module.exports = {
         //get validations
         let role_validation = role_check.length > 0 ? true : false
         let channel_validation = channel_check.length > 0 || permissions.channel_perms === null ? true : false
-        // let administrator = member.permissions.has("MANAGE_GUILD");
-        let administrator = false
+        let administrator = member.permissions.has("MANAGE_GUILD");
 
         //error messages
-        if (role_validation === false) errorMsg += 'You do not access to this command.'
-        if (channel_validation === false) errorMsg += 'This command can not be used in this channel.'
+        if (administrator != true) {
+            if (role_validation === false) errorMsg += 'You do not access to this command.'
+            if (channel_validation === false) errorMsg += 'This command can not be used in this channel.'
+        }
 
         //validations
         if (role_validation === true && channel_validation === true) commandStatus = true
         else if (administrator === true) commandStatus = true
 
         //return status
-        return new commandValidation(command, commandStatus, role_validation, channel_validation, administrator, errorMsg)
+        return new commandPermissions(command, commandStatus, role_validation, channel_validation, administrator, errorMsg)
     },
 
 

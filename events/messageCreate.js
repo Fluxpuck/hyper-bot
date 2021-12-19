@@ -23,7 +23,6 @@ module.exports = async (client, message) => {
 
     //check if content starts with prefix, else return
     if (messagePrefix.startsWith(prefix)) {
-
         //check for regular command (including alliasses)
         const commandFile = (client.commands.get(messageCommand)) ?
             client.commands.get(messageCommand) :
@@ -33,13 +32,12 @@ module.exports = async (client, message) => {
         if (commandFile) {
             //get command permissions from cache
             const permissions = await getCommandPermissions(message.guild, messageCommand);
-            const verification = await checkCommandPermissions(message, messageCommand, permissions)
+            const verification = await checkCommandPermissions(message, messageCommand, permissions);
 
             //execute commandfile if user has permission
-            if (verification.status === true) commandFile.run(client, message, messageArgs, prefix, 'permissions');
-            // else message.reply(verification.message)
+            if (verification.status === true) commandFile.run(client, message, messageArgs, prefix, verification);
+            // else message.reply(verification.message);
         }
-
     }
 
     //if client is mentioned, but no content is given return info
