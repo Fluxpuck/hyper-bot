@@ -35,8 +35,10 @@ module.exports = async (client, message) => {
             const verification = await checkCommandPermissions(message, messageCommand, permissions);
 
             //execute commandfile if user has permission
-            if (verification.status === true) commandFile.run(client, message, messageArgs, prefix, verification);
-            // else message.reply(verification.message);
+            if (verification.status === true) {
+                await message.react('701401045473165352'); //reply to command
+                commandFile.run(client, message, messageArgs, prefix, verification); //execute command
+            } /* else message.reply(verification.message); */
         }
     }
 

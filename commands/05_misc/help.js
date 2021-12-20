@@ -1,7 +1,7 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License
     For more information on the commands, please visit hyperbot.cc  */
 
-//import styling
+//import styling from assets
 const embed = require('../../assets/embed.json');
 
 //load required modules
