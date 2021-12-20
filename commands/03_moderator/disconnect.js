@@ -15,11 +15,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
-    category: 'misc',
-    desc: 'Just for testing purposes',
-    usage: '{prefix}test',
+    name: 'disconnect',
+    alias: [],
+    category: 'moderation',
+    desc: 'Disconnect target member from a voicechannel',
+    usage: '{prefix}disconnect @user',
 }
 
 //slash setup

@@ -39,7 +39,7 @@ module.exports = async (client) => {
 
     //get and cache guild prefix and command permissions
     await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
-    await PermissionManager.loadCommandPermissions(client);
+    await PermissionManager.loadCommandPermissions(client); //cache command permissions
 
     //set client activity
     await ClientManager.setClientActivity(client);

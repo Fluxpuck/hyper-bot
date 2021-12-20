@@ -15,11 +15,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
-    category: 'misc',
-    desc: 'Just for testing purposes',
-    usage: '{prefix}test',
+    name: 'fetch',
+    alias: ['whois'],
+    category: 'moderation',
+    desc: 'Get user-information from the target member',
+    usage: '{prefix}fetch @user',
 }
 
 //slash setup

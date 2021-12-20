@@ -15,11 +15,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
-    category: 'misc',
-    desc: 'Just for testing purposes',
-    usage: '{prefix}test',
+    name: 'warn',
+    alias: [],
+    category: 'moderation',
+    desc: 'Warn target member with a message.',
+    usage: '{prefix}warn @user [message]',
 }
 
 //slash setup

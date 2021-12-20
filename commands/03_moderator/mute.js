@@ -15,11 +15,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
-    category: 'misc',
-    desc: 'Just for testing purposes',
-    usage: '{prefix}test',
+    name: 'mute',
+    alias: [],
+    category: 'moderation',
+    desc: 'Mute target member for X minutes in the server',
+    usage: '{prefix}mute @user [time]',
 }
 
 //slash setup
