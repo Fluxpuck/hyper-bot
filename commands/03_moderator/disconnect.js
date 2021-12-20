@@ -1,14 +1,24 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License
     For more information on the commands, please visit hyperbot.cc  */
 
+//load required modules
+const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { getUserFromInput } = require("../../utils/Resolver");
+
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
-    console.log(message.author)
-    console.log(arguments)
-    console.log(prefix)
-    console.log(permissions)
+    //if there are no arguments, no target has been defined
+    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
+    //get target user
+    const target = await getUserFromInput(message.guild, arguments[0]);
+    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+
+    //disconnect the target
+    await target.voice.kick().catch(err => {
+        return ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+    })
 
 }
 

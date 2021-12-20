@@ -48,4 +48,28 @@ module.exports = {
         }
     },
 
+    /** Send DM (direct message) to user
+     * @param {*} message Message object
+     * @param {*} input Message
+     * @param {object} target Member
+     */
+    async SendWarningMessageDM(message, input, target) {
+        //create the embed message
+        const warn_embed = new MessageEmbed()
+            .setTitle(`Warning - ${message.guild.name}`)
+            .setDescription(`You have received a __warning__ in **${message.guild.name}**`)
+            .addFields({ name: `Reason for warning`, value: `\`\`\`${input}\`\`\`` })
+            .setThumbnail(embed.warning_thumb)
+            .setTimestamp()
+            .setFooter(`${client.user.username} | hyperbot.cc`)
+
+        //send message through DM
+        await target.send({ embeds: [warn_embed] }).catch(err => {
+            if (err) return { status: false, message: `Could not deliver message to ${target.user.tag}` };
+        })
+
+        //return status
+        return { status: true, message: `${target.user.tag} has recieved a warning` };
+    }
+
 }
