@@ -24,6 +24,17 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
-    options: []
+    slash: true,
+    options: [{
+        name: 'user',
+        type: 'USER',
+        description: 'Mention target user',
+        required: true,
+    },
+    {
+        name: 'reason',
+        type: 'STRING',
+        description: 'Reason for warn',
+        required: true,
+    }]
 }
