@@ -13,7 +13,9 @@ const guildCommandPermsCache = new NodeCache();
 
 module.exports = {
 
-    //set guild prefix permission for all guilds
+    /** set guild prefix permission for all guilds
+     * @param {Object} client
+     */
     async loadGuildPrefixes(client) {
         Array.from(client.guilds.cache.values()).forEach(async guild => {
             var prefix = await getGuildPrefix(guild.id); //get prefix from database
@@ -22,14 +24,19 @@ module.exports = {
         })
     },
 
-    //get Guild prefix
+    /** get Guild prefix
+     * @param {Collection} guild 
+     * @returns 
+     */
     async getGuildPrefix(guild) {
         const GuildCache = await guildPrefixCache.get(guild.id); //get the prefix key value from the cache
         const prefix = (GuildCache == undefined) ? defaultPrefix : GuildCache.prefix //set prefix from cache, else get default prefix
         return prefix //return the prefix
     },
 
-    //set all command permissions per guild
+    /** set all command permissions per guild
+     * @param {*} client 
+     */
     async loadCommandPermissions(client) {
         Array.from(client.guilds.cache.values()).forEach(async guild => {
             var collection = await getCommandPerms(guild.id); //get command permissions from database
@@ -37,7 +44,11 @@ module.exports = {
         })
     },
 
-    //get command permissions
+    /** get command permissions
+     * @param {*} guild 
+     * @param {*} messageCommand 
+     * @returns 
+     */
     async getCommandPermissions(guild, messageCommand) {
         const CommandCache = await guildCommandPermsCache.get(guild.id) //get the prefix key value from the cache
         const filter = CommandCache.filter(c => c.commandName === messageCommand);
@@ -50,7 +61,12 @@ module.exports = {
         }
     },
 
-    //check command permissions
+    /** check command permissions
+     * @param {*} message 
+     * @param {*} command 
+     * @param {*} permissions 
+     * @returns 
+     */
     async checkCommandPermissions(message, command, permissions) {
         function commandPermissions(commandName, status, rolePerms, channelPerms, adminPerms, message) {
             this.commandName = commandName;
