@@ -10,6 +10,19 @@ const embed = require('../assets/embed.json');
 
 module.exports = {
 
+    /** Construct Error message
+    * @param {String} input Error message input
+    */
+    async ErrorMessage(input) {
+        //create error embed
+        let ErrorEmbed = new MessageEmbed()
+            .setDescription(`${emote.error} ${input}`)
+            .setColor(embed.errorColor)
+
+        //check if a remove timer is set!
+        return ErrorEmbed
+    },
+
     /** Sends Error message to the message channel
     * @param {String} message Message object
     * @param {String} input Error message input
@@ -17,9 +30,7 @@ module.exports = {
     */
     async SendErrorMessage(message, input, timer) {
         //create error embed
-        let ErrorEmbed = new MessageEmbed()
-            .setDescription(`${emote.error} ${input}`)
-            .setColor(embed.errorColor)
+        let ErrorEmbed = await module.exports.ErrorMessage(input);
 
         //check if a remove timer is set!
         if (timer) { //if timer is set return error message and remove
@@ -36,9 +47,7 @@ module.exports = {
     */
     async ReplyErrorMessage(message, input, timer) {
         //create error embed
-        let ErrorEmbed = new MessageEmbed()
-            .setDescription(`${emote.error} ${input}`)
-            .setColor(embed.errorColor)
+        let ErrorEmbed = await module.exports.ErrorMessage(input);
 
         //check if a remove timer is set!
         if (timer) { //if timer is set return error message and remove

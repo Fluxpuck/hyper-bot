@@ -11,6 +11,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
+    //get target user
+    const target = await getUserFromInput(message.guild, arguments[0]);
+    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+
+    //fetch Audit & Hyper logs
+    // const AuditLogs
+    // const HyperLogs
+
+
 
 }
 

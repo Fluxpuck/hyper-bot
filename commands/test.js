@@ -4,10 +4,11 @@
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
-    console.log(message.author)
-    console.log(arguments)
-    console.log(prefix)
-    console.log(permissions)
+
+
+
+
+
 
 
 }
