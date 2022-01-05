@@ -51,7 +51,8 @@ module.exports = {
 
         //check if a remove timer is set!
         if (timer) { //if timer is set return error message and remove
-            return message.reply({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete(), timer); })
+            return message.reply({ embeds: [ErrorEmbed] })
+                .then(msg => { setTimeout(() => msg.delete(), timer); })
         } else { //if no timer is set, just return error message
             return message.reply({ embeds: [ErrorEmbed] })
         }
