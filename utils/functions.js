@@ -63,4 +63,28 @@ module.exports = {
         return returnArray;
     },
 
+    /** get timestamp from snowflake
+     * @param {*} input 
+     * @returns 
+     */
+    convertSnowflake(input) {
+        /* set default discord EPOCH from discord documentation
+        https://discord.com/developers/docs/reference#snowflakes */
+        const DISCORD_EPOCH = 1420070400000
+
+        //convert input (string) to Number
+        let snowflake = Number(input)
+
+        //if snowflake is not an number, return false
+        if (!Number.isInteger(snowflake)) return false
+        //if snowflake is too short, return false
+        if (snowflake < 4194304) return false
+
+        //convert snowflake to timestamp
+        let timestamp = new Date(snowflake / 4194304 + DISCORD_EPOCH)
+
+        //return timestamp
+        return timestamp
+    },
+
 };
