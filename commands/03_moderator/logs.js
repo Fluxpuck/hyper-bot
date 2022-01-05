@@ -25,7 +25,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
         let item = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
-        if (convertSnowflake(item == false)) return ReplyErrorMessage(message, '@user was not found', 4800);
+        if (convertSnowflake(item) === false) return ReplyErrorMessage(message, '@user was not found', 4800);
         //set target variables
         target = { key: null, id: item, user: { id: item, username: undefined } };
     }
@@ -34,7 +34,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     const UserLogs = await FetchHyperLogs(message, target);
 
     //return error if no information was found
-    if (target.key == null && UserLogs == false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
+    if (target.key === null && UserLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
 
     //filter all log information from both Audit and Hyper logs
     const FilterLogs = await FilterTargetLogs(target, UserLogs, [])
@@ -105,9 +105,13 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} \`\`\` `)
         const descriptionPages = chunk(descriptionArray, 3);
         let page = 0, maxpages = descriptionPages.length - 1;
 
+        //setup embedded message
+        messageEmbed.setDescription(descriptionPages[page].join("\n"))
+        messageEmbed.setFooter(`${target.user.id} | Page ${page + 1} of ${descriptionPages.length}`);
+
         //check if embed requires multiple pages
         if (descriptionPages.length > 1) {
-
+            //send message embed
             let paginator_message = await message.reply({
                 embeds: [messageEmbed],
                 components: [page_buttons]
