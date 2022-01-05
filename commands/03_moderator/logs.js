@@ -7,10 +7,10 @@ const { page_buttons } = require('../../config/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");
-const { FetchHyperLogs } = require("../../utils/AuditManager");
-const { ReplyErrorMessage, ErrorMessage } = require("../../utils/MessageManager");
+const { FetchHyperLogs, FilterTargetLogs } = require("../../utils/AuditManager");
+const { ReplyErrorMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
-const { chunk, time } = require('../../utils/functions');
+const { chunk, time, convertSnowflake } = require('../../utils/functions');
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -19,19 +19,52 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
     //get target user
-    const target = await getUserFromInput(message.guild, arguments[0]);
-    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+    var target = await getUserFromInput(message.guild, arguments[0]);
+    if (target == false) {
+        //filter input from user
+        let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
+        let item = filter != null ? filter[1] : arguments[0].trim();
+        //return if input was not a snowflake
+        if (convertSnowflake(item == false)) return ReplyErrorMessage(message, '@user was not found', 4800);
+        //set target variables
+        target = { key: null, id: item, user: { id: item, username: undefined } };
+    }
 
     //get target logs from database
     const UserLogs = await FetchHyperLogs(message, target);
 
+    //return error if no information was found
+    if (target.key == null && UserLogs == false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
+
+    //filter all log information from both Audit and Hyper logs
+    const FilterLogs = await FilterTargetLogs(target, UserLogs, [])
+
     //construct Embed message
     const messageEmbed = new MessageEmbed()
-        .setTitle(`Userlogs (${UserLogs.length}) :   ${target.user.tag}`)
-        .setThumbnail(target.user.avatarURL())
+        .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}`)
         .setColor(embed.color)
         .setTimestamp()
 
+    //fill embedded message
+    switch (FilterLogs.status) {
+        case 'kicked':
+            messageEmbed
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+            break;
+        case 'banned':
+            messageEmbed
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+            break;
+        case 'left':
+            messageEmbed
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+            break;
+        default:
+            messageEmbed
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.tag}`)
+                .setThumbnail(target.user.avatarURL())
+            break;
+    }
 
     //setup description Array
     let descriptionArray = []
@@ -69,15 +102,11 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} \`\`\` `)
         });
 
         //slice Userlogs in chunks of 5
-        const descriptionPages = chunk(descriptionArray, 2);
+        const descriptionPages = chunk(descriptionArray, 3);
         let page = 0, maxpages = descriptionPages.length - 1;
 
-        //setup embedded message
-        messageEmbed.setDescription(descriptionPages[page].join("\n"))
-        messageEmbed.setFooter(`${target.user.id} | Page ${page + 1} of ${descriptionPages.length}`);
-
         //check if embed requires multiple pages
-        if (descriptionPages.length >= 1) {
+        if (descriptionPages.length > 1) {
 
             let paginator_message = await message.reply({
                 embeds: [messageEmbed],
@@ -124,10 +153,25 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} \`\`\` `)
                     embeds: [messageEmbed],
                     components: [page_buttons]
                 });
-
             })
 
-        } else { //send messageEmbed
+            //when button collection is over, disable buttons
+            collector.on('end', collected => {
+                //disable both buttons
+                page_buttons.components[0].setDisabled(true)
+                page_buttons.components[1].setDisabled(true)
+                //edit paginator message
+                paginator_message.edit({
+                    embeds: [messageEmbed],
+                    components: [page_buttons]
+                });
+            });
+
+        } else {
+            //alter embedded message
+            messageEmbed.setDescription(descriptionPages[page].join("\n"))
+            messageEmbed.setFooter(`${target.user.id}`);
+            //send messageEmbed
             return message.reply({ embeds: [messageEmbed] });
         }
     }
