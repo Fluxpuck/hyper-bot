@@ -1,28 +1,40 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This event is triggers by Discord and does processing of data  */
 
-module.exports = async (client, guild, user) => {
+//load required modules
+const { getModuleSettings } = require("../utils/PermissionManager");
 
-    voiceStateUpdate = {
-        "name": "voiceJoin",
-        "desc": "Send a log-message, when a member joins voice-channel",
-        "state": "",
-        "chnl": ""
-    },
-    {
-        "name": "voiceChange",
-        "desc": "Send a log-message, when a member changed voice-channel",
-        "state": "",
-        "chnl": ""
-    },
-    {
-        "name": "voiceLeave",
-        "desc": "Send a log-message, when a member leaves voice-channel",
-        "state": "",
-        "chnl": ""
+module.exports = async (client, oldMember, newMember) => {
+
+    //get module settings, proceed if true
+    const voiceJoin = await getModuleSettings(oldMember.guild.id, 'voiceJoin');
+    if (voiceJoin.state === 1 && voiceJoin.channel != null) {
+
+
+
+
+
     }
 
+    //get module settings, proceed if true
+    const voiceChange = await getModuleSettings(guild.id, 'voiceChange');
+    if (voiceChange.state === 1 && voiceChange.channel != null) {
 
+
+
+
+
+    }
+
+    //get module settings, proceed if true
+    const voiceLeave = await getModuleSettings(guild.id, 'voiceLeave');
+    if (voiceLeave.state === 1 && voiceLeave.channel != null) {
+
+
+
+
+
+    }
 
 
 

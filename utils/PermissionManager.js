@@ -4,7 +4,7 @@
 //require packages
 const NodeCache = require("node-cache");
 const { defaultPrefix, ownerIds } = require('../config/config.json');
-const { getGuildPrefix, getCommandPerms, getModuleSettings } = require("../database/QueryManager");
+const { getGuildPrefix, getCommandPerms, getModuleSets } = require("../database/QueryManager");
 const { getUserFromInput } = require("./Resolver");
 
 //build cache
@@ -116,7 +116,7 @@ module.exports = {
      */
     async loadModuleSettings(client) {
         Array.from(client.guilds.cache.values()).forEach(async guild => {
-            var collection = await getModuleSettings(guild.id); //get module settings from database
+            var collection = await getModuleSets(guild.id); //get module settings from database
             await guildModulePermsCache.set(guild.id, collection); //add to cache
         })
     },

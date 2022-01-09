@@ -2,9 +2,11 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 const { SendWarningMessageDM } = require("../../utils/MessageManager");
+const { createHyperLog } = require("../../utils/AuditManager");
+const { getModuleSettings } = require("../../utils/PermissionManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -29,18 +31,22 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     const warning = SendWarningMessageDM(message, reason, target);
 
     //verify that the user has been warned
-    if (warning.status === true) {
+    if (warning.status === false) {
         message.reply(`${warning.message}, but warning has been logged`);
-    } else if (warning.status === false) {
-        message.reply(`${warning.message}, and this has been logegd`);
+    } else if (warning.status === true) {
+        message.reply(`${warning.message}, and this has been logged`);
     }
 
     //verify that the user has been kicked
     message.reply(`**${target.user.tag}** has been warned through DM`);
-
-    //SAVE TO DATABASE &
-    //LOG THE EVENT
-
+    //save log to database and log event
+    await createHyperLog(message, 'kick', null, target, reason);
+    //get module settings, proceed if true
+    const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+    if (moderationAction.state === 1 && moderationAction.channel != null) {
+        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+    }
+    return;
 }
 
 

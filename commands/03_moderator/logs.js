@@ -8,9 +8,10 @@ const { page_buttons } = require('../../config/buttons');
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");
 const { FetchHyperLogs, FilterTargetLogs } = require("../../utils/AuditManager");
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 const { chunk, time, convertSnowflake } = require('../../utils/functions');
+const { getModuleSettings } = require('../../utils/PermissionManager');
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -72,7 +73,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //if no Userlogs are found
     if (UserLogs.length <= 0) {
         messageEmbed.setDescription(`\`\`\`User has no logs\`\`\``)
-        messageEmbed.setFooter(`${target.user.id}`);
+        messageEmbed.setFooter({ text: `${target.user.id}` });
 
         //send messageEmbed
         return message.reply({ embeds: [messageEmbed] });
@@ -107,7 +108,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
 
         //setup embedded message
         messageEmbed.setDescription(descriptionPages[page].join("\n"))
-        messageEmbed.setFooter(`${target.user.id} | Page ${page + 1} of ${descriptionPages.length}`);
+        messageEmbed.setFooter({ text: `${target.user.id} | Page ${page + 1} of ${descriptionPages.length}` });
 
         //check if embed requires multiple pages
         if (descriptionPages.length > 1) {
@@ -135,7 +136,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
 
                 //alter embedded message
                 messageEmbed.setDescription(descriptionPages[page].join("\n"))
-                messageEmbed.setFooter(`${target.user.id} | Page ${page + 1} of ${descriptionPages.length}`);
+                messageEmbed.setFooter({ text: `${target.user.id} | Page ${page + 1} of ${descriptionPages.length}` });
 
                 //check page and alter buttons
                 switch (page) {
@@ -174,11 +175,17 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
         } else {
             //alter embedded message
             messageEmbed.setDescription(descriptionPages[page].join("\n"))
-            messageEmbed.setFooter(`${target.user.id}`);
+            messageEmbed.setFooter({ text: `${target.user.id}` });
             //send messageEmbed
-            return message.reply({ embeds: [messageEmbed] });
+            message.reply({ embeds: [messageEmbed] });
+        }
+        //get module settings, proceed if true
+        const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+        if (moderationAction.state === 1 && moderationAction.channel != null) {
+            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
         }
     }
+    return;
 }
 
 

@@ -2,8 +2,10 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { getModuleSettings } = require("../../utils/PermissionManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
+const { createHyperLog } = require("../../utils/AuditManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -34,10 +36,14 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //verify that the user has been kicked
         message.reply(`**${target.user.tag}** has been banned from the server`);
         //save log to database and log event
-        const hyperLog = await createHyperLog(message, 'ban', null, target, reason);
-
-        //LOG "hyperLOG" to guild channel
+        await createHyperLog(message, 'ban', null, target, reason);
+        //get module settings, proceed if true
+        const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+        if (moderationAction.state === 1 && moderationAction.channel != null) {
+            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        }
     }
+    return;
 }
 
 

@@ -1,23 +1,12 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This event is triggers by Discord and does processing of data  */
 
-module.exports = async (client, guild, user) => {
+const { getModuleSettings } = require("../utils/PermissionManager");
 
-    guildMemberRemove = {
-        "name": "guildLeave",
-        "desc": "Send a log-message, when a member is leaving server",
-        "state": "",
-        "chnl": ""
-    },
-    {
-        "name": "kick",
-        "desc": "Send a log-message, when a member is kicked",
-        "state": "",
-        "chnl": ""
-    }
+module.exports = async (client, member) => {
 
     //get module settings, proceed if true
-    const guildLeave = await getModuleSettings(guild, 'ban');
+    const guildLeave = await getModuleSettings(member.guild.id, 'ban');
     if (guildLeave.state === 1 && guildLeave.channel != null) {
 
 
@@ -27,7 +16,7 @@ module.exports = async (client, guild, user) => {
     }
 
     //get module settings, proceed if true
-    const kick = await getModuleSettings(guild, 'ban');
+    const kick = await getModuleSettings(member.guild.id, 'ban');
     if (kick.state === 1 && kick.channel != null) {
 
 
@@ -37,6 +26,9 @@ module.exports = async (client, guild, user) => {
     }
 
 
+
+    //check if "communicationDisabledUntilTimestamp" is set and in the present
+    //if so, give muted role :clown:
 
 
 
