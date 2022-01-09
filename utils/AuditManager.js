@@ -2,9 +2,34 @@
     The AuditManager contains functions related to Logging Audits and Moderator actions */
 
 //require packages
-const { getMemberLogs } = require("../database/QueryManager");
+const { customAlphabet } = require('nanoid');
+const nanoid = customAlphabet('1234567890abcdef', 12);
+const { getMemberLogs, saveMemberLog } = require("../database/QueryManager");
 
 module.exports = {
+
+    /** construct hyperLog and save to database
+     * @param {*} message 
+     * @param {*} type 
+     * @param {*} target 
+     * @param {*} reason 
+     * @returns 
+     */
+    async createHyperLog(message, type, duration, target, reason) {
+        function hyperLog(log, reason, duration, target, executor) {
+            this.log = log;
+            this.reason = reason;
+            this.duration = duration;
+            this.target = target;
+            this.executor = executor;
+        }
+        //construct hyperlog
+        const UserLog = new hyperLog({ id: nanoid(), type: type }, reason, duration, { id: target.user.id, username: target.user.tag }, { id: message.author.id, username: message.author.tag });
+        //save to database
+        await saveMemberLog(message.guild.id, UserLog);
+        //return hyperlog
+        return UserLog
+    },
 
     /** collect all (saved) Userlogs 
      * @param {*} message 
@@ -90,7 +115,7 @@ module.exports = {
 
         //return value
         return new TargetLogs({ id: target.user.id, username: target.user.username }, targetStatus, logReason, logDate)
-    }
+    },
 
 
 

@@ -49,15 +49,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     switch (FilterLogs.status) {
         case 'kicked':
             messageEmbed
-                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     - ${FilterLogs.status}`)
             break;
         case 'banned':
             messageEmbed
-                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     - ${FilterLogs.status}`)
             break;
         case 'left':
             messageEmbed
-                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     -     ${FilterLogs.status}`)
+                .setTitle(`Userlogs (${UserLogs.length}) :     ${target.user.username}     - ${FilterLogs.status}`)
             break;
         default:
             messageEmbed
@@ -92,12 +92,12 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 Moderator:      ${Userlog.executor.username}                
 Reason:         ${Userlog.reason}
 Duration:       ${Userlog.duration} minutes
-Date:           ${date_convert.toDateString()} - ${time(date_convert)} \`\`\` `);
+Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\` `);
             } else {
                 descriptionArray.push(`[${Userlog.type}] - ${Userlog.id}\`\`\`yaml
 Moderator:      ${Userlog.executor.username}                
 Reason:         ${Userlog.reason}
-Date:           ${date_convert.toDateString()} - ${time(date_convert)} \`\`\` `);
+Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\` `);
             }
         });
 

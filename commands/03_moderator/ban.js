@@ -24,16 +24,20 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
     //ban the target
-    await target.ban({ reason: `{HYPER} ` }).catch(err => {
-        return ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not banned`);
+    const ban = await target.ban({ reason: `{HYPER} ${reason}` }).catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not banned`);
+        return false
     });
 
-    //verify that the user has been banned
-    message.reply(`**${target.user.tag}** has been banned from the server`);
+    //check if action was succesfull
+    if (ban != false) {
+        //verify that the user has been kicked
+        message.reply(`**${target.user.tag}** has been banned from the server`);
+        //save log to database and log event
+        const hyperLog = await createHyperLog(message, 'ban', null, target, reason);
 
-    //SAVE TO DATABASE &
-    //LOG THE EVENT
-
+        //LOG "hyperLOG" to guild channel
+    }
 }
 
 

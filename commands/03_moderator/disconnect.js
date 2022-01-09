@@ -16,10 +16,20 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
 
     //disconnect the target
-    await target.voice.kick().catch(err => {
-        return ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+    const disconnect = await target.voice.kick().catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+        return false
     })
 
+    //check if action was succesfull
+    if (disconnect != false) {
+        //verify that the user has been kicked
+        message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
+        //save log to database and log event
+        const hyperLog = await createHyperLog(message, 'disconnect', null, target, reason);
+
+        //LOG "hyperLOG" to guild channel
+    }
 }
 
 

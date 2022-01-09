@@ -4,6 +4,7 @@
 //load required modules
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
+const { createHyperLog } = require("../../utils/AuditManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -17,24 +18,43 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if target is moderator
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    //check if target is already timed out
+    const timedifference = target.communicationDisabledUntilTimestamp - Date.now();
+    if (timedifference > 0) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+
+
+
+
+
+
+    //GET TIMER...
+    let time_input = arguments[1];
+
+
+    //GET REASON...
+
+
+
+
+
 
     //check and set reason, else use default message
-    let r = arguments.slice(1) //slice reason from arguments
+    let r = arguments.slice(2) //slice reason from arguments
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
-    //kick the target
-    const kick = await target.kick({ reason: `{HYPER} ${reason}` }).catch(err => {
-        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not kicked`);
+    //timeout the target
+    const mute = await target.timeout(10 * 60 * 1000, `{HYPER} ${reason}`).catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted`);
         return false
     });
 
     //check if action was succesfull
-    if (kick != false) {
-        //verify that the user has been kicked
-        message.reply(`**${target.user.tag}** has been kicked from the server`);
+    if (mute != false) {
+        //verify that the user has been timed out
+        message.reply(`**${target.user.tag}** has been timed out for ${null} minutes.`);
         //save log to database and log event
-        const hyperLog = await createHyperLog(message, 'kick', null, target, reason);
+        const hyperLog = await createHyperLog(message, 'timeout', 10 * 60 * 1000, target, reason);
 
         //LOG "hyperLOG" to guild channel
     }
@@ -43,16 +63,16 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'kick',
-    alias: [],
+    name: 'timeout',
+    alias: ['mute'],
     category: 'moderation',
-    desc: 'Kick target member from the server',
-    usage: '{prefix}kick @user [reason]',
+    desc: 'Mute target member for X minutes in the server',
+    usage: '{prefix}timeout @user [time] [reason]',
 }
 
 //slash setup
 module.exports.slash = {
-    slash: true,
+    slash: false,
     options: [{
         name: 'user',
         type: 'USER',
@@ -60,9 +80,15 @@ module.exports.slash = {
         required: true,
     },
     {
+        name: 'time',
+        type: 'NUMBER',
+        description: 'Duration in minutes',
+        required: true,
+    },
+    {
         name: 'reason',
         type: 'STRING',
-        description: 'Reason for kick',
-        required: true,
+        description: 'Reason why member is muted',
+        required: false,
     }]
 }
