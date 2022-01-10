@@ -12,23 +12,16 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //delete command message
     setTimeout(() => message.delete(), 1000);
 
-    //divide the input {amount, user}
-    const { amount, member } = input = await inputType(message.guild, arguments.slice(0, 2))
-
-    //if any of two not provide, return error
-    if (amount == null) return ReplyErrorMessage(message, 'Amount was not provied', 4800);
-    if (member == false) return ReplyErrorMessage(message, '@user was not found', 4800);
-
-    //check if target is moderator
-    if (member.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    //if there are no arguments, no amount has been defined
+    if (arguments.length < 1) return ReplyErrorMessage(message, 'Amount was not provided', 4800);
 
     //check and parse amount/limit
-    const limit = parseInt(amount)
+    const limit = parseInt(arguments[0])
     if (isNaN(limit)) return ReplyErrorMessage(message, `Doesn't seem to be a valid number`, 4800)
     if (limit > 100 || limit < 2) return ReplyErrorMessage(message, `Provide an amount between 1 and 100`, 4800)
 
     //get the message collection (limit 100)
-    let collection = await getUserMessages(message, member, limit)
+    let collection = await getUserMessages(message, undefined, limit)
 
     //check if collection hold messages
     if (collection.size > 0) {
@@ -42,8 +35,6 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //delete message and verify that the messages have been deleted
     // message.reply(`**${collection.size}** messages have been deleted`);
 
-    //save log to database and log event
-    await createHyperLog(message, 'purge', null, member, `purged ${collection.size} messages`);
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
@@ -55,11 +46,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'purge',
-    alias: ['delete'],
+    name: 'clean',
+    alias: ['clear'],
     category: 'moderation',
-    desc: 'Removes X messages from target member',
-    usage: '{prefix}purge @user [amount]',
+    desc: 'Removes X messages from channel',
+    usage: '{prefix}clean [amount]',
 }
 
 //slash setup

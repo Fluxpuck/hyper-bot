@@ -142,7 +142,7 @@ module.exports = {
             //collect messages in chunks of 50
             const options = { before: LastMessage.id, limit: 50 } //set filter options
             var FetchMessages = await message.channel.messages.fetch(options); //collect messages from target channel
-            FetchMessages.sweep(message => message.author.id != member.user.id); //remove messages not from target member         
+            if (member != undefined) FetchMessages.sweep(message => message.author.id != member.user.id); //remove messages not from target member
 
             //filter messages for NOT older than two weeks and within limit
             await FetchMessages.map(message => {
