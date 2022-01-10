@@ -7,7 +7,7 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 module.exports = async (client, oldMessage, newMessage) => {
 
     //get module settings, proceed if true
-    const messageChange = await getModuleSettings(oldMessage.guild.id, 'messageChange');
+    const messageChange = await getModuleSettings(oldMessage.guild, 'messageChange');
     if (messageChange.state === 1 && messageChange.channel != null) {
 
 

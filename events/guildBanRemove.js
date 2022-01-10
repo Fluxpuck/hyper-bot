@@ -7,7 +7,7 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 module.exports = async (client, guild, user) => {
 
     //get module settings, proceed if true
-    const banRevokeModule = await getModuleSettings(guild.id, 'banRevoke');
+    const banRevokeModule = await getModuleSettings(guild, 'banRevoke');
     if (banRevokeModule.state === 1 && banRevokeModule.channel != null) {
 
 

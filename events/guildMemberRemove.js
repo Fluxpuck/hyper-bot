@@ -7,7 +7,7 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 module.exports = async (client, member) => {
 
     //get module settings, proceed if true
-    const guildJoin = await getModuleSettings(member.guild.id, 'guildJoin');
+    const guildJoin = await getModuleSettings(member.guild, 'guildJoin');
     if (guildJoin.state === 1 && guildJoin.channel != null) {
 
 

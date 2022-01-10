@@ -10,7 +10,7 @@ module.exports = async (client, messages) => {
     const message = messages.first();
 
     //get module settings, proceed if true
-    const messageBulkDelete = await getModuleSettings(message.guild.id, 'messageBulkDelete');
+    const messageBulkDelete = await getModuleSettings(message.guild, 'messageBulkDelete');
     if (messageBulkDelete.state === 1 && messageBulkDelete.channel != null) {
 
 

@@ -6,7 +6,7 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 module.exports = async (client, member) => {
 
     //get module settings, proceed if true
-    const guildLeave = await getModuleSettings(member.guild.id, 'ban');
+    const guildLeave = await getModuleSettings(member.guild, 'ban');
     if (guildLeave.state === 1 && guildLeave.channel != null) {
 
 
