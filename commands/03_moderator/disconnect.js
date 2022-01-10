@@ -2,7 +2,9 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { createHyperLog } = require("../../utils/AuditManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
+const { getModuleSettings } = require("../../utils/PermissionManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 
 //construct the command and export
@@ -16,10 +18,24 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
 
     //disconnect the target
-    await target.voice.kick().catch(err => {
-        return ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+    const disconnect = await target.voice.kick().catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+        return false
     })
 
+    //check if action was succesfull
+    if (disconnect != false) {
+        //verify that the user has been kicked
+        message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
+        //save log to database and log event
+        await createHyperLog(message, 'disconnect', null, target, reason);
+        //get module settings, proceed if true
+        const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+        if (moderationAction.state === 1 && moderationAction.channel != null) {
+            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        }
+    }
+    return;
 }
 
 

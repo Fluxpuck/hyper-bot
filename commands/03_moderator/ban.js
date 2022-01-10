@@ -2,8 +2,10 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { getModuleSettings } = require("../../utils/PermissionManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
+const { createHyperLog } = require("../../utils/AuditManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -24,16 +26,24 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
     //ban the target
-    await target.ban({ reason: `{HYPER} ` }).catch(err => {
-        return ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not banned`);
+    const ban = await target.ban({ reason: `{HYPER} ${reason}` }).catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not banned`);
+        return false
     });
 
-    //verify that the user has been banned
-    message.reply(`**${target.user.tag}** has been banned from the server`);
-
-    //SAVE TO DATABASE &
-    //LOG THE EVENT
-
+    //check if action was succesfull
+    if (ban != false) {
+        //verify that the user has been kicked
+        message.reply(`**${target.user.tag}** has been banned from the server`);
+        //save log to database and log event
+        await createHyperLog(message, 'ban', null, target, reason);
+        //get module settings, proceed if true
+        const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+        if (moderationAction.state === 1 && moderationAction.channel != null) {
+            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        }
+    }
+    return;
 }
 
 

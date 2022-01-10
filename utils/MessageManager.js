@@ -3,6 +3,7 @@
 
 //load required modules
 const { MessageEmbed } = require('discord.js');
+const { capitalize } = require('./functions');
 
 //import styling from assets
 const emote = require('../assets/emotes.json');
@@ -71,15 +72,36 @@ module.exports = {
             .addFields({ name: `Reason for warning`, value: `\`\`\`${input}\`\`\`` })
             .setThumbnail(embed.warning_thumb)
             .setTimestamp()
-            .setFooter(`${client.user.username} | hyperbot.cc`)
+            .setFooter({ text: `${client.user.username} | hyperbot.cc` })
 
         //send message through DM
         await target.send({ embeds: [warn_embed] }).catch(err => {
             if (err) return { status: false, message: `Could not deliver message to ${target.user.tag}` };
         })
-
         //return status
         return { status: true, message: `${target.user.tag} has recieved a warning` };
+    },
+
+    /** Send Mod Action log to specified channel
+     * @param {*} message 
+     * @param {*} command 
+     * @param {*} channel 
+     */
+    async SendModerationActionMessage(message, command, channel) {
+        //create the embed message
+        const embedMessage = new MessageEmbed()
+            .setDescription(`**${message.author.tag}** executed the **${capitalize(command)}** command`)
+            .setColor(embed.color)
+            .setTimestamp()
+            .setFooter({ text: `${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
+
+        //get target channel and send message embed
+        const targetChannel = message.guild.channels.cache.get(channel);
+        if (targetChannel) return targetChannel.send({ embeds: [embedMessage] });
+    },
+
+    async SendLogMessage() {
+
     }
 
 }

@@ -3,13 +3,14 @@
 
 //require packages
 const NodeCache = require("node-cache");
-const { defaultPrefix } = require('../config/config.json');
-const { getGuildPrefix, getCommandPerms } = require("../database/QueryManager");
+const { defaultPrefix, ownerIds } = require('../config/config.json');
+const { getGuildPrefix, getCommandPerms, getModuleSets } = require("../database/QueryManager");
 const { getUserFromInput } = require("./Resolver");
 
 //build cache
 const guildPrefixCache = new NodeCache();
 const guildCommandPermsCache = new NodeCache();
+const guildModulePermsCache = new NodeCache();
 
 module.exports = {
 
@@ -93,7 +94,7 @@ module.exports = {
         //get validations
         let role_validation = role_check.length > 0 ? true : false
         let channel_validation = channel_check.length > 0 || permissions.channel_perms === null ? true : false
-        let administrator = member.permissions.has("MANAGE_GUILD");
+        let administrator = member.permissions.has("ADMINISTRATOR");
 
         //error messages
         if (administrator != true) {
@@ -102,6 +103,7 @@ module.exports = {
         }
 
         //validations
+        if (ownerIds.includes(member.id)) commandStatus = true
         if (role_validation === true && channel_validation === true) commandStatus = true
         else if (administrator === true) commandStatus = true
 
@@ -109,9 +111,33 @@ module.exports = {
         return new commandPermissions(command, commandStatus, role_validation, channel_validation, administrator, errorMsg)
     },
 
+    /** set all module permissions per guild
+     * @param {*} client 
+     */
+    async loadModuleSettings(client) {
+        Array.from(client.guilds.cache.values()).forEach(async guild => {
+            var collection = await getModuleSets(guild.id); //get module settings from database
+            await guildModulePermsCache.set(guild.id, collection); //add to cache
+        })
+    },
+
+    /** get module settings
+     * @param {*} guild 
+     * @param {*} module 
+     */
+    async getModuleSettings(guild, module) {
+        const ModuleCache = await guildModulePermsCache.get(guild.id) //get the prefix key value from the cache
+        const filter = ModuleCache.filter(m => m.moduleName === module);
+        if (filter.length > 0) {
+            return { "state": filter[0].state, "channel": filter[0].channel }
+        } else {
+            return { "state": 0, "channel": null }
+        }
+    },
 
     //module export the cache
     guildPrefixCache,
-    guildCommandPermsCache
+    guildCommandPermsCache,
+    guildModulePermsCache
 
 }

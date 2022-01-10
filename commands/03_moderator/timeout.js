@@ -4,7 +4,6 @@
 //load required modules
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
-const { SendWarningMessageDM } = require("../../utils/MessageManager");
 const { createHyperLog } = require("../../utils/AuditManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
 
@@ -13,7 +12,6 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
-    if (arguments.length >= 1 && arguments.length < 3) return ReplyErrorMessage(message, 'Reason was not provided or too short', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
@@ -21,30 +19,48 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if target is moderator
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    //check if target is already timed out
+    const timedifference = target.communicationDisabledUntilTimestamp - Date.now();
+    if (timedifference > 0) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+
+
+
+
+
+
+    //GET TIMER...
+    let time_input = arguments[1];
+
+
+    //GET REASON...
+
+
+
+
+
 
     //check and set reason, else use default message
-    let r = arguments.slice(1) //slice reason from arguments
+    let r = arguments.slice(2) //slice reason from arguments
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
-    //warn the user
-    const warning = SendWarningMessageDM(message, reason, target);
+    //timeout the target
+    const mute = await target.timeout(10 * 60 * 1000, `{HYPER} ${reason}`).catch(err => {
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted`);
+        return false
+    });
 
-    //verify that the user has been warned
-    if (warning.status === false) {
-        message.reply(`${warning.message}, but warning has been logged`);
-    } else if (warning.status === true) {
-        message.reply(`${warning.message}, and this has been logged`);
-    }
-
-    //verify that the user has been kicked
-    message.reply(`**${target.user.tag}** has been warned through DM`);
-    //save log to database and log event
-    await createHyperLog(message, 'kick', null, target, reason);
-    //get module settings, proceed if true
-    const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
-    if (moderationAction.state === 1 && moderationAction.channel != null) {
-        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+    //check if action was succesfull
+    if (mute != false) {
+        //verify that the user has been timed out
+        message.reply(`**${target.user.tag}** has been timed out for ${null} minutes.`);
+        //save log to database and log event
+        await createHyperLog(message, 'timeout', 10 * 60 * 1000, target, reason);
+        //get module settings, proceed if true
+        const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+        if (moderationAction.state === 1 && moderationAction.channel != null) {
+            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        }
     }
     return;
 }
@@ -52,16 +68,16 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'warn',
-    alias: [],
+    name: 'timeout',
+    alias: ['mute'],
     category: 'moderation',
-    desc: 'Warn target member with a message.',
-    usage: '{prefix}warn @user [message]',
+    desc: 'Mute target member for X minutes in the server',
+    usage: '{prefix}timeout @user [time] [reason]',
 }
 
 //slash setup
 module.exports.slash = {
-    slash: true,
+    slash: false,
     options: [{
         name: 'user',
         type: 'USER',
@@ -69,9 +85,15 @@ module.exports.slash = {
         required: true,
     },
     {
+        name: 'time',
+        type: 'NUMBER',
+        description: 'Duration in minutes',
+        required: true,
+    },
+    {
         name: 'reason',
         type: 'STRING',
-        description: 'Reason for warn',
-        required: true,
+        description: 'Reason why member is muted',
+        required: false,
     }]
 }

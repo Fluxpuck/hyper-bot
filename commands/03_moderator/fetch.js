@@ -8,9 +8,10 @@ const embed = require('../../assets/embed.json');
 const { MessageEmbed, InteractionCollector } = require("discord.js");
 const { FetchHyperLogs, FetchBanLog, FilterTargetLogs } = require("../../utils/AuditManager");
 const { convertSnowflake, capitalize } = require("../../utils/functions");
-const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 const { log_button } = require('../../config/buttons');
+const { getModuleSettings } = require('../../utils/PermissionManager');
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -50,7 +51,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .setDescription(`<@${target.user.id}>  -  ${target.user.id}`)
         .setColor(embed.color)
         .setTimestamp()
-        .setFooter(`${message.author.tag}`, message.author.displayAvatarURL({ dynamic: false }))
+        .setFooter({ text: `${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
 
     //fill embedded message
     switch (FilterLogs.status) {
@@ -97,49 +98,56 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             embeds: [messageEmbed],
             components: [log_button]
         })
+
+        //start collecting button presses for paginator
+        let collector = new InteractionCollector(client, { message: fetch_message, time: 60000, componentType: "BUTTON" })
+
+        //collect button interactions
+        collector.on('collect', async (button) => {
+
+            //filter members with no access
+            if (button.user.id != message.author.id) return button.reply({ ephemeral: true, embeds: [await ErrorMessage('Only the command executor can use the buttons')] })
+
+            //update defer
+            await button.deferUpdate();
+
+            //run LOGS.js command file
+            let commandfile = client.commands.get("logs");
+            if (commandfile) commandfile.run(client, message, [target.user.id], prefix, permissions);
+
+            //disable button after command has run
+            log_button.components[0].setDisabled(true);
+
+            //edit paginator message
+            fetch_message.edit({
+                embeds: [messageEmbed],
+                components: [log_button]
+            });
+
+        })
+
+        //when button collection is over, disable buttons
+        collector.on('end', collected => {
+            //disable both buttons
+            log_button.components[0].setDisabled(true)
+            //edit paginator message
+            fetch_message.edit({
+                embeds: [messageEmbed],
+                components: [log_button]
+            });
+        });
+
     } else {
         //send messageEmbed
         return message.reply({ embeds: [messageEmbed] })
     }
 
-    //start collecting button presses for paginator
-    let collector = new InteractionCollector(client, { message: fetch_message, time: 60000, componentType: "BUTTON" })
-
-    //collect button interactions
-    collector.on('collect', async (button) => {
-
-        //filter members with no access
-        if (button.user.id != message.author.id) return button.reply({ ephemeral: true, embeds: [await ErrorMessage('Only the command executor can use the buttons')] })
-
-        //update defer
-        await button.deferUpdate();
-
-        //run LOGS.js command file
-        let commandfile = client.commands.get("logs");
-        if (commandfile) commandfile.run(client, message, [target.user.id], prefix, permissions);
-
-        //disable button after command has run
-        log_button.components[0].setDisabled(true);
-
-        //edit paginator message
-        fetch_message.edit({
-            embeds: [messageEmbed],
-            components: [log_button]
-        });
-
-    })
-
-    //when button collection is over, disable buttons
-    collector.on('end', collected => {
-        //disable both buttons
-        log_button.components[0].setDisabled(true)
-        //edit paginator message
-        fetch_message.edit({
-            embeds: [messageEmbed],
-            components: [log_button]
-        });
-    });
-
+    //get module settings, proceed if true
+    const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+    if (moderationAction.state === 1 && moderationAction.channel != null) {
+        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+    }
+    return;
 }
 
 
