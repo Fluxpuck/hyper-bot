@@ -48,7 +48,5 @@ module.exports = async (client, oldMessage, newMessage) => {
         if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
 
     }
-
     return;
-
 }

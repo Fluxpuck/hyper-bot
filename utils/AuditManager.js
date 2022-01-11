@@ -161,17 +161,16 @@ module.exports = {
                 //return AuditLog
                 return new AuditLog({ id: HyperLogs[idx].id, type: HyperLogs[idx].type }, HyperLogs[idx].reason.replace('{HYPER} ', ''), HyperLogs[idx].duration, HyperLogs[idx].target, HyperLogs[idx].executor)
             } else { //if log is not from Hyper, save foreign to database
-                //construct hyperlog
-                const UserLog = new AuditLog({ id: nanoid(), type: action }, reason, auditDuration, { id: target.id, username: target.tag }, { id: executor.id, username: executor.tag });
-                //save to database
-                await saveMemberLog(guild.id, UserLog);
-                //return hyperlog
-                return UserLog
+                if (action != 'unban') { //if log is not unban
+                    //construct hyperlog
+                    const UserLog = new AuditLog({ id: nanoid(), type: action }, reason, auditDuration, { id: target.id, username: target.tag }, { id: executor.id, username: executor.tag });
+                    //save to database
+                    await saveMemberLog(guild.id, UserLog);
+                    //return hyperlog
+                    return UserLog
+                }
             }
         } else return false //if no logs are found, return false
     },
-
-
-
 
 }

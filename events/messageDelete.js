@@ -65,8 +65,7 @@ module.exports = async (client, message) => {
         //get target channel and send message embed
         const targetChannel = message.guild.channels.cache.get(messageDelete.channel);
         if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+
     }
-
     return;
-
 }
