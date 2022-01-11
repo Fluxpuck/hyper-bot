@@ -42,8 +42,6 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //delete message and verify that the messages have been deleted
     // message.reply(`**${collection.size}** messages have been deleted`);
 
-    //save log to database and log event
-    await createHyperLog(message, 'purge', null, member, `purged ${collection.size} messages`);
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {

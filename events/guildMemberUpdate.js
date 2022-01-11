@@ -82,10 +82,5 @@ module.exports = async (client, oldMember, newMember) => {
         //remove jail-role
 
     }
-
-
-
-
-
-
+    return;
 }

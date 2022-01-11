@@ -17,22 +17,22 @@ module.exports = async (client, guild, user) => {
 
         //fetch log, and if nessesary, save to database
         const AuditLog = await getAuditLogDetails(guild, 'GUILD_BAN_ADD', null);
+        if (AuditLog != false) {
 
-        //construct message
-        const logMessage = new MessageEmbed()
-            .setTitle(`${AuditLog.target.username} is Banned`)
-            .setDescription(`Ban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
-            .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
-            .setColor(embed.colour__red)
-            .setTimestamp()
-            .setFooter({ text: `${AuditLog.log.id}` })
+            //construct message
+            const logMessage = new MessageEmbed()
+                .setTitle(`${AuditLog.target.username} is Banned`)
+                .setDescription(`Ban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
+                .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
+                .setColor(embed.colour__red)
+                .setTimestamp()
+                .setFooter({ text: `${AuditLog.log.id}` })
 
-        //get target channel and send message embed
-        const targetChannel = message.guild.channels.cache.get(banModule.channel);
-        if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            //get target channel and send message embed
+            const targetChannel = message.guild.channels.cache.get(banModule.channel);
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
 
+        }
     }
-
     return;
-
 }

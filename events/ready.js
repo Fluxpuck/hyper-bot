@@ -52,4 +52,5 @@ module.exports = async (client) => {
     ClientConsole.EventMessage(client.events);
     ClientConsole.CommandMessage(client.commands);
 
+    return;
 }
