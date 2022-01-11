@@ -16,7 +16,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .setTitle('Hyper - General Help')
         .setThumbnail(embed.thumbnail)
         .setColor(embed.color)
-        .setFooter(`${client.user.username} | hyperbot.cc`);
+        .setFooter({ text: `${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) });
 
     //filter/sort all commands based on category
     const commandsByGroup = client.commands.reduce((key, value) => {
@@ -33,8 +33,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (arguments.length < 1) {
 
         //general embed description
-        helpMessage.setDescription(`${client.user.username} is a comprehensive server management bot, that allows for basic moderation, logging events, custom commands, timed messages, and more!\
-        \ *Current server prefix is \`${prefix}\`*`)
+        helpMessage.setDescription(`<@${client.user.id}> is a comprehensive server management bot, that allows for basic moderation, logging events, and more!\
+        \ Use command \`${prefix}help [command]\` to get more detailed information.`)
 
         //got through all categories
         for (const category of Object.keys(commandsByGroup)) {
@@ -53,8 +53,8 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
             }
         }
 
-        //send message
-        message.channel.send({ embeds: [helpMessage] })
+        //reply to message
+        message.reply({ embeds: [helpMessage] })
 
     }
 
@@ -64,7 +64,6 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
 
         //change embed variables
         helpMessage.setTitle(`Hyper - Command Help`)
-        helpMessage.setFooter(`${capitalize(commandInfo.name)} | hyperbot.cc`)
 
         //command information
         helpMessage.addFields(
@@ -85,8 +84,8 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
             },
         )
 
-        //send message
-        message.channel.send({ embeds: [helpMessage] })
+        //reply to message
+        message.reply({ embeds: [helpMessage] })
 
     }
 

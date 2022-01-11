@@ -93,15 +93,11 @@ module.exports = {
             .setDescription(`**${message.author.tag}** executed the **${capitalize(command)}** command`)
             .setColor(embed.color)
             .setTimestamp()
-            .setFooter({ text: `${message.author.tag}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
+            .setFooter({ text: `${message.author.id}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
 
         //get target channel and send message embed
         const targetChannel = message.guild.channels.cache.get(channel);
         if (targetChannel) return targetChannel.send({ embeds: [embedMessage] });
     },
-
-    async SendLogMessage() {
-
-    }
 
 }

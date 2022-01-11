@@ -29,7 +29,7 @@ module.exports = async (client) => {
     //SLASH COMMANDS!!??
 
     //check and update all database tables
-    Array.from(client.guilds.cache.values()).forEach(async guild => {
+    await Array.from(client.guilds.cache.values()).forEach(async guild => {
         await DbManager.UpdateGuildTable(); //update (global) guild information table
         await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
         await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands

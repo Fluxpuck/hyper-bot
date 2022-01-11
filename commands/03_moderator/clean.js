@@ -10,7 +10,7 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 1000);
+    setTimeout(() => message.delete(), 100);
 
     //if there are no arguments, no amount has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, 'Amount was not provided', 4800);
@@ -38,6 +38,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
+        //don't log in channels that are excepted from logging
+        if (moderationAction.exceptions.includes(message.channel.id)) return;
         return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
     }
     return;

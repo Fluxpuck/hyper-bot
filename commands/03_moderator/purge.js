@@ -10,7 +10,7 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 1000);
+    setTimeout(() => message.delete(), 100);
 
     //divide the input {amount, user}
     const { amount, member } = input = await inputType(message.guild, arguments.slice(0, 2))
@@ -20,7 +20,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (member == false) return ReplyErrorMessage(message, '@user was not found', 4800);
 
     //check if target is moderator
-    if (member.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    // if (member.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
 
     //check and parse amount/limit
     const limit = parseInt(amount)
@@ -47,6 +47,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
+        //don't log in channels that are excepted from logging
+        if (moderationAction.exceptions.includes(message.channel.id)) return;
         return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
     }
     return;

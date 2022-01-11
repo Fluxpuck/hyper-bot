@@ -24,6 +24,7 @@ assets
 .yarn
 .github
 PermissionManager.js
+00_owner
 
 # Misc
 .DS_STORE

@@ -8,16 +8,17 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 
 
+
 }
 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
-    category: '',
-    desc: 'Just for testing purposes',
-    usage: '{prefix}test',
+    name: 'setup',
+    alias: [],
+    category: 'setup',
+    desc: '',
+    usage: '{prefix}setup',
 }
 
 //slash setup

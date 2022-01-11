@@ -44,6 +44,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
+        //don't log in channels that are excepted from logging
+        if (moderationAction.exceptions.includes(message.channel.id)) return;
         return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
     }
     return;
