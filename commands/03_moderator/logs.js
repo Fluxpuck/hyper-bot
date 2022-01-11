@@ -3,7 +3,7 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { page_buttons } = require('../../config/buttons');
+const { page_buttons } = require('../../assets/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");

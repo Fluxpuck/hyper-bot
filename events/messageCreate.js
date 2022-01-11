@@ -49,5 +49,6 @@ module.exports = async (client, message) => {
                 .then(msg => { setTimeout(() => msg.delete(), 5000) })
         }
     }
+
     return;
 }

@@ -59,5 +59,9 @@ module.exports = async (client, member) => {
 
         }
     }
+
+    //remove user from status table
+    //remove user from away table
+
     return;
 }
