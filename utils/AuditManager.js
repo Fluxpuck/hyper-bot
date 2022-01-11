@@ -143,6 +143,8 @@ module.exports = {
                     break;
                 case 'MEMBER_BAN_ADD': action = 'ban'
                     break;
+                case 'MEMBER_BAN_REMOVE': action = 'unban'
+                    break;
                 case 'MEMBER_UPDATE': action = 'timeout'
                     break;
             }

@@ -3,6 +3,7 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
+const { log_button } = require('../../config/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");
@@ -10,7 +11,6 @@ const { FetchHyperLogs, FetchBanLog, FilterTargetLogs } = require("../../utils/A
 const { convertSnowflake, capitalize } = require("../../utils/functions");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
-const { log_button } = require('../../config/buttons');
 const { getModuleSettings } = require('../../utils/PermissionManager');
 
 //construct the command and export
@@ -145,6 +145,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
+        //don't log in channels that are excepted from logging
+        if (moderationAction.exceptions.includes(message.channel.id)) return;
         return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
     }
     return;

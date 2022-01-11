@@ -129,9 +129,9 @@ module.exports = {
         const ModuleCache = await guildModulePermsCache.get(guild.id) //get the prefix key value from the cache
         const filter = ModuleCache.filter(m => m.moduleName === module);
         if (filter.length > 0) {
-            return { "state": filter[0].state, "channel": filter[0].channel }
+            return { "state": filter[0].state, "channel": filter[0].channel, "exceptions": filter[0].exceptions }
         } else {
-            return { "state": 0, "channel": null }
+            return { "state": 0, "channel": null, "exceptions": [] }
         }
     },
 

@@ -3,8 +3,7 @@
 
 module.exports = {
 
-    /**
-     * Convert timestamp to 2400 time object.
+    /** Convert timestamp to 2400 time object
      * @param {String} t Time object
      */
     time(t) {
@@ -18,8 +17,28 @@ module.exports = {
         } else return undefined
     },
 
-    /**
-     * Capitalize full string
+    /** convert milliseconds to hours, minutes, and seconds
+     * @param {*} t 
+     * @returns 
+     */
+    msToTime(t) {
+        //get hours, minutes and seconds
+        const date = new Date(t * 1000);
+        const days = date.getUTCDate() - 1,
+            hours = date.getUTCHours(),
+            minutes = date.getUTCMinutes(),
+            seconds = date.getUTCSeconds()
+        let segments = []; //prepare array
+        //seperate in segments
+        if (days > 0) segments.push(days + ' day' + ((days == 1) ? '' : 's'));
+        if (hours > 0) segments.push(hours + ' hour' + ((hours == 1) ? '' : 's'));
+        if (minutes > 0) segments.push(minutes + ' minute' + ((minutes == 1) ? '' : 's'));
+        if (seconds > 0) segments.push(seconds + ' second' + ((seconds == 1) ? '' : 's'));
+        const dateString = segments.join(', ');
+        return dateString //return to user
+    },
+
+    /** Capitalize full string
      * @param {String} str String object
      */
     capitalize(str) {
@@ -35,8 +54,7 @@ module.exports = {
         );
     },
 
-    /**
-    * Clean the string object.
+    /** Clean the string object
     * @param {String} string String object
     */
     clean(string) {
@@ -50,8 +68,7 @@ module.exports = {
         }
     },
 
-    /**
-     * slice array in chunks
+    /** slice array in chunks
      * @param {Array} array Lenghy array
      * @param {Number} chunk Chunk size
      */

@@ -1,14 +1,17 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This event is triggers by Discord and does processing of data  */
 
+//import styling from assets
+const embed = require('../assets/embed.json');
+
 //load required modules
 const { getModuleSettings } = require("../utils/PermissionManager");
 
 module.exports = async (client, member) => {
 
     //get module settings, proceed if true
-    const guildJoin = await getModuleSettings(member.guild, 'guildJoin');
-    if (guildJoin.state === 1 && guildJoin.channel != null) {
+    const guildLeave = await getModuleSettings(member.guild, 'guildLeave');
+    if (guildLeave.state === 1 && guildLeave.channel != null) {
 
 
 
@@ -17,8 +20,8 @@ module.exports = async (client, member) => {
     }
 
     //get module settings, proceed if true
-    const guildWelcome = await getModuleSettings(member.guild.id, 'guildWelcome');
-    if (guildWelcome.state === 1 && guildWelcome.channel != null) {
+    const kick = await getModuleSettings(member.guild.id, 'kick');
+    if (kick.state === 1 && kick.channel != null) {
 
 
 
