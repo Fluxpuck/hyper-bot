@@ -25,7 +25,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 
 
-
+    //fix timeout
 
 
     //GET TIMER...
