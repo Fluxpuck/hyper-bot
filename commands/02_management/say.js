@@ -3,7 +3,6 @@
 
 //load required modules
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
-const { getChannelFromMention } = require("../../utils/Resolver");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -16,7 +15,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (!channel) ReplyErrorMessage(message, `#channel was not found`, 4800)
 
     //set message
-    var toSayMessage = arguments.slice(1);
+    let toSayMessage = arguments.slice(1);
 
     //if there are attachments, add to message
     if (message.attachments.size >= 1) {

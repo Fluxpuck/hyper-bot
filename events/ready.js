@@ -39,8 +39,9 @@ module.exports = async (client) => {
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
     });
 
-    //get and cache guild prefix, command permissions and module settings
+    //get and cache guild prefix, roles, command permissions and module settings
     await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
+    await PermissionManager.loadGuildRoles(client); //set guild roles
     await PermissionManager.loadCommandPermissions(client); //cache command permissions
     await PermissionManager.loadModuleSettings(client); //cache module settings
 

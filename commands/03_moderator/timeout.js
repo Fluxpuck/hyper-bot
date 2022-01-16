@@ -34,7 +34,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //GET REASON...
 
-
+    //CALCULATE TIME TO MINUTES
 
 
 

@@ -4,6 +4,7 @@
 
 //get credentials through dot envoirement
 require('dotenv').config({ path: './config/.env' });
+var cron = require('node-cron');
 
 //get Intents BitField from config
 const { INTENTS_BITFIELD } = require('./config/Intents');
@@ -23,7 +24,37 @@ client.version = require('./package.json').version
 
 //listen to Client events
 const events = require('./utils/EventManager');
-events.run(client);
+events.run(client); //run the events
+
+//listen to Pending mutes, every 2 minutes
+const { getPendingMutes } = require('./database/QueryManager');
+const { getUserFromInput } = require('./utils/Resolver');
+cron.schedule('*/2 * * * *', () => {
+
+    //go through each guild
+    Array.from(client.guilds.cache.values()).forEach(async guild => {
+
+        //await for pending mutes from database
+        const pendingMutes = await getPendingMutes(guild.id);
+        for (let i = 0; i < pendingMutes.length; i++) {
+
+            //setup values
+            const { targetId, pendingTime } = pendingMutes
+
+            //if timeout time is in the past, trigger event
+            if (new Date(pendingTime) - Date.now() < 0) {
+
+                //get member details
+                const member = await getUserFromInput(guild, targetId);
+                if (!member) return;
+
+                //change member value to null and trigger event
+                member.communicationDisabledUntilTimestamp = null
+                client.emit('guildMemberAdd', member);
+            }
+        }
+    })
+})
 
 //client login to discord
 client.login(process.env.TOKEN);

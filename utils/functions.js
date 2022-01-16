@@ -73,7 +73,7 @@ module.exports = {
      * @param {Number} chunk Chunk size
      */
     chunk(array, chunk) {
-        var i, j, temp, returnArray = [];
+        let i, j, temp, returnArray = [];
         for (i = 0, j = array.length; i < j; i += chunk) {
             returnArray.push(temp = array.slice(i, i + chunk));
         }

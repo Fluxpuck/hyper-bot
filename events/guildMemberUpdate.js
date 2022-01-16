@@ -93,21 +93,25 @@ module.exports = async (client, oldMember, newMember) => {
         const duration = ((newTimeout - Date.now()) / 1000).toFixed() * 1000
 
 
-        //check if jail-role is available
-        //fetch jail-role
-        //give member jail-role
-
-
-        //check if target is already in database
-        //else check audit log add to database logs & pending
+        //check if mute is available in audit logs / logs
 
 
 
 
 
 
+        //get jail role from guild information
+        const jailRole = oldMember.guild.jailId != null ? await message.guild.roles.cache.find(r => r.id === oldMember.guild.jailId) : undefined
+
+        //if jailrole is available
+        if (jailRole) {
 
 
+            //Give jail role to member
+            //insert ignore to database
+
+
+        }
 
         //get module settings, proceed if true
         const timeout = await getModuleSettings(oldMember.guild, 'timeout');
@@ -115,8 +119,7 @@ module.exports = async (client, oldMember, newMember) => {
 
 
 
-            //create embed
-
+            //create logging mbed
 
 
 
@@ -138,6 +141,7 @@ module.exports = async (client, oldMember, newMember) => {
 
         //check if member has jail-role
         //remove jail-role
+        //remove from pendingmutes, database
 
 
         //get module settings, proceed if true

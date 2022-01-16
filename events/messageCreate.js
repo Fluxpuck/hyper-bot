@@ -12,7 +12,7 @@ module.exports = async (client, message) => {
     if (message.author.bot) return
 
     //get prefix  
-    const prefix = await getGuildPrefix(message.guild);
+    const prefix = message.guild.prefix;
 
     /** Message Handler
      * filter message content into workable elements */
