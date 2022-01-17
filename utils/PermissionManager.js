@@ -4,11 +4,10 @@
 //require packages
 const NodeCache = require("node-cache");
 const { defaultPrefix, ownerIds } = require('../config/config.json');
-const { getGuildPrefix, getCommandPerms, getModuleSets } = require("../database/QueryManager");
+const { getGuildPrefix, getCommandPerms, getModuleSets, getGuildRoles } = require("../database/QueryManager");
 const { getUserFromInput } = require("./Resolver");
 
 //build cache
-const guildPrefixCache = new NodeCache();
 const guildCommandPermsCache = new NodeCache();
 const guildModulePermsCache = new NodeCache();
 
@@ -21,7 +20,17 @@ module.exports = {
         Array.from(client.guilds.cache.values()).forEach(async guild => {
             var prefix = await getGuildPrefix(guild.id); //get prefix from database
             if (prefix == undefined || prefix == null || prefix == false) prefix = defaultPrefix; //set prefix value
-            await guildPrefixCache.set(guild.id, { prefix: prefix }) //add to cache
+            guild.prefix = prefix; //set custom Hyper values and save in guild
+        })
+    },
+
+    /** set guild prefix roles for all guilds
+    * @param {Object} client
+    */
+    async loadGuildRoles(client) {
+        Array.from(client.guilds.cache.values()).forEach(async guild => {
+            const { modId, jailId } = await getGuildRoles(guild.id); //get roles from database
+            guild.modId = modId, guild.jailId = jailId; //set custom Hyper values and save in guild
         })
     },
 
@@ -136,7 +145,6 @@ module.exports = {
     },
 
     //module export the cache
-    guildPrefixCache,
     guildCommandPermsCache,
     guildModulePermsCache
 

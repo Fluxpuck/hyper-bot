@@ -3,7 +3,7 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { log_button } = require('../../config/buttons');
+const { log_button } = require('../../assets/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");
@@ -20,20 +20,20 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
     //get target user
-    var target = await getUserFromInput(message.guild, arguments[0]);
+    let target = await getUserFromInput(message.guild, arguments[0]);
     if (target == false) {
         //filter input from user
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
         let item = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
         if (convertSnowflake(item) === false) return ReplyErrorMessage(message, '@user was not found', 4800);
-        //set target variables
+        //set target letiables
         target = { key: null, id: item, user: { id: item, username: undefined } };
     }
 
     //fetch Audit & Hyper logs
-    const HyperLogs = await FetchHyperLogs(message, target);
-    const BanLogs = await FetchBanLog(message, target);
+    const HyperLogs = await FetchHyperLogs(message.guild, target);
+    const BanLogs = await FetchBanLog(message.guild, target);
 
     //return error if no information was found
     if (target.key === null && HyperLogs === false && BanLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
@@ -42,8 +42,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     const FilterLogs = await FilterTargetLogs(target, HyperLogs, BanLogs)
 
     //modify timestamp
-    var date_number = new Number(FilterLogs.date);
-    var date_convert = new Date(date_number);
+    let date_number = new Number(FilterLogs.date);
+    let date_convert = new Date(date_number);
 
     //construct Embed message
     const messageEmbed = new MessageEmbed()
@@ -88,7 +88,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //check if user has logs and add log button if needed
-    var fetch_message;
+    let fetch_message;
     if (HyperLogs.length >= 1) {
         //setup logbutton label with amount of Userlogs
         log_button.components[0].setLabel(`Show ${HyperLogs.length} logs`);

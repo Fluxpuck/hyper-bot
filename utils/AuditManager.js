@@ -36,9 +36,9 @@ module.exports = {
      * @param {*} target 
      * @returns 
      */
-    async FetchHyperLogs(message, target) {
+    async FetchHyperLogs(guild, target) {
         //get all member logs from database
-        const HyperLogs = await getMemberLogs(message.guild.id, target.id)
+        const HyperLogs = await getMemberLogs(guild.id, target.id)
         //return empty array if false
         if (HyperLogs == false) return [];
         //return values
@@ -49,14 +49,14 @@ module.exports = {
      * @param {*} guild 
      * @param {*} target 
      */
-    async FetchBanLog(message, target) {
+    async FetchBanLog(guild, target) {
         function BanDetails(target, reason, date) {
             this.target = target;
             this.reason = reason;
             this.date = date;
         }
         //get ban information on target
-        const fetchBans = await message.guild.bans.fetch(target.id)
+        const fetchBans = await guild.bans.fetch(target.id)
             .catch(err => { return false }) //return if nothing came up
         //if no ban logs were found, return false
         if (fetchBans == false) return false
@@ -78,7 +78,7 @@ module.exports = {
         }
 
         //setup empty values
-        var logReason, logDate, targetStatus
+        let logReason, logDate, targetStatus
 
         //if target username is undefined, fetch info from logs
         if (target.user.username == undefined) {
@@ -136,7 +136,7 @@ module.exports = {
         const firstLog = fetchLogs.entries.first();
         if (firstLog) { //if a log is found
             //get details from Auditlog
-            var { action, reason, executor, target } = firstLog
+            let { action, reason, executor, target } = firstLog
             //check for the correct logAction
             switch (action) {
                 case 'MEMBER_KICK': action = 'kick'
@@ -155,8 +155,8 @@ module.exports = {
                 if (HyperLogs.length <= 0) return //if no logs are found, return
 
                 //calculate log that is closest to current date
-                var temp = HyperLogs.map(d => Math.abs(new Date() - new Date(d.date.create)));
-                var idx = temp.indexOf(Math.min(...temp)); //index of closest date
+                let temp = HyperLogs.map(d => Math.abs(new Date() - new Date(d.date.create)));
+                let idx = temp.indexOf(Math.min(...temp)); //index of closest date
 
                 //return AuditLog
                 return new AuditLog({ id: HyperLogs[idx].id, type: HyperLogs[idx].type }, HyperLogs[idx].reason.replace('{HYPER} ', ''), HyperLogs[idx].duration, HyperLogs[idx].target, HyperLogs[idx].executor)

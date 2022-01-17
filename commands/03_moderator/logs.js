@@ -3,7 +3,7 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { page_buttons } = require('../../config/buttons');
+const { page_buttons } = require('../../assets/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector } = require("discord.js");
@@ -20,19 +20,19 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
     //get target user
-    var target = await getUserFromInput(message.guild, arguments[0]);
+    let target = await getUserFromInput(message.guild, arguments[0]);
     if (target == false) {
         //filter input from user
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
         let item = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
         if (convertSnowflake(item) === false) return ReplyErrorMessage(message, '@user was not found', 4800);
-        //set target variables
+        //set target letiables
         target = { key: null, id: item, user: { id: item, username: undefined } };
     }
 
     //get target logs from database
-    const UserLogs = await FetchHyperLogs(message, target);
+    const UserLogs = await FetchHyperLogs(message.guild, target);
 
     //return error if no information was found
     if (target.key === null && UserLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
@@ -84,11 +84,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //go over each log and create an Array
         UserLogs.forEach(Userlog => {
             //modify timestamp
-            var date_number = new Number(Userlog.date.create);
-            var date_convert = new Date(date_number);
+            let date_number = new Number(Userlog.date.create);
+            let date_convert = new Date(date_number);
 
             //check if logtype is mute to alter description
-            if (Userlog.type == 'mute') {
+            if (Userlog.type == 'timeout') {
                 descriptionArray.push(`[${Userlog.type}] - ${Userlog.id}\`\`\`yaml
 Moderator:      ${Userlog.executor.username}                
 Reason:         ${Userlog.reason}

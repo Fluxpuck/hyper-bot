@@ -6,6 +6,7 @@ const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/
 const { getUserFromInput } = require("../../utils/Resolver");
 const { createHyperLog } = require("../../utils/AuditManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
+const { checkPendingMute } = require("../../database/QueryManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -20,24 +21,13 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if target is moderator
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
     //check if target is already timed out
-    const timedifference = target.communicationDisabledUntilTimestamp - Date.now();
-    if (timedifference > 0) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+    const pendingMute = await checkPendingMute(message.guild.id, target.user.id);
+    if (pendingMute != false) return ReplyErrorMessage(message, '@user is already timed out', 4800);
 
-
-
-
-
-
-    //GET TIMER...
-    let time_input = arguments[1];
-
-
-    //GET REASON...
-
-
-
-
-
+    //get mute time
+    const muteTime = Number(arguments[1])
+    const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false
+    if (duration == false) return ReplyErrorMessage(message, 'Time out duration was not provided', 4800);
 
     //check and set reason, else use default message
     let r = arguments.slice(2) //slice reason from arguments
@@ -45,7 +35,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
     //timeout the target
-    const mute = await target.timeout(10 * 60 * 1000, `{HYPER} ${reason}`).catch(err => {
+    const mute = await target.timeout(duration, `{HYPER} ${reason}`).catch(err => {
         ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted`);
         return false
     });
@@ -53,9 +43,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (mute != false) {
         //verify that the user has been timed out
-        message.reply(`**${target.user.tag}** has been timed out for ${null} minutes.`);
+        message.reply(`**${target.user.tag}** has been timed out for ${muteTime} minutes.`);
         //save log to database and log event
-        await createHyperLog(message, 'timeout', 10 * 60 * 1000, target, reason);
+        await createHyperLog(message, 'timeout', muteTime, target, reason);
         //get module settings, proceed if true
         const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
         if (moderationAction.state === 1 && moderationAction.channel != null) {

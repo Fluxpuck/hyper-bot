@@ -62,7 +62,7 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
     if (arguments.length > 0 && client.commands.has(arguments[0])) {
         const commandInfo = client.commands.get(arguments[0]).info
 
-        //change embed variables
+        //change embed letiables
         helpMessage.setTitle(`Hyper - Command Help`)
 
         //command information
