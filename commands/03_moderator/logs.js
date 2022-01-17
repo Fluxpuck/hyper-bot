@@ -32,7 +32,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //get target logs from database
-    const UserLogs = await FetchHyperLogs(message, target);
+    const UserLogs = await FetchHyperLogs(message.guild, target);
 
     //return error if no information was found
     if (target.key === null && UserLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
@@ -88,7 +88,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             let date_convert = new Date(date_number);
 
             //check if logtype is mute to alter description
-            if (Userlog.type == 'mute') {
+            if (Userlog.type == 'timeout') {
                 descriptionArray.push(`[${Userlog.type}] - ${Userlog.id}\`\`\`yaml
 Moderator:      ${Userlog.executor.username}                
 Reason:         ${Userlog.reason}

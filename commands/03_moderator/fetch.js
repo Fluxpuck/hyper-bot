@@ -32,8 +32,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //fetch Audit & Hyper logs
-    const HyperLogs = await FetchHyperLogs(message, target);
-    const BanLogs = await FetchBanLog(message, target);
+    const HyperLogs = await FetchHyperLogs(message.guild, target);
+    const BanLogs = await FetchBanLog(message.guild, target);
 
     //return error if no information was found
     if (target.key === null && HyperLogs === false && BanLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);

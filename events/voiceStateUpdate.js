@@ -37,8 +37,8 @@ module.exports = async (client, oldMember, newMember) => {
         return;
     }
 
-    //check if member changed a voicechannel
-    if (oldMember.channelId != null && newMember.channelId != null) {
+    //check if member changed to a new voicechannel
+    if (oldMember.channelId != null && newMember.channelId != null && oldMember.channelId != newMember.channelId) {
         //get module settings, proceed if true
         const voiceChange = await getModuleSettings(oldMember.guild, 'voiceChange');
         if (voiceChange.state === 1 && voiceChange.channel != null) {

@@ -27,7 +27,7 @@ const events = require('./utils/EventManager');
 events.run(client); //run the events
 
 //listen to Pending mutes, every 2 minutes
-const { getPendingMutes } = require('./database/QueryManager');
+const { getPendingMutes, removePendingMute } = require('./database/QueryManager');
 const { getUserFromInput } = require('./utils/Resolver');
 cron.schedule('*/2 * * * *', () => {
 
@@ -39,18 +39,21 @@ cron.schedule('*/2 * * * *', () => {
         for (let i = 0; i < pendingMutes.length; i++) {
 
             //setup values
-            const { targetId, pendingTime } = pendingMutes
+            const { targetId, pendingTime } = pendingMutes[i];
 
             //if timeout time is in the past, trigger event
             if (new Date(pendingTime) - Date.now() < 0) {
 
                 //get member details
                 const member = await getUserFromInput(guild, targetId);
-                if (!member) return;
+                if (member != false) {
+                    //change member value to null and trigger event
+                    member.communicationDisabledUntilTimestamp = pendingTime
+                    client.emit('guildMemberUpdate', member, member);
+                }
 
-                //change member value to null and trigger event
-                member.communicationDisabledUntilTimestamp = null
-                client.emit('guildMemberAdd', member);
+                //remove from database
+                return await removePendingMute(guild.id, targetId);
             }
         }
     })

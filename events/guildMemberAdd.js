@@ -2,11 +2,12 @@
     This event is triggers by Discord and does processing of data  */
 
 //import styling from assets
+const { MessageEmbed } = require('discord.js');
 const embed = require('../assets/embed.json');
 
 //load required modules
 const { getModuleSettings } = require("../utils/PermissionManager");
-const { MessageEmbed } = require('discord.js')
+const { FetchHyperLogs } = require('../utils/AuditManager');
 
 module.exports = async (client, member) => {
 
@@ -36,7 +37,7 @@ module.exports = async (client, member) => {
     if (guildWelcome.state === 1 && guildWelcome.channel != null) {
 
         //fetch Audit & Hyper logs
-        const HyperLogs = await FetchHyperLogs(message, member);
+        const HyperLogs = await FetchHyperLogs(message.guild, member);
 
         //construct message
         const logMessage = new MessageEmbed()

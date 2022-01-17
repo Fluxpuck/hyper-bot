@@ -36,9 +36,9 @@ module.exports = {
      * @param {*} target 
      * @returns 
      */
-    async FetchHyperLogs(message, target) {
+    async FetchHyperLogs(guild, target) {
         //get all member logs from database
-        const HyperLogs = await getMemberLogs(message.guild.id, target.id)
+        const HyperLogs = await getMemberLogs(guild.id, target.id)
         //return empty array if false
         if (HyperLogs == false) return [];
         //return values
@@ -49,14 +49,14 @@ module.exports = {
      * @param {*} guild 
      * @param {*} target 
      */
-    async FetchBanLog(message, target) {
+    async FetchBanLog(guild, target) {
         function BanDetails(target, reason, date) {
             this.target = target;
             this.reason = reason;
             this.date = date;
         }
         //get ban information on target
-        const fetchBans = await message.guild.bans.fetch(target.id)
+        const fetchBans = await guild.bans.fetch(target.id)
             .catch(err => { return false }) //return if nothing came up
         //if no ban logs were found, return false
         if (fetchBans == false) return false

@@ -6,6 +6,7 @@ const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/
 const { getUserFromInput } = require("../../utils/Resolver");
 const { createHyperLog } = require("../../utils/AuditManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
+const { checkPendingMute } = require("../../database/QueryManager");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -20,8 +21,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if target is moderator
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
     //check if target is already timed out
-    const timedifference = target.communicationDisabledUntilTimestamp - Date.now();
-    if (timedifference > 0) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+    const pendingMute = await checkPendingMute(message.guild.id, target.user.id);
+    if (pendingMute != false) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+
 
 
 
