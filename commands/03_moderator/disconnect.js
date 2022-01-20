@@ -18,7 +18,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
 
     //disconnect the target
-    const disconnect = await target.voice.kick().catch(err => {
+    const disconnect = await target.voice.disconnect().catch(err => {
         ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
         return false
     })

@@ -12,7 +12,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //get target channel
     const channel = message.guild.channels.cache.find(c => c.id == arguments[0].replace(/[^\w\s]/gi, ''))
-    if (!channel) ReplyErrorMessage(message, `#channel was not found`, 4800)
+    if (!channel) return await ReplyErrorMessage(message, `#channel was not found`, 4800)
 
     //set message
     let toSayMessage = arguments.slice(1);

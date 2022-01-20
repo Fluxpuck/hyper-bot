@@ -20,14 +20,16 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if target is moderator
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+
+    //check if time is in valid format & if time is 
+    if (/([0-9]+)\s{0,}m\W|/ig.test(arguments[1]) == false) return ReplyErrorMessage(message, 'Provide mute time in the following format \`10m\`.', 4800)
+    const muteTime = Number(arguments[1].replace('m', ''))
+    const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false
+    if (duration == false) return ReplyErrorMessage(message, 'Time out duration was not provided', 4800);
+
     //check if target is already timed out
     const pendingMute = await checkPendingMute(message.guild.id, target.user.id);
     if (pendingMute != false) return ReplyErrorMessage(message, '@user is already timed out', 4800);
-
-    //get mute time
-    const muteTime = Number(arguments[1])
-    const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false
-    if (duration == false) return ReplyErrorMessage(message, 'Time out duration was not provided', 4800);
 
     //check and set reason, else use default message
     let r = arguments.slice(2) //slice reason from arguments
@@ -36,7 +38,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //timeout the target
     const mute = await target.timeout(duration, `{HYPER} ${reason}`).catch(err => {
-        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted`);
+        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted.\n*Make sure the bot-role is above all other roles.*`);
         return false
     });
 
@@ -64,7 +66,7 @@ module.exports.info = {
     alias: ['mute'],
     category: 'moderation',
     desc: 'Mute target member for X minutes in the server',
-    usage: '{prefix}timeout @user [time] [reason]',
+    usage: '{prefix}timeout @user [time]m [reason]',
 }
 
 //slash setup

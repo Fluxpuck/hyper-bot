@@ -16,10 +16,10 @@ module.exports = async (client, messages) => {
     //set length and channel value's
     const bulkMessages = messages.map(m => m);
 
-    //setup message collection
+    //setup message collection & filter out too long messages
     const bulkLimit = 10 //log max 10 messages
     let bulkCollection = bulkMessages.reverse()
-    bulkCollection = bulkCollection.slice(0, bulkLimit).map(message => `[${message.author.tag}]: ${message.content}`)
+    bulkCollection = bulkCollection.slice(0, bulkLimit).map(message => `[${message.author.tag}]: ${message.content.length > 40 ? `${message.content.slice(0, 40)}...` : message}`)
 
     //get module settings, proceed if true
     const messageBulkDelete = await getModuleSettings(message.guild, 'messageBulkDelete');

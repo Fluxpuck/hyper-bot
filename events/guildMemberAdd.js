@@ -27,7 +27,7 @@ module.exports = async (client, member) => {
             .setFooter({ text: `${member.user.id}` })
 
         //get target channel and send message embed
-        const targetChannel = message.guild.channels.cache.get(guildJoin.channel);
+        const targetChannel = member.guild.channels.cache.get(guildJoin.channel);
         if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
 
     }
@@ -50,7 +50,7 @@ module.exports = async (client, member) => {
             .setFooter({ text: `${member.user.id}` })
 
         //get target channel and send message embed
-        const targetChannel = message.guild.channels.cache.get(guildWelcome.channel);
+        const targetChannel = member.guild.channels.cache.get(guildWelcome.channel);
         if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
 
     }

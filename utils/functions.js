@@ -57,12 +57,13 @@ module.exports = {
     /** Clean the string object
     * @param {String} string String object
     */
-    clean(string) {
-        if (typeof text === 'string') {
+    clean(client, string) {
+        if (typeof string === 'string') {
             return string
                 .replace(/`/g, '`' + String.fromCharCode(8203))
                 .replace(/@/g, '@' + String.fromCharCode(8203))
-                .replace(client.token || process.env.TOKEN, '[-- REDACTED --]')
+                .replace(/token/i, '' + String.fromCharCode(8203))
+                .replace(client.token || process.env.TOKEN, '')
         } else {
             return string;
         }

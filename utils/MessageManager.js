@@ -64,7 +64,7 @@ module.exports = {
      * @param {*} input Message
      * @param {object} target Member
      */
-    async SendWarningMessageDM(message, input, target) {
+    async SendWarningMessageDM(client, message, input, target) {
         //create the embed message
         const warn_embed = new MessageEmbed()
             .setTitle(`Warning - ${message.guild.name}`)
@@ -74,12 +74,16 @@ module.exports = {
             .setTimestamp()
             .setFooter({ text: `${client.user.username} | hyperbot.cc` })
 
+        //setup warning message
+        let warning = { status: true, message: `${target.user.tag} has recieved a warning` };
+
         //send message through DM
         await target.send({ embeds: [warn_embed] }).catch(err => {
-            if (err) return { status: false, message: `Could not deliver message to ${target.user.tag}` };
+            if (err) warning = { status: false, message: `Could not deliver message to ${target.user.tag}` };
         })
+
         //return status
-        return { status: true, message: `${target.user.tag} has recieved a warning` };
+        return warning;
     },
 
     /** Send Mod Action log to specified channel
