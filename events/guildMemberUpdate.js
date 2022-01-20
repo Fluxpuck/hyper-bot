@@ -110,18 +110,18 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //remove TimeOut, if an timeout has been removed
+    //remove TimeOut, if timeout time is in the past
     if (new Date(newTimeout) - Date.now() < 0) {
-
-        //check if there is a pending mute available
-        const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
-        if (pendingMute == false) return;
 
         //remove jail role to member, if available
         if (oldMember.guild.jailId != null) { //give jail role to member
             try { await member.roles.remove(oldMember.guild.jailId, `Timeout revoked`); }
             catch (error) { }
         }
+
+        //check if there is a pending mute available
+        const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
+        if (pendingMute == false) return;
 
         //remove pending mute from database
         await removePendingMute(oldMember.guild.id, oldMember.user.id);

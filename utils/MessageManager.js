@@ -64,7 +64,7 @@ module.exports = {
      * @param {*} input Message
      * @param {object} target Member
      */
-    async SendWarningMessageDM(message, input, target) {
+    async SendWarningMessageDM(client, message, input, target) {
         //create the embed message
         const warn_embed = new MessageEmbed()
             .setTitle(`Warning - ${message.guild.name}`)
@@ -74,12 +74,16 @@ module.exports = {
             .setTimestamp()
             .setFooter({ text: `${client.user.username} | hyperbot.cc` })
 
+        //setup warning message
+        let warning = { status: true, message: `${target.user.tag} has recieved a warning` };
+
         //send message through DM
         await target.send({ embeds: [warn_embed] }).catch(err => {
-            if (err) return { status: false, message: `Could not deliver message to ${target.user.tag}` };
+            if (err) warning = { status: false, message: `Could not deliver message to ${target.user.tag}` };
         })
+
         //return status
-        return { status: true, message: `${target.user.tag} has recieved a warning` };
+        return warning;
     },
 
     /** Send Mod Action log to specified channel
@@ -90,7 +94,7 @@ module.exports = {
     async SendModerationActionMessage(message, command, channel) {
         //create the embed message
         const embedMessage = new MessageEmbed()
-            .setDescription(`**${message.author.tag}** executed the **${capitalize(command)}** command`)
+            .setDescription(`<@${message.author.id}> executed the **${capitalize(command)}** command`)
             .setColor(embed.color)
             .setTimestamp()
             .setFooter({ text: `${message.author.id}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
@@ -99,5 +103,20 @@ module.exports = {
         const targetChannel = message.guild.channels.cache.get(channel);
         if (targetChannel) return targetChannel.send({ embeds: [embedMessage] });
     },
+
+    /** Send No Activation message to guild
+     * @param {*} client 
+     * @param {*} message 
+     * @param {*} timer 
+     */
+    async HandshakeMessage(message, timer) {
+        //check if a remove timer is set!
+        if (timer) { //if timer is set return error message and remove
+            return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
+                .then(msg => { setTimeout(() => msg.delete(), timer); })
+        } else { //if no timer is set, just return error message
+            return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
+        }
+    }
 
 }

@@ -9,7 +9,7 @@ const { log_button } = require('../../assets/buttons');
 const { MessageEmbed, InteractionCollector } = require("discord.js");
 const { FetchHyperLogs, FetchBanLog, FilterTargetLogs } = require("../../utils/AuditManager");
 const { convertSnowflake, capitalize } = require("../../utils/functions");
-const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
+const { ReplyErrorMessage, SendModerationActionMessage, ErrorMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 const { getModuleSettings } = require('../../utils/PermissionManager');
 

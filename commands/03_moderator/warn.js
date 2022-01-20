@@ -28,19 +28,17 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
     //warn the user
-    const warning = SendWarningMessageDM(message, reason, target);
+    const warning = await SendWarningMessageDM(client, message, reason, target);
 
     //verify that the user has been warned
     if (warning.status === false) {
         message.reply(`${warning.message}, but warning has been logged`);
     } else if (warning.status === true) {
-        message.reply(`${warning.message}, and this has been logged`);
+        message.reply(`${warning.message}, and it has been logged`);
     }
 
-    //verify that the user has been kicked
-    message.reply(`**${target.user.tag}** has been warned through DM`);
     //save log to database and log event
-    await createHyperLog(message, 'kick', null, target, reason);
+    await createHyperLog(message, 'warn', null, target, reason);
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {

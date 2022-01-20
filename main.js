@@ -26,10 +26,10 @@ client.version = require('./package.json').version
 const events = require('./utils/EventManager');
 events.run(client); //run the events
 
-//listen to Pending mutes, every 2 minutes
+//listen to Pending mutes, every 1 minute
 const { getPendingMutes, removePendingMute } = require('./database/QueryManager');
 const { getUserFromInput } = require('./utils/Resolver');
-cron.schedule('*/2 * * * *', () => {
+cron.schedule('* * * * *', () => {
 
     //go through each guild
     Array.from(client.guilds.cache.values()).forEach(async guild => {

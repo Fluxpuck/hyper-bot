@@ -31,3 +31,5 @@ PermissionManager.js
 package.json
 yarn.lock
 FAQ.md
+guildCreate.js
+guildDelete.js
