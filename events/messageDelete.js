@@ -5,13 +5,13 @@
 const embed = require('../assets/embed.json');
 
 //load required modules
-const { getModuleSettings, getGuildPrefix } = require("../utils/PermissionManager");
+const { getModuleSettings } = require("../utils/PermissionManager");
 const { MessageEmbed } = require('discord.js');
 
 module.exports = async (client, message) => {
 
     //construct guild prefix
-    const prefix = await getGuildPrefix(message.guild);
+    const prefix = message.guild.prefix;
 
     //ignore filters
     if (!message.guild) return; //ignore direct messages

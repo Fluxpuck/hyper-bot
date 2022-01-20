@@ -26,7 +26,7 @@ module.exports = async (client) => {
     await ClientManager.getClientCommands(commandFolder, { dealerFunction: fileLoader })
 
     //get and initialize interactive commands  
-    //SLASH COMMANDS!!??
+    //SLASH COMMANDS!!?? 
 
     //check and update all database tables
     await Array.from(client.guilds.cache.values()).forEach(async guild => {
@@ -39,9 +39,9 @@ module.exports = async (client) => {
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
     });
 
-    //get and cache guild prefix, roles, command permissions and module settings
+    //get and cache guild prefix, config, command permissions and module settings
     await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
-    await PermissionManager.loadGuildRoles(client); //set guild roles
+    await PermissionManager.loadGuildConfiguration(client); //set guild config
     await PermissionManager.loadCommandPermissions(client); //cache command permissions
     await PermissionManager.loadModuleSettings(client); //cache module settings
 

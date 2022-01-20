@@ -90,7 +90,7 @@ module.exports = {
     async SendModerationActionMessage(message, command, channel) {
         //create the embed message
         const embedMessage = new MessageEmbed()
-            .setDescription(`**${message.author.tag}** executed the **${capitalize(command)}** command`)
+            .setDescription(`<@${message.author.id}> executed the **${capitalize(command)}** command`)
             .setColor(embed.color)
             .setTimestamp()
             .setFooter({ text: `${message.author.id}`, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
@@ -99,5 +99,20 @@ module.exports = {
         const targetChannel = message.guild.channels.cache.get(channel);
         if (targetChannel) return targetChannel.send({ embeds: [embedMessage] });
     },
+
+    /** Send No Activation message to guild
+     * @param {*} client 
+     * @param {*} message 
+     * @param {*} timer 
+     */
+    async HandshakeMessage(message, timer) {
+        //check if a remove timer is set!
+        if (timer) { //if timer is set return error message and remove
+            return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
+                .then(msg => { setTimeout(() => msg.delete(), timer); })
+        } else { //if no timer is set, just return error message
+            return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
+        }
+    }
 
 }

@@ -4,7 +4,7 @@
 //require packages
 const NodeCache = require("node-cache");
 const { defaultPrefix, ownerIds } = require('../config/config.json');
-const { getGuildPrefix, getCommandPerms, getModuleSets, getGuildRoles } = require("../database/QueryManager");
+const { getGuildPrefix, getCommandPerms, getModuleSets, getGuildConfig } = require("../database/QueryManager");
 const { getUserFromInput } = require("./Resolver");
 
 //build cache
@@ -25,23 +25,13 @@ module.exports = {
     },
 
     /** set guild prefix roles for all guilds
-    * @param {Object} client
-    */
-    async loadGuildRoles(client) {
-        Array.from(client.guilds.cache.values()).forEach(async guild => {
-            const { modId, jailId } = await getGuildRoles(guild.id); //get roles from database
-            guild.modId = modId, guild.jailId = jailId; //set custom Hyper values and save in guild
-        })
-    },
-
-    /** get Guild prefix
-     * @param {Collection} guild 
-     * @returns 
+     * @param {Object} client
      */
-    async getGuildPrefix(guild) {
-        const GuildCache = await guildPrefixCache.get(guild.id); //get the prefix key value from the cache
-        const prefix = (GuildCache == undefined) ? defaultPrefix : GuildCache.prefix //set prefix from cache, else get default prefix
-        return prefix //return the prefix
+    async loadGuildConfiguration(client) {
+        Array.from(client.guilds.cache.values()).forEach(async guild => {
+            const { modId, jailId, handshake } = await getGuildConfig(guild.id); //get roles from database
+            guild.modId = modId, guild.jailId = jailId, guild.handshake = handshake; //set custom Hyper values and save in guild
+        })
     },
 
     /** set all command permissions per guild
