@@ -16,32 +16,34 @@ module.exports = {
     /** set guild prefix permission for all guilds
      * @param {Object} client
      */
-    async loadGuildPrefixes(client) {
-        Array.from(client.guilds.cache.values()).forEach(async guild => {
-            var prefix = await getGuildPrefix(guild.id); //get prefix from database
-            if (prefix == undefined || prefix == null || prefix == false) prefix = defaultPrefix; //set prefix value
-            guild.prefix = prefix; //set custom Hyper values and save in guild
-        })
+    async loadGuildPrefixes(guild) {
+        var prefix = await getGuildPrefix(guild.id); //get prefix from database
+        if (prefix == undefined || prefix == null || prefix == false) prefix = defaultPrefix; //set prefix value
+        guild.prefix = prefix; //set custom Hyper values and save in guild
     },
 
     /** set guild prefix roles for all guilds
      * @param {Object} client
      */
-    async loadGuildConfiguration(client) {
-        Array.from(client.guilds.cache.values()).forEach(async guild => {
-            const { modId, jailId, handshake } = await getGuildConfig(guild.id); //get roles from database
-            guild.modId = modId, guild.jailId = jailId, guild.handshake = handshake; //set custom Hyper values and save in guild
-        })
+    async loadGuildConfiguration(guild) {
+        const { modId, jailId, handshake } = await getGuildConfig(guild.id); //get roles from database
+        guild.modId = modId, guild.jailId = jailId, guild.handshake = handshake; //set custom Hyper values and save in guild
     },
 
     /** set all command permissions per guild
      * @param {*} client 
      */
-    async loadCommandPermissions(client) {
-        Array.from(client.guilds.cache.values()).forEach(async guild => {
-            var collection = await getCommandPerms(guild.id); //get command permissions from database
-            await guildCommandPermsCache.set(guild.id, collection); //add to cache
-        })
+    async loadCommandPermissions(guild) {
+        var collection = await getCommandPerms(guild.id); //get command permissions from database
+        await guildCommandPermsCache.set(guild.id, collection); //add to cache
+    },
+
+    /** set all module permissions per guild
+     * @param {*} client 
+     */
+    async loadModuleSettings(guild) {
+        var collection = await getModuleSets(guild.id); //get module settings from database
+        await guildModulePermsCache.set(guild.id, collection); //add to cache
     },
 
     /** get command permissions
@@ -108,16 +110,6 @@ module.exports = {
 
         //return status
         return new commandPermissions(command, commandStatus, role_validation, channel_validation, administrator, errorMsg)
-    },
-
-    /** set all module permissions per guild
-     * @param {*} client 
-     */
-    async loadModuleSettings(client) {
-        Array.from(client.guilds.cache.values()).forEach(async guild => {
-            var collection = await getModuleSets(guild.id); //get module settings from database
-            await guildModulePermsCache.set(guild.id, collection); //add to cache
-        })
     },
 
     /** get module settings

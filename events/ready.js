@@ -10,6 +10,7 @@ const ClientConsole = require('../utils/ConsoleManager');
 const ClientManager = require('../utils/ClientManager');
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
+const { insertGuild } = require('../database/QueryManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -29,7 +30,8 @@ module.exports = async (client) => {
     //SLASH COMMANDS!!?? 
 
     //check and update all database tables
-    await Array.from(client.guilds.cache.values()).forEach(async guild => {
+    const guilds = Array.from(client.guilds.cache.values())
+    for await (let guild of guilds) {
         await DbManager.UpdateGuildTable(); //update (global) guild information table
         await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
         await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands
@@ -37,13 +39,15 @@ module.exports = async (client) => {
         await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
         await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
-    });
 
-    //get and cache guild prefix, config, command permissions and module settings
-    await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
-    await PermissionManager.loadGuildConfiguration(client); //set guild config
-    await PermissionManager.loadCommandPermissions(client); //cache command permissions
-    await PermissionManager.loadModuleSettings(client); //cache module settings
+        //double check guild in global guild information
+        await insertGuild(guild);
+
+        await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes
+        await PermissionManager.loadGuildConfiguration(guild); //set guild config
+        await PermissionManager.loadCommandPermissions(guild); //cache command permissions
+        await PermissionManager.loadModuleSettings(guild); //cache module settings
+    }
 
     //set client activity
     await ClientManager.setClientActivity(client);

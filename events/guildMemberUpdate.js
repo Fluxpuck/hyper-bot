@@ -110,7 +110,7 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //remove TimeOut, if an timeout has been removed
+    //remove TimeOut, if timeout time is in the past
     if (new Date(newTimeout) - Date.now() < 0) {
 
         //remove jail role to member, if available
