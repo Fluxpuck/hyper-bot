@@ -170,5 +170,6 @@ module.exports.slash = {
         type: 'USER',
         description: 'Mention target user',
         required: true,
-    }]
+    }],
+    permission: false
 }

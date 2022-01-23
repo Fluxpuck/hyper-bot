@@ -10,7 +10,7 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 100);
+    if (!message.interaction) setTimeout(() => message.delete(), 100);
 
     //if there are no arguments, no amount has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, 'Amount was not provided', 4800);
@@ -57,17 +57,12 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
+    slash: true,
     options: [{
-        name: 'user',
-        type: 'USER',
-        description: 'Mention target user',
-        required: true,
-    },
-    {
         name: 'amount',
         type: 'NUMBER',
         description: 'Amount of messages',
         required: true,
-    }]
+    }],
+    permission: false
 }

@@ -29,7 +29,7 @@ module.exports = {
         if (filter_item.match(/^[0-9]+$/)) {
             member = await guild.members.cache.get(filter_item) //get user straight from member cache
             if (!member) { member = await guild.members.cache.find(member => member.id == filter_item) } //find user in member cache
-            else if (!member) { member = await guild.members.fetch(filter_item); } //fetch member straight from guild
+            else if (!member) { member = await guild.members.fetch(filter_item) } //fetch member straight from guild
             //if member is found (by id) return member
             if (member) return member;
         }
@@ -44,6 +44,37 @@ module.exports = {
 
         //if member value is still empty, return false
         if (!member) return false;
+
+    },
+
+    /** Get channel information from input
+     * @param {*} guild 
+     * @param {*} input 
+     */
+    async getChannelfromInput(guild, input) {
+        if (!input) return false;
+
+        let channel //setup channel value
+
+        //filter input [1]
+        let mention = new RegExp('<#([0-9]+)>', 'g').exec(input)
+        let item = mention != null ? mention[1] : input.trim()
+
+        //filter input [2]
+        let filter = mysql.escape(item.replace(',', ''))
+        let filter_item = filter.substring(1).slice(0, -1).trim()
+
+        //get Channel by id
+        if (filter_item.match(/^[0-9]+$/)) {
+            channel = await guild.channels.cache.get(filter_item) //get channel straight from channel cache
+            if (!channel) { channel = await guild.channels.cache.find(channel => channel.id == filter_item) } //find channel in channel cache
+            else if (!channel) { channel = await guild.channels.fetch(filter_item) } //fetch channel straight from guild
+            //if channel is found (by id) return channel
+            if (channel) return channel;
+        }
+
+        //if channel value is still empty, return false
+        if (!channel) return false;
 
     },
 
@@ -98,7 +129,7 @@ module.exports = {
         }
     },
 
-    /** /get input type for purge
+    /** get input type for purge
      * @param {*} guild 
      * @param {*} input 
      * @returns 

@@ -73,5 +73,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for warn',
         required: true,
-    }]
+    }],
+    permission: false
 }

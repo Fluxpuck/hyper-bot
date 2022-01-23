@@ -3,6 +3,7 @@
 
 //require packages
 const fs = require('fs');
+const { getCommandPermissions } = require('./PermissionManager');
 
 //check if filepath is a directory
 function isDir(filePath) {
@@ -54,6 +55,50 @@ module.exports = {
             else options.dealerFunction(filePath)
         }
 
+    },
+
+    /** filter all client commands for slash commands
+     *  and add the command permissions from cache
+     * @param {*} commands 
+     */
+    async getSlashCommands(commands, guild) {
+        function slashCommand(name, description, options, permission) {
+            this.name = name
+            this.description = description
+            this.options = options
+            this.permission = permission
+        }
+        //filter all client commands for slash options, then put them in a new map
+        const commandCollection = commands.filter(c => c.slash.slash == true).map(c => new slashCommand(c.info.name, c.info.desc, c.slash.options, c.slash.permission))
+        for await (let command of commandCollection) {
+            function permission(id, type, permission) {
+                this.id = id
+                this.type = type
+                this.permission = permission
+            }
+            const { role_perms } = await getCommandPermissions(guild, command.name)
+            if (role_perms != null) {
+                const commandPermissions = await role_perms.map(r => new permission(r, 'ROLE', true))
+                command.permission = commandPermissions
+            }
+        }
+        return commandCollection
+    },
+
+    /** create or update slash commands
+     * @param {*} client 
+     * @param {*} guildId 
+     */
+    async registerSlashCommands(client, slashCommands, guildId) {
+        await client.application?.fetch() //fetch current command information
+        for await (let slash of slashCommands) {
+            client.application.commands.create({
+                name: slash.name,
+                description: slash.description,
+                options: slash.options,
+                permission: slash.permission
+            }, guildId)
+        }
     }
 
 }

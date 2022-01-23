@@ -3,6 +3,8 @@
 
 //load required modules
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { textchannels } = require('../../config/config.json');
+const { Collection } = require("discord.js");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -12,12 +14,14 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //get target channel
     const channel = message.guild.channels.cache.find(c => c.id == arguments[0].replace(/[^\w\s]/gi, ''))
-    if (!channel) return await ReplyErrorMessage(message, `#channel was not found`, 4800)
+    if (!channel) return ReplyErrorMessage(message, `#channel was not found`, 4800)
+    if (textchannels.includes(channel.type) == false) return ReplyErrorMessage(message, `#channel is not a text channel`, 4800)
 
     //set message
     let toSayMessage = arguments.slice(1);
 
     //if there are attachments, add to message
+    if (!message.attachments) message.attachments = new Collection()
     if (message.attachments.size >= 1) {
         if (toSayMessage.length >= 1) {
             //send message and file to target channel
@@ -32,7 +36,6 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 }
 
-
 //command information
 module.exports.info = {
     name: 'say',
@@ -44,6 +47,19 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
-    options: []
+    slash: true,
+    options: [
+        {
+            name: 'channel',
+            type: 'CHANNEL',
+            description: 'Where should I talk?',
+            required: true,
+        },
+        {
+            name: 'text',
+            type: 'STRING',
+            description: 'What should the bot say?',
+            required: true,
+        }],
+    permission: false
 }

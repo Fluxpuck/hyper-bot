@@ -27,5 +27,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'string',
         required: true,
-    }]
+    }],
+    permission: false
 }

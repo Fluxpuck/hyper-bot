@@ -102,5 +102,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Write desired prefix',
         required: true,
-    }]
+    }],
+    permission: false
 }

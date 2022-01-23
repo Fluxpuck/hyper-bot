@@ -33,11 +33,13 @@ module.exports = {
         //create error embed
         let ErrorEmbed = await module.exports.ErrorMessage(input);
 
-        //check if a remove timer is set!
-        if (timer) { //if timer is set return error message and remove
-            return message.channel.send(ErrorEmbed).then(msg => { setTimeout(() => msg.delete(), timer); })
+        //if interaction return emphameral
+        if (message.slashinteraction == true) {
+            return message.interaction.followUp({ embeds: [ErrorEmbed], ephemeral: true });
+        } else if (timer) { //if timer is set return error message and remove
+            return message.channel.send({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete(), timer); })
         } else { //if no timer is set, just return error message
-            return message.channel.send(ErrorEmbed)
+            return message.channel.send({ embeds: [ErrorEmbed] })
         }
     },
 
@@ -50,8 +52,10 @@ module.exports = {
         //create error embed
         let ErrorEmbed = await module.exports.ErrorMessage(input);
 
-        //check if a remove timer is set!
-        if (timer) { //if timer is set return error message and remove
+        //if interaction return emphameral
+        if (message.slashinteraction == true) {
+            return message.interaction.followUp({ embeds: [ErrorEmbed], ephemeral: true });
+        } else if (timer) { //if timer is set return error message and remove
             return message.reply({ embeds: [ErrorEmbed] })
                 .then(msg => { setTimeout(() => msg.delete(), timer); })
         } else { //if no timer is set, just return error message

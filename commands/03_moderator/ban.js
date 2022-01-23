@@ -72,5 +72,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for ban',
         required: true,
-    }]
+    }],
+    permission: false
 }

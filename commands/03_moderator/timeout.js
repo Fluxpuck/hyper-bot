@@ -89,5 +89,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason why member is muted',
         required: false,
-    }]
+    }],
+    permission: false
 }

@@ -72,5 +72,6 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for kick',
         required: true,
-    }]
+    }],
+    permission: false
 }

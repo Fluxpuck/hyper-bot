@@ -10,7 +10,7 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 100);
+    if (!message.interaction) setTimeout(() => message.delete(), 100);
 
     //divide the input {amount, user}
     const { amount, member } = input = await inputType(message.guild, arguments.slice(0, 2))
@@ -64,7 +64,7 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
+    slash: true,
     options: [{
         name: 'user',
         type: 'USER',
@@ -76,5 +76,6 @@ module.exports.slash = {
         type: 'NUMBER',
         description: 'Amount of messages',
         required: true,
-    }]
+    }],
+    permission: false
 }
