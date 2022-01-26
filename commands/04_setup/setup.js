@@ -25,5 +25,6 @@ module.exports.info = {
 module.exports.slash = {
     slash: false,
     options: [],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

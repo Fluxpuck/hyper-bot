@@ -40,6 +40,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //delete message and verify that the messages have been deleted
+    if (message.interaction) message.interaction.editReply({ content: `**${collection.size}** messages have been deleted`, ephemeral: true });
     // message.reply(`**${collection.size}** messages have been deleted`);
 
     //get module settings, proceed if true
@@ -77,5 +78,6 @@ module.exports.slash = {
         description: 'Amount of messages',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

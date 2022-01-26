@@ -25,15 +25,18 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (message.attachments.size >= 1) {
         if (toSayMessage.length >= 1) {
             //send message and file to target channel
-            return channel.send(toSayMessage.join(' '), { files: Array.from(message.attachments.values()) })
+            channel.send(toSayMessage.join(' '), { files: Array.from(message.attachments.values()) })
         } else {
             //send file to target channel
-            return channel.send({ files: Array.from(message.attachments.values()) })
+            channel.send({ files: Array.from(message.attachments.values()) })
         }
     } else {
         //send message to target channel
-        return channel.send(toSayMessage.join(' '))
+        channel.send(toSayMessage.join(' '))
     }
+    //if interaction, return message
+    if (message.interaction) message.interaction.editReply({ content: `Message was send in <#${channel.id}>`, ephemeral: true });
+    return;
 }
 
 //command information
@@ -61,5 +64,6 @@ module.exports.slash = {
             description: 'What should the bot say?',
             required: true,
         }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

@@ -89,7 +89,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 module.exports.info = {
     name: 'prefix',
     alias: ['set-prefix', 'change-prefix'],
-    category: '',
+    category: 'setup',
     desc: 'Change current prefix',
     usage: '{prefix}prefix',
 }
@@ -103,5 +103,6 @@ module.exports.slash = {
         description: 'Write desired prefix',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

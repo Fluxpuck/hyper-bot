@@ -16,6 +16,10 @@ const { getModuleSettings } = require('../../utils/PermissionManager');
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    //setup and change some values for interaction
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -76,10 +80,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         messageEmbed.setFooter({ text: `${target.user.id}` });
 
         //send messageEmbed
-        return message.reply({ embeds: [messageEmbed] });
+        if (interaction) {
+            return interaction.followUp({ embeds: [messageEmbed] })
+        } else {
+            return message.reply({ embeds: [messageEmbed] });
+        }
     }
 
     //if there are Userlogs
+    let paginator_message;
     if (UserLogs.length >= 1) {
         //go over each log and create an Array
         UserLogs.forEach(Userlog => {
@@ -112,14 +121,22 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
 
         //check if embed requires multiple pages
         if (descriptionPages.length > 1) {
-            //send message embed
-            let paginator_message = await message.reply({
-                embeds: [messageEmbed],
-                components: [page_buttons]
-            })
+            //send messageEmbed
+            if (interaction) {
+                paginator_message = await interaction.followUp({
+                    embeds: [messageEmbed],
+                    components: [page_buttons],
+                    ephemeral: false
+                })
+            } else {
+                paginator_message = await message.reply({
+                    embeds: [messageEmbed],
+                    components: [page_buttons]
+                })
+            }
 
             //start collecting button presses for paginator
-            let collector = new InteractionCollector(client, { message: paginator_message, time: 120000, componentType: "BUTTON" })
+            let collector = await new InteractionCollector(client, { message: paginator_message, time: 60000, componentType: "BUTTON" })
 
             //collect button interactions
             collector.on('collect', async (button) => {
@@ -154,10 +171,18 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
                 }
 
                 //edit paginator message
-                paginator_message.edit({
-                    embeds: [messageEmbed],
-                    components: [page_buttons]
-                });
+                if (interaction) {
+                    interaction.editReply({
+                        embeds: [messageEmbed],
+                        components: [page_buttons],
+                        ephemeral: false
+                    });
+                } else {
+                    paginator_message.edit({
+                        embeds: [messageEmbed],
+                        components: [page_buttons]
+                    });
+                }
             })
 
             //when button collection is over, disable buttons
@@ -166,10 +191,18 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
                 page_buttons.components[0].setDisabled(true)
                 page_buttons.components[1].setDisabled(true)
                 //edit paginator message
-                paginator_message.edit({
-                    embeds: [messageEmbed],
-                    components: [page_buttons]
-                });
+                if (interaction) {
+                    interaction.editReply({
+                        embeds: [messageEmbed],
+                        components: [page_buttons],
+                        ephemeral: false
+                    });
+                } else {
+                    paginator_message.edit({
+                        embeds: [messageEmbed],
+                        components: [page_buttons]
+                    });
+                }
             });
 
         } else {
@@ -177,7 +210,11 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
             messageEmbed.setDescription(descriptionPages[page].join("\n"))
             messageEmbed.setFooter({ text: `${target.user.id}` });
             //send messageEmbed
-            message.reply({ embeds: [messageEmbed] });
+            if (interaction) {
+                return interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
+            } else {
+                return message.reply({ embeds: [messageEmbed] })
+            }
         }
         //get module settings, proceed if true
         const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
@@ -209,5 +246,6 @@ module.exports.slash = {
         description: 'Mention target user',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: false
 }

@@ -16,6 +16,10 @@ const { getModuleSettings } = require('../../utils/PermissionManager');
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    //setup and change some values for interaction
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -93,14 +97,22 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //setup logbutton label with amount of Userlogs
         log_button.components[0].setLabel(`Show ${HyperLogs.length} logs`);
         log_button.components[0].setDisabled(false);
+
         //send messageEmbed
-        fetch_message = await message.reply({
-            embeds: [messageEmbed],
-            components: [log_button]
-        })
+        if (interaction) {
+            fetch_message = await interaction.followUp({
+                embeds: [messageEmbed],
+                ephemeral: false
+            })
+        } else {
+            fetch_message = await message.reply({
+                embeds: [messageEmbed],
+                components: [log_button]
+            })
+        }
 
         //start collecting button presses for paginator
-        let collector = new InteractionCollector(client, { message: fetch_message, time: 60000, componentType: "BUTTON" })
+        let collector = await new InteractionCollector(client, { message: fetch_message, time: 60000, componentType: "BUTTON" })
 
         //collect button interactions
         collector.on('collect', async (button) => {
@@ -119,10 +131,17 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             log_button.components[0].setDisabled(true);
 
             //edit paginator message
-            fetch_message.edit({
-                embeds: [messageEmbed],
-                components: [log_button]
-            });
+            if (interaction) {
+                interaction.editReply({
+                    embeds: [messageEmbed],
+                    ephemeral: false
+                });
+            } else {
+                fetch_message.edit({
+                    embeds: [messageEmbed],
+                    components: [log_button]
+                });
+            }
 
         })
 
@@ -131,15 +150,27 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             //disable both buttons
             log_button.components[0].setDisabled(true)
             //edit paginator message
-            fetch_message.edit({
-                embeds: [messageEmbed],
-                components: [log_button]
-            });
+            if (interaction) {
+                interaction.editReply({
+                    embeds: [messageEmbed],
+                    components: [log_button],
+                    ephemeral: false
+                });
+            } else {
+                fetch_message.edit({
+                    embeds: [messageEmbed],
+                    components: [log_button]
+                });
+            }
         });
 
     } else {
         //send messageEmbed
-        return message.reply({ embeds: [messageEmbed] })
+        if (interaction) {
+            return interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
+        } else {
+            return message.reply({ embeds: [messageEmbed] })
+        }
     }
 
     //get module settings, proceed if true
@@ -171,5 +202,6 @@ module.exports.slash = {
         description: 'Mention target user',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: false
 }

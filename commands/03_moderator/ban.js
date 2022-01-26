@@ -34,6 +34,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (ban != false) {
         //verify that the user has been kicked
+        if (message.interaction) message.interaction.editReply({ content: `**${target.user.tag}** has been banned from the server`, ephemeral: true });
         message.reply(`**${target.user.tag}** has been banned from the server`);
         //save log to database and log event
         await createHyperLog(message, 'ban', null, target, reason);
@@ -73,5 +74,6 @@ module.exports.slash = {
         description: 'Reason for ban',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

@@ -74,5 +74,6 @@ module.exports.slash = {
         description: 'Reason for warn',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

@@ -25,7 +25,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if action was succesfull
     if (disconnect != false) {
-        //verify that the user has been kicked
+        //verify that the user has been disconnected
+        if (message.interaction) message.interaction.editReply({ content: `**${target.user.tag}** has been disconnected from the voice-channel`, ephemeral: true });
         message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
         //save log to database and log event
         await createHyperLog(message, 'disconnect', null, target, reason);
@@ -59,5 +60,6 @@ module.exports.slash = {
         description: 'Mention target user',
         required: true,
     }],
-    permission: false
+    permission: false,
+    ephemeral: true
 }

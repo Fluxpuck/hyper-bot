@@ -35,7 +35,7 @@ module.exports = {
 
         //if interaction return emphameral
         if (message.slashinteraction == true) {
-            return message.interaction.followUp({ embeds: [ErrorEmbed], ephemeral: true });
+            return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
         } else if (timer) { //if timer is set return error message and remove
             return message.channel.send({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete(), timer); })
         } else { //if no timer is set, just return error message
@@ -54,7 +54,7 @@ module.exports = {
 
         //if interaction return emphameral
         if (message.slashinteraction == true) {
-            return message.interaction.followUp({ embeds: [ErrorEmbed], ephemeral: true });
+            return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
         } else if (timer) { //if timer is set return error message and remove
             return message.reply({ embeds: [ErrorEmbed] })
                 .then(msg => { setTimeout(() => msg.delete(), timer); })
