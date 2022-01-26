@@ -85,7 +85,7 @@ module.exports = {
         return commandCollection
     },
 
-    /** create or update slash commands
+    /** create slash commands
      * @param {*} client 
      * @param {*} guildId 
      */
@@ -96,9 +96,62 @@ module.exports = {
                 name: slash.name,
                 description: slash.description,
                 options: slash.options,
-                permission: slash.permission
+                permission: slash.permission,
+                defaultPermission: slash.defaultPermission
             }, guildId)
         }
+    },
+
+    /** update slash commands
+     * @param {*} guild 
+     * @param {*} slashCommands 
+     */
+    async updateSlashCommands(client, guild, slashCommands) {
+        await client.application?.fetch() //fetch all commands
+        await guild.commands.fetch().then(async commandlist => {
+            if (commandlist.size <= 0) return //return if no commands are fetched
+            for await (const [key, value] of commandlist.entries()) {
+                //get dito result from client and slashcommands
+                const slashcommand = slashCommands.filter(slash => slash.name == value.name)
+                if (slashcommand.length === 1) {
+
+                    //update existing command
+                    await client.application.commands.edit(key, {
+                        name: slashcommand[0].name,
+                        description: slashcommand[0].description,
+                        options: slashcommand[0].options,
+                        defaultPermission: slashcommand[0].defaultPermission,
+                    }, [guild.id]).catch(err => console.log('update command', err));
+
+                    //update permissions
+                    await client.application.commands.permissions.set({
+                        guild: guild.id,
+                        command: key,
+                        permissions: slashcommand[0].permission
+                    }).catch(err => console.log('update command perms', err));
+
+                } else {
+
+                    ///disable existing command
+                    await client.application.commands.permissions.set({
+                        guild: guild.id,
+                        command: key,
+                        permissions: []
+                    }).catch(err => console.log('disable command', err));
+
+                }
+                if (slashcommand.length === 0) {
+
+                    //remove existing command
+                    await client.application.commands.delete(key, [guild.id])
+                        .catch(err => console.log('remove command', err));
+
+                }
+            }
+        })
     }
+
+
+
 
 }

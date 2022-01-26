@@ -60,6 +60,7 @@ module.exports.slash = {
         description: 'Mention target user',
         required: true,
     }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: true
 }

@@ -103,6 +103,7 @@ module.exports.slash = {
         description: 'Write desired prefix',
         required: true,
     }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: true
 }

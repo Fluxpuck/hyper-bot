@@ -17,6 +17,7 @@ const { getModuleSettings } = require('../../utils/PermissionManager');
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //setup and change some values for interaction
+    const oldMessage = message; //save for original author, execution logging
     const interaction = (message.interaction) ? message.interaction : undefined;
     if (interaction) message = await interaction.fetchReply();
 
@@ -221,7 +222,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
         if (moderationAction.state === 1 && moderationAction.channel != null) {
             //don't log in channels that are excepted from logging
             if (moderationAction.exceptions.includes(message.channel.id)) return;
-            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+            return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
     }
     return;
@@ -246,6 +247,7 @@ module.exports.slash = {
         description: 'Mention target user',
         required: true,
     }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: false
 }

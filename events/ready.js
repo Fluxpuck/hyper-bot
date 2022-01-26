@@ -11,6 +11,7 @@ const ClientManager = require('../utils/ClientManager');
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
 const { insertGuild } = require('../database/QueryManager');
+const { updateSlashCommands } = require('../utils/ClientManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -51,6 +52,7 @@ module.exports = async (client) => {
             //get slash commands
             const slashCommands = await ClientManager.getSlashCommands(client.commands, guild)
             await ClientManager.registerSlashCommands(client, slashCommands, guild.id);
+            updateSlashCommands(client, guild, slashCommands); //update slash commands
         }
     }
 

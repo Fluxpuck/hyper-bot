@@ -90,6 +90,7 @@ module.exports.slash = {
         description: 'Reason why member is muted',
         required: false,
     }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: true
 }

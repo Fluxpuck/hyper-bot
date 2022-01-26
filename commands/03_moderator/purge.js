@@ -78,6 +78,7 @@ module.exports.slash = {
         description: 'Amount of messages',
         required: true,
     }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: true
 }

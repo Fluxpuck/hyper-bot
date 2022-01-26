@@ -55,6 +55,7 @@ module.exports.slash = {
         {
             name: 'channel',
             type: 'CHANNEL',
+            channelTypes: ['GUILD_TEXT', 'GUILD_NEWS_THREAD', 'GUILD_PUBLIC_THREAD', 'GUILD_PRIVATE_THREAD'],
             description: 'Where should I talk?',
             required: true,
         },
@@ -64,6 +65,7 @@ module.exports.slash = {
             description: 'What should the bot say?',
             required: true,
         }],
-    permission: false,
+    permission: [],
+    defaultPermission: false,
     ephemeral: true
 }
