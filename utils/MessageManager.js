@@ -17,7 +17,7 @@ module.exports = {
     async ErrorMessage(input) {
         //create error embed
         let ErrorEmbed = new MessageEmbed()
-            .setDescription(`${emote.error} ${input}`)
+            .setDescription(`❌ ${input}`)
             .setColor(embed.errorColor)
 
         //check if a remove timer is set!

@@ -96,7 +96,7 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: true,
+    slash: false,
     options: [{
         name: 'prefix',
         type: 'STRING',

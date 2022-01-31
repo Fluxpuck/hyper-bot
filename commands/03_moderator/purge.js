@@ -9,8 +9,12 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //delete command message
-    if (!message.interaction) setTimeout(() => message.delete(), 100);
+    if (!interaction) setTimeout(() => message.delete(), 100);
 
     //divide the input {amount, user}
     const { amount, member } = input = await inputType(message.guild, arguments.slice(0, 2))
@@ -40,15 +44,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //delete message and verify that the messages have been deleted
-    if (message.interaction) message.interaction.editReply({ content: `**${collection.size}** messages have been deleted`, ephemeral: true });
-    // message.reply(`**${collection.size}** messages have been deleted`);
+    if (interaction) interaction.editReply({ content: `**${collection.size}** messages have been deleted`, ephemeral: true });
+    // else message.reply(`**${collection.size}** messages have been deleted`);
 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
         //don't log in channels that are excepted from logging
         if (moderationAction.exceptions.includes(message.channel.id)) return;
-        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
     }
     return;
 }

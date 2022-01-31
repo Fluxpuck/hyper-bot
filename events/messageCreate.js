@@ -53,16 +53,18 @@ module.exports = async (client, message) => {
 
     //if client is mentioned, but no content is given return info
     if (message.content.startsWith('<@') && message.content.endsWith('>')) {
-        if (message.mentions.users.first().id === client.user.id && messageArgs.length < 1) {
-            //check if bot has been activated, else return
-            if (message.guild.handshake == null) {
-                //if member is moderator, return handshake message
-                if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
-                else return;
+        if (message.mentions.user) { //check if mention is available
+            if (message.mentions.users.first().id === client.user.id && messageArgs.length < 1) {
+                //check if bot has been activated, else return
+                if (message.guild.handshake == null) {
+                    //if member is moderator, return handshake message
+                    if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
+                    else return;
+                }
+                //reply with server info
+                message.reply(`Hello, your current server prefix is \`${prefix}\``)
+                    .then(msg => { setTimeout(() => msg.delete(), 5000) })
             }
-            //reply with server info
-            message.reply(`Hello, your current server prefix is \`${prefix}\``)
-                .then(msg => { setTimeout(() => msg.delete(), 5000) })
         }
     }
 

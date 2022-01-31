@@ -123,29 +123,34 @@ module.exports = {
                         defaultPermission: slashcommand[0].defaultPermission,
                     }, [guild.id]).catch(err => console.log('update command', err));
 
-                    //update permissions
-                    await client.application.commands.permissions.set({
-                        guild: guild.id,
-                        command: key,
-                        permissions: slashcommand[0].permission
-                    }).catch(err => console.log('update command perms', err));
-
+                    //if command has permissions, set them up
+                    if (slashcommand[0].permission.length >= 1) {
+                        //update permissions
+                        await client.application.commands.permissions.set({
+                            guild: guild.id,
+                            command: key,
+                            permissions: slashcommand[0].permission
+                        }).catch(err => console.log('update command perms', err));
+                    } else {
+                        //update permissions
+                        await client.application.commands.permissions.set({
+                            guild: guild.id,
+                            command: key,
+                            permissions: []
+                        }).catch(err => console.log('update command perms', err));
+                    }
                 } else {
-
                     ///disable existing command
                     await client.application.commands.permissions.set({
                         guild: guild.id,
                         command: key,
                         permissions: []
                     }).catch(err => console.log('disable command', err));
-
                 }
                 if (slashcommand.length === 0) {
-
                     //remove existing command
                     await client.application.commands.delete(key, [guild.id])
                         .catch(err => console.log('remove command', err));
-
                 }
             }
         })

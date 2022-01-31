@@ -11,6 +11,10 @@ const { checkPendingMute } = require("../../database/QueryManager");
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -23,7 +27,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if time is in valid format & if time is 
     if (/([0-9]+)\s{0,}m\W|/ig.test(arguments[1]) == false) return ReplyErrorMessage(message, 'Provide mute time in the following format \`10m\`.', 4800)
-    const muteTime = Number(arguments[1].replace('m', ''))
+    const muteTime = (interaction) ? arguments[1] : Number(arguments[1].replace('m', ''))
     const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false
     if (duration == false) return ReplyErrorMessage(message, 'Time out duration was not provided', 4800);
 
@@ -45,6 +49,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (mute != false) {
         //verify that the user has been timed out
+        if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been timed out for ${muteTime} minutes.`, ephemeral: true });
         message.reply(`**${target.user.tag}** has been timed out for ${muteTime} minutes.`);
         //save log to database and log event
         await createHyperLog(message, 'timeout', muteTime, target, reason);
@@ -53,7 +58,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (moderationAction.state === 1 && moderationAction.channel != null) {
             //don't log in channels that are excepted from logging
             if (moderationAction.exceptions.includes(message.channel.id)) return;
-            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+            return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
     }
     return;
@@ -71,7 +76,7 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
+    slash: true,
     options: [{
         name: 'user',
         type: 'USER',
@@ -82,6 +87,28 @@ module.exports.slash = {
         name: 'time',
         type: 'NUMBER',
         description: 'Duration in minutes',
+        choices: [
+            {
+                name: "5 minutes",
+                value: 5
+            },
+            {
+                name: "10 minutes",
+                value: 10
+            },
+            {
+                name: "20 minutes",
+                value: 20
+            },
+            {
+                name: "1 hour",
+                value: 60
+            },
+            {
+                name: "1 day",
+                value: 1440
+            },
+        ],
         required: true,
     },
     {
