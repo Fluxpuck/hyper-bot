@@ -10,6 +10,10 @@ const { getUserFromInput } = require("../../utils/Resolver");
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -25,7 +29,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
-    //kick the target
+    // kick the target
     const kick = await target.kick({ reason: `{HYPER} ${reason}` }).catch(err => {
         ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not kicked`);
         return false
@@ -34,7 +38,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (kick != false) {
         //verify that the user has been kicked
-        message.reply(`**${target.user.tag}** has been kicked from the server`);
+        if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been kicked from the server`, ephemeral: true });
+        else message.reply(`**${target.user.tag}** has been kicked from the server`);
         //save log to database and log event
         await createHyperLog(message, 'kick', null, target, reason);
         //get module settings, proceed if true
@@ -42,7 +47,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (moderationAction.state === 1 && moderationAction.channel != null) {
             //don't log in channels that are excepted from logging
             if (moderationAction.exceptions.includes(message.channel.id)) return;
-            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+            return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
     }
     return;
@@ -72,5 +77,8 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for kick',
         required: true,
-    }]
+    }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }

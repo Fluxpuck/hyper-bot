@@ -10,6 +10,10 @@ const { getUserFromInput } = require("../../utils/Resolver");
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -25,7 +29,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if action was succesfull
     if (disconnect != false) {
-        //verify that the user has been kicked
+        //verify that the user has been disconnected
+        if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been disconnected from the voice-channel`, ephemeral: true });
         message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
         //save log to database and log event
         await createHyperLog(message, 'disconnect', null, target, reason);
@@ -34,7 +39,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (moderationAction.state === 1 && moderationAction.channel != null) {
             //don't log in channels that are excepted from logging
             if (moderationAction.exceptions.includes(message.channel.id)) return;
-            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+            return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
     }
     return;
@@ -58,5 +63,8 @@ module.exports.slash = {
         type: 'USER',
         description: 'Mention target user',
         required: true,
-    }]
+    }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }

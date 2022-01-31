@@ -9,8 +9,13 @@ const { inputType, getUserMessages } = require("../../utils/Resolver")
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    //setup and change some values for interaction
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //delete command message
-    setTimeout(() => message.delete(), 100);
+    if (!interaction) setTimeout(() => message.delete(), 100);
 
     //if there are no arguments, no amount has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, 'Amount was not provided', 4800);
@@ -33,14 +38,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //delete message and verify that the messages have been deleted
-    // message.reply(`**${collection.size}** messages have been deleted`);
+    if (interaction) interaction.editReply({ content: `**${collection.size}** messages have been deleted`, ephemeral: true });
+    // else message.reply(`**${collection.size}** messages have been deleted`);
 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {
         //don't log in channels that are excepted from logging
         if (moderationAction.exceptions.includes(message.channel.id)) return;
-        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
     }
     return;
 }
@@ -57,17 +63,14 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
+    slash: true,
     options: [{
-        name: 'user',
-        type: 'USER',
-        description: 'Mention target user',
-        required: true,
-    },
-    {
         name: 'amount',
         type: 'NUMBER',
         description: 'Amount of messages',
         required: true,
-    }]
+    }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }

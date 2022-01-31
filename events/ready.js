@@ -11,6 +11,7 @@ const ClientManager = require('../utils/ClientManager');
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
 const { insertGuild } = require('../database/QueryManager');
+const { updateSlashCommands } = require('../utils/ClientManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -26,9 +27,6 @@ module.exports = async (client) => {
     //get and initialize client commands
     await ClientManager.getClientCommands(commandFolder, { dealerFunction: fileLoader })
 
-    //get and initialize interactive commands  
-    //SLASH COMMANDS!!?? 
-
     //check and update all database tables
     const guilds = Array.from(client.guilds.cache.values())
     for await (let guild of guilds) {
@@ -40,13 +38,22 @@ module.exports = async (client) => {
         await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
 
-        //double check guild in global guild information
-        await insertGuild(guild);
+        await insertGuild(guild); //double check guild in global guild information
 
         await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes
         await PermissionManager.loadGuildConfiguration(guild); //set guild config
         await PermissionManager.loadCommandPermissions(guild); //cache command permissions
         await PermissionManager.loadModuleSettings(guild); //cache module settings
+    }
+
+    //get and initialize interactive commands per guild
+    for await (let guild of guilds) {
+        if (guild.slash === 1) { //if slash commands are enabled
+            //get slash commands
+            const slashCommands = await ClientManager.getSlashCommands(client.commands, guild)
+            await ClientManager.registerSlashCommands(client, slashCommands, guild.id);
+            updateSlashCommands(client, guild, slashCommands); //update slash commands
+        }
     }
 
     //set client activity

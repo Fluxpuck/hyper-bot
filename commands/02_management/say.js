@@ -3,6 +3,8 @@
 
 //load required modules
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
+const { textchannels } = require('../../config/config.json');
+const { Collection } = require("discord.js");
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -12,26 +14,30 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //get target channel
     const channel = message.guild.channels.cache.find(c => c.id == arguments[0].replace(/[^\w\s]/gi, ''))
-    if (!channel) return await ReplyErrorMessage(message, `#channel was not found`, 4800)
+    if (!channel) return ReplyErrorMessage(message, `#channel was not found`, 4800)
+    if (textchannels.includes(channel.type) == false) return ReplyErrorMessage(message, `#channel is not a text channel`, 4800)
 
     //set message
     let toSayMessage = arguments.slice(1);
 
     //if there are attachments, add to message
+    if (!message.attachments) message.attachments = new Collection()
     if (message.attachments.size >= 1) {
         if (toSayMessage.length >= 1) {
             //send message and file to target channel
-            return channel.send(toSayMessage.join(' '), { files: Array.from(message.attachments.values()) })
+            channel.send(toSayMessage.join(' '), { files: Array.from(message.attachments.values()) })
         } else {
             //send file to target channel
-            return channel.send({ files: Array.from(message.attachments.values()) })
+            channel.send({ files: Array.from(message.attachments.values()) })
         }
     } else {
         //send message to target channel
-        return channel.send(toSayMessage.join(' '))
+        channel.send(toSayMessage.join(' '))
     }
+    //if interaction, return message
+    if (message.interaction) message.interaction.editReply({ content: `Message was send in <#${channel.id}>`, ephemeral: true });
+    return;
 }
-
 
 //command information
 module.exports.info = {
@@ -44,6 +50,22 @@ module.exports.info = {
 
 //slash setup
 module.exports.slash = {
-    slash: false,
-    options: []
+    slash: true,
+    options: [
+        {
+            name: 'channel',
+            type: 'CHANNEL',
+            channelTypes: ['GUILD_TEXT', 'GUILD_NEWS_THREAD', 'GUILD_PUBLIC_THREAD', 'GUILD_PRIVATE_THREAD'],
+            description: 'Where should I talk?',
+            required: true,
+        },
+        {
+            name: 'text',
+            type: 'STRING',
+            description: 'What should the bot say?',
+            required: true,
+        }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }

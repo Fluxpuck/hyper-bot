@@ -9,6 +9,9 @@ const { web_button } = require('../../assets/buttons');
 const { MessageEmbed } = require('discord.js');
 const { msToTime } = require('../../utils/functions');
 
+//require info
+const { dependencies } = require('../../package.json');
+
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
@@ -20,8 +23,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             { name: `Guilds`, value: `\`\`\`${client.guilds.cache.size}\`\`\``, inline: true },
             { name: `Commands`, value: `\`\`\`${client.commands.size} commands\`\`\``, inline: true },
             { name: `Events`, value: `\`\`\`${client.events.size} events\`\`\``, inline: true },
-            { name: `Uptime`, value: `\`\`\`${msToTime(process.uptime())}\`\`\``, inline: true },
-            { name: `Version`, value: `\`\`\`${client.version}\`\`\``, inline: true },
+            { name: `Client version`, value: `\`\`\`${client.version}\`\`\``, inline: true },
+            { name: `DiscordJS version`, value: `\`\`\`${Object.values(dependencies)[0]}\`\`\``, inline: true },
+            { name: `Uptime`, value: `\`\`\`${msToTime(process.uptime())}\`\`\``, inline: false },
         )
         .setThumbnail(embed.thumbnail)
         .setColor(embed.color)
@@ -47,5 +51,7 @@ module.exports.info = {
 //slash setup
 module.exports.slash = {
     slash: false,
-    options: []
+    options: [],
+    permission: [],
+    defaultPermission: false,
 }

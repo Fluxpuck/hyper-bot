@@ -11,9 +11,13 @@ const { getModuleSettings } = require("../../utils/PermissionManager");
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    //setup and change some values for interaction
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
-    if (arguments.length >= 1 && arguments.length < 3) return ReplyErrorMessage(message, 'Reason was not provided or too short', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
@@ -23,7 +27,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
 
     //check and set reason, else use default message
-    let r = arguments.slice(1) //slice reason from arguments
+    let r = (interaction) ? arguments[1].split(" ") : arguments.slice(1) //slice reason from arguments
+    //if no reason was provided, return message
+    if (r.length >= 1 && r.length < 3) return ReplyErrorMessage(message, 'Reason was not provided or too short', 4800);
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
@@ -32,9 +38,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //verify that the user has been warned
     if (warning.status === false) {
-        message.reply(`${warning.message}, but warning has been logged`);
+        (interaction) ? interaction.editReply({ content: `${warning.message}, but warning has been logged`, ephemeral: true })
+            : message.reply(`${warning.message}, but warning has been logged`);
     } else if (warning.status === true) {
-        message.reply(`${warning.message}, and it has been logged`);
+        (interaction) ? interaction.editReply({ content: `${warning.message}, and it has been logged`, ephemeral: true })
+            : message.reply(`${warning.message}, and it has been logged`);
     }
 
     //save log to database and log event
@@ -44,7 +52,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (moderationAction.state === 1 && moderationAction.channel != null) {
         //don't log in channels that are excepted from logging
         if (moderationAction.exceptions.includes(message.channel.id)) return;
-        return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+        return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
     }
     return;
 }
@@ -73,5 +81,8 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for warn',
         required: true,
-    }]
+    }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }

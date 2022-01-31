@@ -104,5 +104,7 @@ module.exports.info = {
 //slash setup
 module.exports.slash = {
     slash: false,
-    options: []
+    options: [],
+    permission: [],
+    defaultPermission: false,
 }

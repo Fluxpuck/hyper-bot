@@ -21,11 +21,8 @@ module.exports.info = {
 }
 //slash setup
 module.exports.slash = {
-    slash: true,
-    options: [{
-        name: 'test',
-        type: 'STRING',
-        description: 'string',
-        required: true,
-    }]
+    slash: false,
+    options: [],
+    permission: [],
+    defaultPermission: false,
 }

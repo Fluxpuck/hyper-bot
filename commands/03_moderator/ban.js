@@ -10,6 +10,11 @@ const { createHyperLog } = require("../../utils/AuditManager");
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+    //setup and change some values for interaction
+    const oldMessage = message; //save for original author, execution logging
+    const interaction = (message.interaction) ? message.interaction : undefined;
+    if (interaction) message = await interaction.fetchReply();
+
     //if there are no arguments, no target has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
 
@@ -34,7 +39,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (ban != false) {
         //verify that the user has been kicked
-        message.reply(`**${target.user.tag}** has been banned from the server`);
+        if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been banned from the server`, ephemeral: true });
+        else message.reply(`**${target.user.tag}** has been banned from the server`);
         //save log to database and log event
         await createHyperLog(message, 'ban', null, target, reason);
         //get module settings, proceed if true
@@ -42,7 +48,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (moderationAction.state === 1 && moderationAction.channel != null) {
             //don't log in channels that are excepted from logging
             if (moderationAction.exceptions.includes(message.channel.id)) return;
-            return SendModerationActionMessage(message, module.exports.info.name, moderationAction.channel)
+            return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
     }
     return;
@@ -72,5 +78,8 @@ module.exports.slash = {
         type: 'STRING',
         description: 'Reason for ban',
         required: true,
-    }]
+    }],
+    permission: [],
+    defaultPermission: false,
+    ephemeral: true
 }
