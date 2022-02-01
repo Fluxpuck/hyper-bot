@@ -38,7 +38,7 @@ module.exports = async (client, member) => {
     }
 
     //get module settings, proceed if true
-    const kick = await getModuleSettings(member.guild.id, 'kick');
+    const kick = await getModuleSettings(member.guild, 'kick');
     if (kick.state === 1 && kick.channel != null) {
         //fetch log, and if nessesary, save to database
         const AuditLog = await getAuditLogDetails(guild, 'MEMBER_KICK', null);

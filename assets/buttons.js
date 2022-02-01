@@ -1,6 +1,8 @@
 
 //construct packages
 const { MessageButton, MessageActionRow } = require('discord.js');
+//require configuration
+const { applicationButton } = require('../config/config.json');
 
 //previous button
 const PREVIOUS_button = new MessageButton()
@@ -49,7 +51,7 @@ const WEB_button = new MessageButton()
     .setLabel('Website')
     .setDisabled(false)
 
-//Logs button ActionRow
+//Website button ActionRow
 const WebButtons = new MessageActionRow()
     .addComponents(
         WEB_button
@@ -71,15 +73,32 @@ const CHECK_button = new MessageButton()
     .setCustomId('success')
     .setDisabled(false)
 
-//Logs button ActionRow
+//Verify button ActionRow
 const VerifyButtons = new MessageActionRow()
     .addComponents(
         CROSS_button,
         CHECK_button
     )
 
+/*----------------------*/
+
+//Application button
+const apply_button = new MessageButton()
+    .setStyle('SUCCESS')
+    .setLabel('Apply!')
+    .setCustomId('application')
+    .setDisabled(false)
+
+//Collect Application button ActionRow
+const ApplyButtons = new MessageActionRow()
+    .addComponents(apply_button)
+
+/*----------------------*/
+
+
 //export buttons & actionrows
 exports.page_buttons = PaginatorButtons;
 exports.log_button = LogsButtons;
 exports.web_button = WebButtons;
 exports.verify_buttons = VerifyButtons;
+exports.apply_button = ApplyButtons;

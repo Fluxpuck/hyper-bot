@@ -33,7 +33,7 @@ module.exports = async (client, member) => {
     }
 
     //get module settings, proceed if true
-    const guildWelcome = await getModuleSettings(member.guild.id, 'guildWelcome');
+    const guildWelcome = await getModuleSettings(member.guild, 'guildWelcome');
     if (guildWelcome.state === 1 && guildWelcome.channel != null) {
 
         //fetch Audit & Hyper logs
