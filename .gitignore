@@ -32,3 +32,4 @@ yarn.lock
 FAQ.md
 guildCreate.js
 guildDelete.js
+autoReport.js

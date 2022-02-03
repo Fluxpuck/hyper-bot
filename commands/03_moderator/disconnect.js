@@ -31,7 +31,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (disconnect != false) {
         //verify that the user has been disconnected
         if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been disconnected from the voice-channel`, ephemeral: true });
-        message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
+        else message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
         //save log to database and log event
         await createHyperLog(message, 'disconnect', null, target, reason);
         //get module settings, proceed if true

@@ -32,7 +32,7 @@ module.exports = {
     },
 
     /** collect all (saved) Userlogs 
-     * @param {*} message 
+     * @param {*} guild 
      * @param {*} target 
      * @returns 
      */
@@ -118,12 +118,13 @@ module.exports = {
     },
 
     /** get AuditLogDetails and save foreign logs to Database
+     * @param {*} client
      * @param {*} guild 
      * @param {*} auditType 
      * @param {*} auditDuration 
      * @returns 
      */
-    async getAuditLogDetails(guild, auditType, auditDuration) {
+    async getAuditLogDetails(client, guild, auditType, auditDuration) {
         function AuditLog(log, reason, duration, target, executor) {
             this.log = log;
             this.reason = reason;
@@ -170,6 +171,8 @@ module.exports = {
                     return UserLog
                 }
             }
+            //trigger checkup for smart auto report
+            await client.emit('autoReport', guild, target);
         } else return false //if no logs are found, return false
     },
 

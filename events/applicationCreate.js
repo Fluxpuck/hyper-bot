@@ -41,7 +41,7 @@ module.exports = async (client, interaction) => {
         return interaction.reply({ ephemeral: true, content: `A private channel has been opened for you!\nStart you application process here: <#${threadChannel.id}>` })
     }).catch(async err => {
         //update defer
-        await interaction.deferUpdate();
+        await interaction.reply({ ephemeral: true, embeds: [await ErrorMessage(`Oops. Something went wrong.`)] })
     })
 
     return;

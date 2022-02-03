@@ -16,7 +16,7 @@ module.exports = async (client, guild, user) => {
     if (banModule.state === 1 && banModule.channel != null) {
 
         //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(guild, 'GUILD_BAN_ADD', null);
+        const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_ADD', null);
         if (AuditLog != false) {
 
             //construct message

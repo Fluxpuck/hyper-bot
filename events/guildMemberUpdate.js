@@ -76,7 +76,7 @@ module.exports = async (client, oldMember, newMember) => {
         const muteTime = new Number(duration) / 1000 / 60;
 
         //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(oldMember.guild, 'MEMBER_UPDATE', muteTime);
+        const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_UPDATE', muteTime);
 
         //add pending mute to database
         await savePendingMute(oldMember.guild.id, oldMember.user.id, newTimeout);

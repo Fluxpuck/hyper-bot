@@ -16,7 +16,7 @@ module.exports = async (client, guild, user) => {
     if (banRevokeModule.state === 1 && banRevokeModule.channel != null) {
 
         //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(guild, 'GUILD_BAN_REMOVE', null);
+        const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_REMOVE', null);
         if (AuditLog != false) {
 
             //construct message

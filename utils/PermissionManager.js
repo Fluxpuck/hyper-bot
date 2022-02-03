@@ -26,11 +26,12 @@ module.exports = {
      * @param {Object} client
      */
     async loadGuildConfiguration(guild) {
-        const { modId, jailId, applyId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
+        const { modId, jailId, applyId, reportId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
         //set custom Hyper values and save in guild
         guild.modId = modId;
         guild.jailId = jailId;
         guild.applyId = applyId;
+        guild.reportId = reportId;
         guild.handshake = handshake;
         guild.slash = slash;
     },
