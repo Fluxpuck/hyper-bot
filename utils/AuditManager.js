@@ -159,6 +159,9 @@ module.exports = {
                 let temp = HyperLogs.map(d => Math.abs(new Date() - new Date(d.date.create)));
                 let idx = temp.indexOf(Math.min(...temp)); //index of closest date
 
+                //trigger checkup for smart auto report
+                await client.emit('autoReport', guild, target);
+
                 //return AuditLog
                 return new AuditLog({ id: HyperLogs[idx].id, type: HyperLogs[idx].type }, HyperLogs[idx].reason.replace('{HYPER} ', ''), HyperLogs[idx].duration, HyperLogs[idx].target, HyperLogs[idx].executor)
             } else { //if log is not from Hyper, save foreign to database
@@ -167,12 +170,12 @@ module.exports = {
                     const UserLog = new AuditLog({ id: nanoid(), type: action }, reason, auditDuration, { id: target.id, username: target.tag }, { id: executor.id, username: executor.tag });
                     //save to database
                     await saveMemberLog(guild.id, UserLog);
+                    //trigger checkup for smart auto report
+                    await client.emit('autoReport', guild, target);
                     //return hyperlog
                     return UserLog
                 }
             }
-            //trigger checkup for smart auto report
-            await client.emit('autoReport', guild, target);
         } else return false //if no logs are found, return false
     },
 

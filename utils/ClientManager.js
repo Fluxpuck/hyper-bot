@@ -154,6 +154,22 @@ module.exports = {
                 }
             }
         })
+    },
+
+    /** remove slash commands
+     * @param {*} client 
+     * @param {*} guild 
+     */
+    async removeSlashCommands(client, guild) {
+        await client.application?.fetch() //fetch all commands
+        await guild.commands.fetch().then(async commandlist => {
+            if (commandlist.size <= 0) return //return if no commands are fetched
+            for await (const [key, value] of commandlist.entries()) {
+                //remove existing command
+                await client.application.commands.delete(key, [guild.id])
+                    .catch(err => console.log('remove command', err));
+            }
+        })
     }
 
 

@@ -9,7 +9,10 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 const { MessageEmbed } = require('discord.js');
 const { getAuditLogDetails } = require('../utils/AuditManager');
 
-module.exports = async (client, guild, user) => {
+module.exports = async (client, unban) => {
+
+    //construct info from unban info
+    const { guild, user } = unban
 
     //get module settings, proceed if true
     const banRevokeModule = await getModuleSettings(guild, 'banRevoke');

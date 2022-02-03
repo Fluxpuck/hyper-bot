@@ -15,14 +15,14 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //if there are no arguments, no target has been defined
-    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
+    if (arguments.length < 1) return ReplyErrorMessage(oldMessage, '@user was not provided', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
-    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+    if (target == false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
 
     //check if target is moderator
-    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(oldMessage, '@user is a moderator', 4800);
 
     //check and set reason, else use default message
     let r = arguments.slice(1) //slice reason from arguments
@@ -31,7 +31,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     // kick the target
     const kick = await target.kick({ reason: `{HYPER} ${reason}` }).catch(err => {
-        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not kicked`);
+        ReplyErrorMessage(oldMessage, `An Error occured, and ${target.user.tag} was not kicked`);
         return false
     });
 

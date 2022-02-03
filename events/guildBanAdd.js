@@ -9,7 +9,10 @@ const { MessageEmbed } = require("discord.js");
 const { getAuditLogDetails } = require("../utils/AuditManager");
 const { getModuleSettings } = require("../utils/PermissionManager");
 
-module.exports = async (client, guild, user) => {
+module.exports = async (client, ban) => {
+
+    //construct info from ban info
+    const { guild, user } = ban
 
     //get module settings, proceed if true
     const banModule = await getModuleSettings(guild, 'ban');

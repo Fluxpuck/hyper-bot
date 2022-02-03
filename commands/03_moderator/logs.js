@@ -22,7 +22,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //if there are no arguments, no target has been defined
-    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
+    if (arguments.length < 1) return ReplyErrorMessage(oldMessage, '@user was not provided', 4800);
 
     //get target user
     let target = await getUserFromInput(message.guild, arguments[0]);
@@ -31,7 +31,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
         let item = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
-        if (convertSnowflake(item) === false) return ReplyErrorMessage(message, '@user was not found', 4800);
+        if (convertSnowflake(item) === false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
         //set target letiables
         target = { key: null, id: item, user: { id: item, username: undefined } };
     }
@@ -40,7 +40,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     const UserLogs = await FetchHyperLogs(message.guild, target);
 
     //return error if no information was found
-    if (target.key === null && UserLogs === false) return ReplyErrorMessage(message, '@user nor any logs were found', 4800);
+    if (target.key === null && UserLogs === false) return ReplyErrorMessage(oldMessage, '@user nor any logs were found', 4800);
 
     //filter all log information from both Audit and Hyper logs
     const FilterLogs = await FilterTargetLogs(target, UserLogs, [])

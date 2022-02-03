@@ -16,24 +16,24 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //if there are no arguments, no target has been defined
-    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
+    if (arguments.length < 1) return ReplyErrorMessage(oldMessage, '@user was not provided', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
-    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+    if (target == false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
 
     //check if target is moderator
-    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(oldMessage, '@user is a moderator', 4800);
 
     //check if time is in valid format & if time is 
     if (/([0-9]+)\s{0,}m\W|/ig.test(arguments[1]) == false) return ReplyErrorMessage(message, 'Provide mute time in the following format \`10m\`.', 4800)
     const muteTime = (interaction) ? arguments[1] : Number(arguments[1].replace('m', ''))
     const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false
-    if (duration == false) return ReplyErrorMessage(message, 'Time out duration was not provided', 4800);
+    if (duration == false) return ReplyErrorMessage(oldMessage, 'Time out duration was not provided', 4800);
 
     //check if target is already timed out
     const pendingMute = await checkPendingMute(message.guild.id, target.user.id);
-    if (pendingMute != false) return ReplyErrorMessage(message, '@user is already timed out', 4800);
+    if (pendingMute != false) return ReplyErrorMessage(oldMessage, '@user is already timed out', 4800);
 
     //check and set reason, else use default message
     let r = arguments.slice(2) //slice reason from arguments
@@ -42,7 +42,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //timeout the target
     const mute = await target.timeout(duration, `{HYPER} ${reason}`).catch(err => {
-        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not muted.\n*Make sure the bot-role is above all other roles.*`);
+        ReplyErrorMessage(oldMessage, `An Error occured, and ${target.user.tag} was not muted.\n*Make sure the bot-role is above all other roles.*`);
         return false
     });
 
