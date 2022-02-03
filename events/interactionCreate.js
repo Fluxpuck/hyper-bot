@@ -5,7 +5,15 @@
 const { getCommandPermissions, checkCommandPermissions } = require("../utils/PermissionManager");
 const { getChannelfromInput, getUserFromInput } = require("../utils/Resolver");
 
+//require configuration
+const { applicationButton } = require('../config/config.json');
+
 module.exports = async (client, interaction) => {
+
+    //check if interaction is application button
+    if (interaction.customId == applicationButton) {
+        client.emit('applicationCreate', interaction);
+    }
 
     //check if interaction is application command
     if (!interaction.isCommand()) return;

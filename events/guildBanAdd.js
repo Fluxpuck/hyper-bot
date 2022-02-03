@@ -9,14 +9,17 @@ const { MessageEmbed } = require("discord.js");
 const { getAuditLogDetails } = require("../utils/AuditManager");
 const { getModuleSettings } = require("../utils/PermissionManager");
 
-module.exports = async (client, guild, user) => {
+module.exports = async (client, ban) => {
+
+    //construct info from ban info
+    const { guild, user } = ban
 
     //get module settings, proceed if true
     const banModule = await getModuleSettings(guild, 'ban');
     if (banModule.state === 1 && banModule.channel != null) {
 
         //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(guild, 'GUILD_BAN_ADD', null);
+        const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_ADD', null);
         if (AuditLog != false) {
 
             //construct message

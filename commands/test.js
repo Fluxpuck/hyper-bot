@@ -7,7 +7,6 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 
 
-
 }
 
 
@@ -23,7 +22,15 @@ module.exports.info = {
 //slash setup
 module.exports.slash = {
     slash: false,
-    options: [],
+    options: [
+        {
+            name: 'channel',
+            type: 'CHANNEL',
+            channelTypes: ['GUILD_TEXT', 'GUILD_NEWS_THREAD', 'GUILD_PUBLIC_THREAD', 'GUILD_PRIVATE_THREAD'],
+            description: 'Where should I talk?',
+            required: true,
+        }
+    ],
     permission: [],
     defaultPermission: false,
     ephemeral: true

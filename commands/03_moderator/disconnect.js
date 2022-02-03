@@ -15,15 +15,15 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //if there are no arguments, no target has been defined
-    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
+    if (arguments.length < 1) return ReplyErrorMessage(oldMessage, '@user was not provided', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
-    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+    if (target == false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
 
     //disconnect the target
     const disconnect = await target.voice.disconnect().catch(err => {
-        ReplyErrorMessage(message, `An Error occured, and ${target.user.tag} was not disconnected`);
+        ReplyErrorMessage(oldMessage, `An Error occured, and ${target.user.tag} was not disconnected`);
         return false
     })
 
@@ -31,7 +31,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (disconnect != false) {
         //verify that the user has been disconnected
         if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been disconnected from the voice-channel`, ephemeral: true });
-        message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
+        else message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
         //save log to database and log event
         await createHyperLog(message, 'disconnect', null, target, reason);
         //get module settings, proceed if true

@@ -13,17 +13,18 @@ module.exports = async (client, messages) => {
     //get first message {guild} and other values
     const message = messages.first();
 
-    //set length and channel value's
-    const bulkMessages = messages.map(m => m);
-
-    //setup message collection & filter out too long messages
-    const bulkLimit = 10 //log max 10 messages
-    let bulkCollection = bulkMessages.reverse()
-    bulkCollection = bulkCollection.slice(0, bulkLimit).map(message => `[${message.author.tag}]: ${message.content.length > 40 ? `${message.content.slice(0, 40)}...` : message}`)
-
     //get module settings, proceed if true
     const messageBulkDelete = await getModuleSettings(message.guild, 'messageBulkDelete');
     if (messageBulkDelete.state === 1 && messageBulkDelete.channel != null) {
+
+        //set length and channel value's
+        const bulkMessages = messages.map(m => m);
+
+        //setup message collection & filter out too long messages
+        const bulkLimit = 10 //log max 10 messages
+        let bulkCollection = bulkMessages.reverse()
+        bulkCollection = bulkCollection.slice(0, bulkLimit).map(message => `[${message.author.tag}]: ${message.content.length > 40 ? `${message.content.slice(0, 40)}...` : message}`)
+
 
         //construct message
         const logMessage = new MessageEmbed()
@@ -34,9 +35,10 @@ module.exports = async (client, messages) => {
 
         //if all messages are from same user, set Author and Footer
         if (bulkMessages.every(msg => msg.author.id === message.author.id)) {
-            logMessage.setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
-            logMessage.setDescription(`**${bulkMessages.length}** messages from <@${message.author.id}> are **purged** from <#${message.channelId}>`)
-            logMessage.setFooter({ text: `${message.author.id}` })
+            logMessage
+                .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL({ dynamic: false }) })
+                .setDescription(`**${bulkMessages.length}** messages from <@${message.author.id}> are **purged** from <#${message.channelId}>`)
+                .setFooter({ text: `${message.author.id}` })
         }
 
         //don't log in channels that are excepted from logging

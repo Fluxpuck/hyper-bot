@@ -17,19 +17,19 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //if there are no arguments, no target has been defined
-    if (arguments.length < 1) return ReplyErrorMessage(message, '@user was not provided', 4800);
+    if (arguments.length < 1) return ReplyErrorMessage(oldMessage, '@user was not provided', 4800);
 
     //get target user
     const target = await getUserFromInput(message.guild, arguments[0]);
-    if (target == false) return ReplyErrorMessage(message, '@user was not found', 4800);
+    if (target == false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
 
     //check if target is moderator
-    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(message, '@user is a moderator', 4800);
+    if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(oldMessage, '@user is a moderator', 4800);
 
     //check and set reason, else use default message
     let r = (interaction) ? arguments[1].split(" ") : arguments.slice(1) //slice reason from arguments
     //if no reason was provided, return message
-    if (r.length >= 1 && r.length < 3) return ReplyErrorMessage(message, 'Reason was not provided or too short', 4800);
+    if (r.length >= 1 && r.length < 3) return ReplyErrorMessage(oldMessage, 'Reason was not provided or too short', 4800);
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 

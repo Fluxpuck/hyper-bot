@@ -7,6 +7,13 @@ const { getSlashCommands, registerSlashCommands, updateSlashCommands } = require
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
+
+    //get ENABLE and DISABLE functionality with embed and two buttons!!
+
+    //on enable, enable in guild_information table
+
+    //on disable, disable in guild_information table
+
     //collect slash commands
     const slashCommands = await getSlashCommands(client.commands, message.guild);
 
@@ -19,10 +26,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
 //command information
 module.exports.info = {
-    name: 'test',
-    alias: ['testing'],
+    name: 'slash',
+    alias: [],
     category: '',
-    desc: 'Just for testing purposes',
+    desc: 'Enable or Disable slash commands',
     usage: '{prefix}test',
 }
 

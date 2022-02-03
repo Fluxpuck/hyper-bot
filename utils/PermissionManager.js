@@ -26,8 +26,14 @@ module.exports = {
      * @param {Object} client
      */
     async loadGuildConfiguration(guild) {
-        const { modId, jailId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
-        guild.modId = modId, guild.jailId = jailId, guild.handshake = handshake, guild.slash = slash; //set custom Hyper values and save in guild
+        const { modId, jailId, applyId, reportId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
+        //set custom Hyper values and save in guild
+        guild.modId = modId;
+        guild.jailId = jailId;
+        guild.applyId = applyId;
+        guild.reportId = reportId;
+        guild.handshake = handshake;
+        guild.slash = slash;
     },
 
     /** set all command permissions per guild
@@ -117,7 +123,7 @@ module.exports = {
      * @param {*} module 
      */
     async getModuleSettings(guild, module) {
-        const ModuleCache = await guildModulePermsCache.get(guild.id) //get the prefix key value from the cache
+        const ModuleCache = await guildModulePermsCache.get(guild.id) //get the module perms from the cache
         const filter = ModuleCache.filter(m => m.moduleName === module);
         if (filter.length > 0) {
             return { "state": filter[0].state, "channel": filter[0].channel, "exceptions": filter[0].exceptions }
