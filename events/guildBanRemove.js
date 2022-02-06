@@ -31,7 +31,7 @@ module.exports = async (client, unban) => {
                 .setFooter({ text: `${AuditLog.log.id}` })
 
             //get target channel and send message embed
-            const targetChannel = message.guild.channels.cache.get(banRevokeModule.channel);
+            const targetChannel = guild.channels.cache.get(banRevokeModule.channel);
             if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
 
         }

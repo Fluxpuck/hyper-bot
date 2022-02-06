@@ -23,8 +23,14 @@ module.exports = {
             this.target = target;
             this.executor = executor;
         }
+
+        let executor //setup executor details
+        const interaction = (message.interaction) ? message.interaction : undefined;
+        if (interaction) executor = { id: interaction.user.id, tag: `${interaction.user.username}#${interaction.user.discriminator}` }
+        else executor = { id: message.author.id, tag: message.author.tag }
+
         //construct hyperlog
-        const UserLog = new hyperLog({ id: nanoid(), type: type }, reason, duration, { id: target.user.id, username: target.user.tag }, { id: message.author.id, username: message.author.tag });
+        const UserLog = new hyperLog({ id: nanoid(), type: type }, reason, duration, { id: target.user.id, username: target.user.tag }, { id: executor.id, username: executor.tag });
         //save to database
         await saveMemberLog(message.guild.id, UserLog);
         //return hyperlog
@@ -135,6 +141,7 @@ module.exports = {
         //fetch AuditLog(s)
         const fetchLogs = await guild.fetchAuditLogs({ limit: 5, type: auditType })
         const firstLog = fetchLogs.entries.first();
+
         if (firstLog) { //if a log is found
             //get details from Auditlog
             let { action, reason, executor, target } = firstLog
@@ -148,7 +155,15 @@ module.exports = {
                     break;
                 case 'MEMBER_UPDATE': action = 'timeout'
                     break;
+                case 'MEMBER_ROLE_UPDATE': action = 'mute'
+                    break;
             }
+
+            //if action is mute
+            if (!reason && action == 'mute') reason = 'Foreign mute';
+            //set reason if not provided
+            if (!reason) reason = "-"
+
             //check if log is a hyperLog
             if (reason.startsWith('{HYPER}')) {
                 //get all member logs from database
@@ -160,21 +175,24 @@ module.exports = {
                 let idx = temp.indexOf(Math.min(...temp)); //index of closest date
 
                 //trigger checkup for smart auto report
-                await client.emit('autoReport', guild, target);
+                await client.emit('autoReport', guild, target, action);
 
                 //return AuditLog
                 return new AuditLog({ id: HyperLogs[idx].id, type: HyperLogs[idx].type }, HyperLogs[idx].reason.replace('{HYPER} ', ''), HyperLogs[idx].duration, HyperLogs[idx].target, HyperLogs[idx].executor)
+
             } else { //if log is not from Hyper, save foreign to database
-                if (action != 'unban') { //if log is not unban
-                    //construct hyperlog
-                    const UserLog = new AuditLog({ id: nanoid(), type: action }, reason, auditDuration, { id: target.id, username: target.tag }, { id: executor.id, username: executor.tag });
-                    //save to database
-                    await saveMemberLog(guild.id, UserLog);
-                    //trigger checkup for smart auto report
-                    await client.emit('autoReport', guild, target);
-                    //return hyperlog
-                    return UserLog
-                }
+
+                //construct hyperlog
+                const UserLog = new AuditLog({ id: nanoid(), type: action }, reason, auditDuration, { id: target.id, username: target.tag }, { id: executor.id, username: executor.tag });
+
+                //save to database
+                await saveMemberLog(guild.id, UserLog);
+
+                //trigger checkup for smart auto report
+                await client.emit('autoReport', guild, target, action);
+
+                //return hyperlog
+                return UserLog
             }
         } else return false //if no logs are found, return false
     },

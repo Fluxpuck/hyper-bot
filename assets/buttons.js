@@ -1,8 +1,5 @@
-
 //construct packages
 const { MessageButton, MessageActionRow } = require('discord.js');
-//require configuration
-const { applicationButton } = require('../config/config.json');
 
 //previous button
 const PREVIOUS_button = new MessageButton()

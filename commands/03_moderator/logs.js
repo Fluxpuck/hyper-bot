@@ -120,6 +120,10 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
         messageEmbed.setDescription(descriptionPages[page].join("\n"))
         messageEmbed.setFooter({ text: `${target.user.id} | Page ${page + 1} of ${descriptionPages.length}` });
 
+        //reset buttons into their default state
+        page_buttons.components[0].setDisabled(true);
+        page_buttons.components[1].setDisabled(false);
+
         //check if embed requires multiple pages
         if (descriptionPages.length > 1) {
             //send messageEmbed
