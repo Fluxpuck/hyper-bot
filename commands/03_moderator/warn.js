@@ -46,7 +46,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }
 
     //save log to database and log event
-    await createHyperLog(message, 'warn', null, target, reason);
+    await createHyperLog(oldMessage, 'warn', null, target, reason);
+    //trigger checkup for smart auto report
+    await client.emit('autoReport', message.guild, target, 'warn');
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
     if (moderationAction.state === 1 && moderationAction.channel != null) {

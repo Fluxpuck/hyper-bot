@@ -15,35 +15,18 @@ module.exports = {
     async getUserFromInput(guild, input) {
         if (!input) return false;
 
-        let member //setup member value
-
-        //filter input [1]
+        //filter input
         let mention = new RegExp('<@!?([0-9]+)>', 'g').exec(input)
         let item = mention != null ? mention[1] : input.trim()
 
-        //filter input [2]
-        let filter = mysql.escape(item.replace(',', ''))
-        let filter_item = filter.substring(1).slice(0, -1).trim()
+        //fetch member from guild
+        var member = await guild.members.fetch(item)
+            || await guild.members.cache.get(item)
+            || await guild.members.cache.find(m => m.id == item)
 
-        //get User by id
-        if (filter_item.match(/^[0-9]+$/)) {
-            member = await guild.members.cache.get(filter_item) //get user straight from member cache
-            if (!member) { member = await guild.members.cache.find(member => member.id == filter_item) } //find user in member cache
-            else if (!member) { member = await guild.members.fetch(filter_item) } //fetch member straight from guild
-            //if member is found (by id) return member
-            if (member) return member;
-        }
-
-        //get user by username#discriminator
-        if (filter_item.indexOf('#') > -1) {
-            let [name, discrim] = filter_item.split('#') //split the into username and (#) discriminator
-            member = await guild.members.cache.find(u => u.user.username === name && u.user.discriminator === discrim);
-            //if member is found (by username and discriminator) return member
-            if (member) return member;
-        }
-
-        //if member value is still empty, return false
+        //if member value is present, return member
         if (!member) return false;
+        else return member;
 
     },
 
@@ -92,6 +75,9 @@ module.exports = {
         //get last message from channel
         let LastMessage = await message.channel.messages.fetch({ limit: 1, force: true });
         LastMessage = ([...LastMessage.values()].length > 0) ? [...LastMessage.values()][0] : null
+
+        //add first message to message collection
+        messageCollection.set(LastMessage.id, LastMessage)
 
         //keep fetching messages, till collection is full or last message is null
         while (messageCollection.size < limit) {

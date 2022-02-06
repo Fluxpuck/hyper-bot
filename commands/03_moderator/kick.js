@@ -29,7 +29,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     let reason = (r.length > 0) ? '' : 'No reason was provided.' //set default message if no reason was provided
     r.forEach(word => { reason += `${word} ` }); //set the reason
 
-    // kick the target
+    //kick the target
     const kick = await target.kick({ reason: `{HYPER} ${reason}` }).catch(err => {
         ReplyErrorMessage(oldMessage, `An Error occured, and ${target.user.tag} was not kicked`);
         return false

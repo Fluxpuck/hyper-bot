@@ -41,8 +41,11 @@ module.exports = async (client, member) => {
     const kick = await getModuleSettings(member.guild, 'kick');
     if (kick.state === 1 && kick.channel != null) {
         //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(client, guild, 'MEMBER_KICK', null);
+        const AuditLog = await getAuditLogDetails(client, member.guild, 'MEMBER_KICK', null);
         if (AuditLog != false) {
+
+            //return if Log and Member are not the same!!
+            if (member.id != AuditLog.target.id) return;
 
             //construct message
             const logMessage = new MessageEmbed()
