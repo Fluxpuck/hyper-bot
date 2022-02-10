@@ -28,6 +28,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .addFields({ name: `Prefix`, value: `Desired prefix: \`${newPrefix}\``, inline: false })
         .setColor(embed.color)
 
+    //reset buttons into their default state
+    verify_buttons.components[0].setDisabled(false);
+    verify_buttons.components[1].setDisabled(false);
+
     //return verification message to user
     let verify_message = await message.reply({
         embeds: [messageEmbed],
@@ -46,20 +50,39 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //update defer
         await button.deferUpdate();
 
-        //alter Embed message
-        messageEmbed.setDescription(`Confirmed! Prefix has been updated to: \`${newPrefix}\``)
-        messageEmbed.fields = []; //empty fields
-        messageEmbed.setColor(embed.colour__green);
-        messageEmbed.setTimestamp();
+        //if verified
+        if (button.customId === 'success') {
 
-        //edit verify message
-        verify_message.edit({
-            embeds: [messageEmbed],
-            components: []
-        });
+            //alter Embed message
+            messageEmbed.setDescription(`Confirmed! Prefix has been updated to: \`${newPrefix}\``)
+            messageEmbed.fields = []; //empty fields
+            messageEmbed.setColor(embed.colour__green);
+            messageEmbed.setTimestamp();
 
-        //update guild prefix
-        await updateGuildPrefix(message.guild.id, newPrefix);
+            //edit verify message
+            verify_message.edit({
+                embeds: [messageEmbed],
+                components: []
+            });
+
+            //update guild prefix
+            return updateGuildPrefix(message.guild.id, newPrefix);
+
+        } else {
+
+            //alter Embed message
+            messageEmbed.setDescription(`Stopped! Setup has been cancelled`)
+            messageEmbed.fields = []; //empty fields
+            messageEmbed.setColor(embed.colour__red);
+            messageEmbed.setTimestamp();
+
+            //edit verify message
+            verify_message.edit({
+                embeds: [messageEmbed],
+                components: []
+            });
+
+        }
 
     })
     //when button collection is over, disable buttons
