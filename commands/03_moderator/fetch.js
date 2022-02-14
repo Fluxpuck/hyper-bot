@@ -3,10 +3,10 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { log_button } = require('../../assets/buttons');
+const { LOGS_button } = require('../../assets/buttons');
 
 //load required modules
-const { MessageEmbed, InteractionCollector } = require("discord.js");
+const { MessageEmbed, InteractionCollector, MessageActionRow } = require("discord.js");
 const { FetchHyperLogs, FetchBanLog, FilterTargetLogs } = require("../../utils/AuditManager");
 const { convertSnowflake, capitalize } = require("../../utils/functions");
 const { ReplyErrorMessage, SendModerationActionMessage, ErrorMessage } = require("../../utils/MessageManager");
@@ -96,6 +96,11 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if user has logs and add log button if needed
     let fetch_message;
     if (HyperLogs.length >= 1) {
+
+        //construct log button
+        const log_button = new MessageActionRow()
+            .addComponents(LOGS_button);
+
         //setup logbutton label with amount of Userlogs
         log_button.components[0].setLabel(`Show ${HyperLogs.length} logs`);
         log_button.components[0].setDisabled(false);

@@ -20,8 +20,9 @@ module.exports = async (client, message) => {
     if (pendingAway === false) return;
 
     //setup away time date
-    const awaySince = moment(pendingAway.create_date)
-    const backIn = moment(pendingAway.create_date).add(pendingAway.awayDuration, 'm')
+    const awaySince = moment(pendingAway.create_date);
+    const backIn = moment(pendingAway.create_date).add(pendingAway.awayDuration, 'm');
+    const awayFor = (awaySince.fromNow()).toString();
 
     //check if member is mentioned, else remove away
     if (message.mentions.members.size > 0 && message.mentions.members.size < 2) {
@@ -38,7 +39,7 @@ module.exports = async (client, message) => {
         //setup embed message
         const messageEmbed = new MessageEmbed()
             .setAuthor({ name: `Welcome back ${target.username}`, iconURL: target.displayAvatarURL({ dynamic: false }) })
-            .setDescription(`You've been away from ${(((awaySince.fromNow()).toString()).replace('from', 'for').replace('ago', ''))}`)
+            .setDescription(`You've been away for ${(awayFor.replace('ago', ''))}`)
             .setColor(embed.color);
 
         //remove away from database

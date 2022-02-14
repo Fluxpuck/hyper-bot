@@ -2,10 +2,10 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //import styling
-const { apply_button } = require('../../assets/buttons');
+const { APPLY_button } = require('../../assets/buttons');
 
 //require modules
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow } = require("discord.js");
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
 const { textchannels } = require('../../config/config.json');
 
@@ -23,6 +23,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //create embedded message
     const collect_message = new MessageEmbed()
         .setDescription(`Please click the button to start your application process.`)
+
+    //construct apply button
+    const apply_button = new MessageActionRow()
+        .addComponents(APPLY_button);
 
     //send message to target channel
     await channel.send({

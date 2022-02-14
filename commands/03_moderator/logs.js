@@ -3,10 +3,10 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { page_buttons } = require('../../assets/buttons');
+const { PREVIOUS_button, NEXT_button } = require('../../assets/buttons');
 
 //load required modules
-const { MessageEmbed, InteractionCollector } = require("discord.js");
+const { MessageEmbed, InteractionCollector, MessageActionRow } = require("discord.js");
 const { FetchHyperLogs, FilterTargetLogs } = require("../../utils/AuditManager");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
@@ -120,7 +120,10 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
         messageEmbed.setDescription(descriptionPages[page].join("\n"))
         messageEmbed.setFooter({ text: `${target.user.id} | Page ${page + 1} of ${descriptionPages.length}` });
 
-        //reset buttons into their default state
+        //construct page buttons
+        const page_buttons = new MessageActionRow()
+            .addComponents(PREVIOUS_button, NEXT_button);
+        //reset values
         page_buttons.components[0].setDisabled(true);
         page_buttons.components[1].setDisabled(false);
 

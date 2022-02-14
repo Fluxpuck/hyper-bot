@@ -28,7 +28,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         await saveAway(message.guild.id, message.author.id, awayDuration);
 
         //return message to the user
-        return message.channel.send(`**${message.author.tag}** has gone away for **${awayDuration}** minutes`)
+        return message.channel.send(`**${message.author.tag}** is away for **${awayDuration}** minutes`)
             .then(msg => { setTimeout(() => msg.delete(), 2800) }); //delete message after
 
     }
@@ -41,12 +41,17 @@ module.exports.info = {
     alias: ['brb', 'afk'],
     category: 'misc',
     desc: 'Set an AFK (away from keyboard) timer',
-    usage: '{prefix}away',
+    usage: '{prefix}away [minutes]',
 }
 //slash setup
 module.exports.slash = {
     slash: false,
-    options: [],
+    options: [{
+        name: 'amount',
+        type: 'NUMBER',
+        description: 'Amount of messages',
+        required: true,
+    }],
     permission: [],
     defaultPermission: false,
 }

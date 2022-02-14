@@ -15,7 +15,7 @@ const guildCustomCommandCache = new NodeCache();
 module.exports = {
 
     /** set guild prefix permission for all guilds
-     * @param {Object} client
+     * @param {Object} guild
      */
     async loadGuildPrefixes(guild) {
         var prefix = await getGuildPrefix(guild.id); //get prefix from database
@@ -24,7 +24,7 @@ module.exports = {
     },
 
     /** set guild prefix roles for all guilds
-     * @param {Object} client
+     * @param {Object} guild
      */
     async loadGuildConfiguration(guild) {
         const { modId, jailId, applyId, reportId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
@@ -38,7 +38,7 @@ module.exports = {
     },
 
     /** set all command permissions per guild
-     * @param {*} client 
+     * @param {*} guild 
      */
     async loadCommandPermissions(guild) {
         var collection = await getCommandPerms(guild.id); //get command permissions from database
@@ -54,7 +54,7 @@ module.exports = {
     },
 
     /** set all module permissions per guild
-     * @param {*} client 
+     * @param {*} guild 
      */
     async loadModuleSettings(guild) {
         var collection = await getModuleSets(guild.id); //get module settings from database

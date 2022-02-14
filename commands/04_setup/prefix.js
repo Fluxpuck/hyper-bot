@@ -3,13 +3,14 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { verify_buttons } = require('../../assets/buttons');
+const { CROSS_button, CHECK_button } = require('../../assets/buttons');
 
 //require modules
-const { MessageEmbed, InteractionCollector } = require('discord.js');
+const { MessageEmbed, InteractionCollector, MessageActionRow } = require('discord.js');
 const { updateGuildPrefix } = require('../../database/QueryManager');
 const { capitalize } = require('../../utils/functions');
 const { ReplyErrorMessage } = require('../../utils/MessageManager');
+const { loadGuildPrefixes } = require('../../utils/PermissionManager');
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
@@ -28,7 +29,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .addFields({ name: `Prefix`, value: `Desired prefix: \`${newPrefix}\``, inline: false })
         .setColor(embed.color)
 
-    //reset buttons into their default state
+    //construct verification buttons
+    const verify_buttons = new MessageActionRow()
+        .addComponents(CROSS_button, CHECK_button);
+    //reset values
     verify_buttons.components[0].setDisabled(false);
     verify_buttons.components[1].setDisabled(false);
 
@@ -65,8 +69,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
                 components: []
             });
 
-            //update guild prefix
-            return updateGuildPrefix(message.guild.id, newPrefix);
+            //update guild prefix in database and cache
+            await updateGuildPrefix(message.guild.id, newPrefix);
+            await loadGuildPrefixes(message.guild);
+            return;
 
         } else {
 

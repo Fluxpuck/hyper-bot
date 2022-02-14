@@ -99,10 +99,12 @@ module.exports = {
         }
 
         //setup or alter target status
-        if (HyperBan.length >= 1) { targetStatus = 'banned' }
-        else if (BanLogs) { targetStatus = 'banned' }
-        else if (HyperKick.length >= 1) { targetStatus = 'kicked' }
-        else { targetStatus = 'left' }
+        if (target.user.username == undefined) {
+            if (HyperBan.length >= 1) { targetStatus = 'banned' }
+            else if (BanLogs) { targetStatus = 'banned' }
+            else if (HyperKick.length >= 1) { targetStatus = 'kicked' }
+            else { targetStatus = 'left' }
+        }
 
         //set information
         switch (targetStatus) {
