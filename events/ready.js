@@ -38,6 +38,7 @@ module.exports = async (client) => {
         await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
         await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
+        await DbManager.UpdateAwayTable(guild.id); //update (guild) away tables
 
         await insertGuild(guild); //double check guild in global guild information
 
