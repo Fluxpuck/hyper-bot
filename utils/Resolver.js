@@ -20,13 +20,18 @@ module.exports = {
         let item = mention != null ? mention[1] : input.trim()
 
         //fetch member from guild
-        var member = await guild.members.fetch(item)
-            || await guild.members.cache.get(item)
-            || await guild.members.cache.find(m => m.id == item)
+        try {
+            var member = await guild.members.fetch(item)
+                || await guild.members.cache.get(item)
+                || await guild.members.cache.find(m => m.id == item)
 
-        //if member value is present, return member
-        if (!member) return false;
-        else return member;
+            //if member value is present, return member
+            if (!member) return false;
+            else return member;
+
+        } catch (err) {
+            return false
+        }
 
     },
 

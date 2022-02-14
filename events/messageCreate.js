@@ -3,7 +3,7 @@
 
 //require packages
 const { HandshakeMessage } = require("../utils/MessageManager");
-const { getCommandPermissions, checkCommandPermissions } = require("../utils/PermissionManager");
+const { getCommandPermissions, checkCommandPermissions, getCustomCommand } = require("../utils/PermissionManager");
 
 //exports "message" event
 module.exports = async (client, message) => {
@@ -11,6 +11,9 @@ module.exports = async (client, message) => {
     //ignore private messages and messages from other bots
     if (message.channel.type === 'dm') return
     if (message.author.bot) return
+
+    //check for away feature
+    client.emit('guildMemberAway', message);
 
     //get prefix  
     const prefix = message.guild.prefix;
@@ -48,6 +51,9 @@ module.exports = async (client, message) => {
                 await message.react('701401045473165352'); //react to command
                 commandFile.run(client, message, messageArgs, prefix, verification); //execute command
             } // else message.reply(verification.message);
+        } else {
+            //fire custom command event
+            client.emit('customCommand', message, messageCommand);
         }
     }
 

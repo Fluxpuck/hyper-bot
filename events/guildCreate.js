@@ -11,7 +11,6 @@ const { MessageEmbed } = require('discord.js');
 
 //require config
 const { reportChannel } = require('../config/config.json');
-const { getUserFromInput } = require('../utils/Resolver');
 
 module.exports = async (client, guild) => {
 
@@ -19,6 +18,7 @@ module.exports = async (client, guild) => {
     await DbManager.UpdateGuildTable(); //update (global) guild information table
     await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
     await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands
+    await DbManager.UpdateCustomCommandsTable(guild.id) //update (guild) custom command table
     await DbManager.UpdateLogTable(guild.id); //update (guild) log tables
     await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
     await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
@@ -28,6 +28,7 @@ module.exports = async (client, guild) => {
     await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes
     await PermissionManager.loadGuildConfiguration(guild); //set guild config
     await PermissionManager.loadCommandPermissions(guild); //cache command permissions
+    await PermissionManager.loadCustomCommands(guild); //cache custom commands
     await PermissionManager.loadModuleSettings(guild); //cache module settings
 
     //setup guild's first text channel
@@ -53,7 +54,7 @@ module.exports = async (client, guild) => {
             .setFooter({ text: `Version ${client.version}` })
 
         //get target channel and send message embed
-        // if (channels) return channel.send({ embeds: [handshakeMessage] });
+        if (channels) return channel.send({ embeds: [handshakeMessage] });
 
     } else {
 
@@ -70,7 +71,7 @@ module.exports = async (client, guild) => {
             .setFooter({ text: `Version ${client.version}` })
 
         //get target channel and send message embed
-        // if (channels) channel.send({ embeds: [handshakeMessage] });
+        if (channels) channel.send({ embeds: [handshakeMessage] });
 
         //create reportEmbed
         let reportEmbed = new MessageEmbed()

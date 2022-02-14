@@ -4,12 +4,13 @@
 //require packages
 const NodeCache = require("node-cache");
 const { defaultPrefix, ownerIds } = require('../config/config.json');
-const { getGuildPrefix, getCommandPerms, getModuleSets, getGuildConfig } = require("../database/QueryManager");
+const { getGuildPrefix, getCommandPerms, getModuleSets, getGuildConfig, getCustomCommands } = require("../database/QueryManager");
 const { getUserFromInput } = require("./Resolver");
 
 //build cache
 const guildCommandPermsCache = new NodeCache();
 const guildModulePermsCache = new NodeCache();
+const guildCustomCommandCache = new NodeCache();
 
 module.exports = {
 
@@ -44,6 +45,14 @@ module.exports = {
         await guildCommandPermsCache.set(guild.id, collection); //add to cache
     },
 
+    /** set all custom commands per guild
+     * @param {*} guild 
+     */
+    async loadCustomCommands(guild) {
+        var collection = await getCustomCommands(guild.id); //get custom commands from database
+        await guildCustomCommandCache.set(guild.id, collection); //add to cache
+    },
+
     /** set all module permissions per guild
      * @param {*} client 
      */
@@ -58,7 +67,7 @@ module.exports = {
      * @returns 
      */
     async getCommandPermissions(guild, messageCommand) {
-        const CommandCache = await guildCommandPermsCache.get(guild.id) //get the prefix key value from the cache
+        const CommandCache = await guildCommandPermsCache.get(guild.id) //get the command values from the cache
         const filter = CommandCache.filter(c => c.commandName === messageCommand);
         if (filter.length > 0) {
             var role_perms = filter[0].rolePerms != null ? filter[0].rolePerms.split(',') : null
@@ -66,6 +75,22 @@ module.exports = {
             return { "role_perms": role_perms, "channel_perms": channel_perms }
         } else {
             return { "role_perms": null, "channel_perms": null }
+        }
+    },
+
+    /** get custom command
+     * @param {*} guild 
+     * @param {*} messageCommand 
+     */
+    async getCustomCommand(guild, messageCommand) {
+        const CustomCommandCache = await guildCustomCommandCache.get(guild.id) //get the custom command values from cache
+        const filter = CustomCommandCache.filter(c => c.customName === messageCommand);
+        if (filter.length > 0) {
+            var role_perms = filter[0].rolePerms != null ? filter[0].rolePerms.split(',') : null
+            var channel_perms = filter[0].channelPerms != null ? filter[0].channelPerms.split(',') : null
+            //setup new values
+            filter[0].role_perms = role_perms, filter[0].channel_perms = channel_perms
+            return filter[0];
         }
     },
 
@@ -134,6 +159,7 @@ module.exports = {
 
     //module export the cache
     guildCommandPermsCache,
-    guildModulePermsCache
+    guildModulePermsCache,
+    guildCustomCommandCache
 
 }

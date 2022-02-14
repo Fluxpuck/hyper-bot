@@ -61,26 +61,27 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //fill embedded message
     switch (FilterLogs.status) {
         case 'kicked':
-            messageEmbed
-                .addFields(
-                    { name: `${capitalize(FilterLogs.status)}`, value: `\`\`\`${FilterLogs.reason}\`\`\``, inline: false },
-                    { name: 'Left server', value: `\`\`\`${date_convert.toDateString()}\`\`\``, inline: false },
-                )
+            //setup message embed
+            messageEmbed.addFields(
+                { name: `Status:   ${capitalize(FilterLogs.status)}`, value: `\`\`\`${FilterLogs.reason}\`\`\``, inline: false },
+                { name: 'Leave date', value: `\`\`\`${FilterLogs.date == undefined ? 'Unknown' : date_convert.toDateString()}\`\`\``, inline: false },
+            )
             break;
         case 'banned':
-            messageEmbed
-                .addFields(
-                    { name: `${capitalize(FilterLogs.status)}`, value: `\`\`\`${FilterLogs.reason}\`\`\``, inline: false },
-                    { name: 'Left server', value: `\`\`\`${date_convert.toDateString()}\`\`\``, inline: false },
-                )
+            //setup message embed
+            messageEmbed.addFields(
+                { name: `Status:   ${capitalize(FilterLogs.status)}`, value: `\`\`\`${FilterLogs.reason}\`\`\``, inline: false },
+                { name: 'Leave date', value: `\`\`\`${FilterLogs.date == undefined ? 'Unknown' : date_convert.toDateString()}\`\`\``, inline: false },
+            )
             break;
         case 'left':
-            messageEmbed
-                .addFields(
-                    { name: `${capitalize(FilterLogs.status)}`, value: `\`\`\`Has left the server\`\`\``, inline: false },
-                )
+            //setup message embed
+            messageEmbed.addFields(
+                { name: `Status:   ${capitalize(FilterLogs.status)}`, value: `\`\`\`Has left the server\`\`\``, inline: false },
+            )
             break;
         default:
+            //setup message embed
             messageEmbed
                 .setTitle(`Member information :     ${target.user.tag}     (${HyperLogs.length})`)
                 .setThumbnail(target.user.avatarURL())

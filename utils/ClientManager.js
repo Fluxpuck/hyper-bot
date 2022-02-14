@@ -17,7 +17,7 @@ module.exports = {
      */
     async setClientActivity(client) {
         // Set the client user's presence
-        client.user.setPresence({ activities: [{ type: 'PLAYING', name: 'hyperbot.cc' }], status: 'online' });
+        client.user.setPresence({ activities: [{ type: 'LISTENING', name: 'Fluxpuck' }], status: 'online' });
     },
 
     /** go through all folders and setup client commands

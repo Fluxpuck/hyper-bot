@@ -13,6 +13,11 @@ const { getUserFromInput } = require('../utils/Resolver');
 
 module.exports = async (client, oldMember, newMember) => {
 
+    //get all member details
+    const member = await getUserFromInput(oldMember.guild, oldMember.user.id);
+    const newTimeout = newMember.communicationDisabledUntilTimestamp != null ? new Date(newMember.communicationDisabledUntilTimestamp) : null;
+    const jailId = oldMember.guild.jailId;
+
     //check if member changed their nickname
     if (oldMember.nickname !== newMember.nickname) {
         //get module settings, proceed if true
@@ -59,12 +64,7 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //setup TimeOut values
-    const oldTimeout = oldMember.communicationDisabledUntilTimestamp != null ? new Date(oldMember.communicationDisabledUntilTimestamp) : null;
-    const newTimeout = newMember.communicationDisabledUntilTimestamp != null ? new Date(newMember.communicationDisabledUntilTimestamp) : null;
-    const member = await getUserFromInput(oldMember.guild, oldMember.user.id); //get member
-
-    //new TimeOut, if new timeout time is in the future
+    //check if member got Timed Out
     if (oldMember.isCommunicationDisabled() == false
         && newMember.isCommunicationDisabled() == true) {
 
@@ -83,8 +83,8 @@ module.exports = async (client, oldMember, newMember) => {
             await savePendingMute(oldMember.guild.id, oldMember.user.id, newTimeout);
 
             //add jail role to member, if available
-            if (oldMember.guild.jailId != null) { //give jail role to member
-                try { await member.roles.add(oldMember.guild.jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`); }
+            if (jailId != null) { //give jail role to member
+                try { await member.roles.add(jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`); }
                 catch (error) { }
             }
 
@@ -110,15 +110,16 @@ module.exports = async (client, oldMember, newMember) => {
                 }
             }
         }
+
     }
 
-    //remove TimeOut, if timeout time is in the past
+    //check if Time Out is removed
     if (oldMember.isCommunicationDisabled() == true
         && newMember.isCommunicationDisabled() == false) {
 
         //remove jail role to member, if available
-        if (oldMember.guild.jailId != null) { //give jail role to member
-            try { await member.roles.remove(oldMember.guild.jailId, `Timeout revoked`); }
+        if (jailId != null) { //give jail role to member
+            try { await member.roles.remove(jailId, `Timeout revoked`); }
             catch (error) { }
         }
 
@@ -149,74 +150,62 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //setup member roles
-    const oldMember_roles = oldMember._roles;
-    const newMember_roles = newMember._roles;
-    const jailId = oldMember.guild.jailId;
+    //check if member got Muted (old ways)
+    if (newMember.isCommunicationDisabled() == false
+        && oldMember.roles.cache.has(jailId) == false
+        && newMember.roles.cache.has(jailId) == true) {
 
-    //check if member update increased roles
-    if (oldMember_roles.length < newMember_roles.length) {
-        if (jailId) { //if jailId is available
+        //fetch log, and if nessesary, save to database
+        const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_ROLE_UPDATE', 10);
 
-            //check if member has received the jail role
-            if (oldMember_roles.includes(jailId) == false
-                && newMember_roles.includes(jailId) == true) {
+        //get module settings, proceed if true
+        const mute = await getModuleSettings(oldMember.guild, 'mute');
+        if (mute.state === 1 && mute.channel != null) {
 
-                //fetch log, and if nessesary, save to database
-                const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_ROLE_UPDATE', 10);
+            //if auditlog is not false, log time out
+            if (AuditLog != false) {
 
-                //get module settings, proceed if true
-                const mute = await getModuleSettings(oldMember.guild, 'mute');
-                if (mute.state === 1 && mute.channel != null) {
-                    //if auditlog is not false, log time out
-                    if (AuditLog != false) {
+                //construct message
+                const logMessage = new MessageEmbed()
+                    .setTitle(`${AuditLog.target.username} is Muted for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
+                    .setDescription(`Mute was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
+                    .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
+                    .setColor(embed.colour__red)
+                    .setTimestamp()
+                    .setFooter({ text: `${AuditLog.log.id}` })
 
-                        //construct message
-                        const logMessage = new MessageEmbed()
-                            .setTitle(`${AuditLog.target.username} is Muted for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
-                            .setDescription(`Mute was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
-                            .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
-                            .setColor(embed.colour__red)
-                            .setTimestamp()
-                            .setFooter({ text: `${AuditLog.log.id}` })
+                //get target channel and send message embed
+                const targetChannel = oldMember.guild.channels.cache.get(mute.channel);
+                if (targetChannel) targetChannel.send({ embeds: [logMessage] });
 
-                        //get target channel and send message embed
-                        const targetChannel = oldMember.guild.channels.cache.get(mute.channel);
-                        if (targetChannel) targetChannel.send({ embeds: [logMessage] });
-
-                    }
-                }
             }
         }
+
     }
 
-    //check if member update decreased roles
-    if (oldMember_roles.length > newMember_roles.length) {
-        if (jailId) { //if jailId is available
+    //check if Mute is removed (old ways)
+    if (oldMember.isCommunicationDisabled() == false
+        && oldMember.roles.cache.has(jailId) == true
+        && newMember.roles.cache.has(jailId) == false) {
 
-            //check if member has lost the jail role
-            if (oldMember_roles.includes(jailId) == true
-                && newMember_roles.includes(jailId) == false) {
+        //get module settings, proceed if true
+        const muteRevoke = await getModuleSettings(oldMember.guild, 'muteRevoke');
+        if (muteRevoke.state === 1 && muteRevoke.channel != null) {
 
-                //get module settings, proceed if true
-                const muteRevoke = await getModuleSettings(oldMember.guild, 'muteRevoke');
-                if (muteRevoke.state === 1 && muteRevoke.channel != null) {
+            //construct message
+            const logMessage = new MessageEmbed()
+                .setTitle(`${oldMember.user.tag} Time out is revoked`)
+                .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
+                .setColor(embed.colour__blue)
+                .setTimestamp()
+                .setFooter({ text: `${oldMember.user.id}` })
 
-                    //construct message
-                    const logMessage = new MessageEmbed()
-                        .setTitle(`${oldMember.user.tag} Time out is revoked`)
-                        .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
-                        .setColor(embed.colour__blue)
-                        .setTimestamp()
-                        .setFooter({ text: `${oldMember.user.id}` })
+            //get target channel and send message embed
+            const targetChannel = oldMember.guild.channels.cache.get(muteRevoke.channel);
+            if (targetChannel) targetChannel.send({ embeds: [logMessage] });
 
-                    //get target channel and send message embed
-                    const targetChannel = oldMember.guild.channels.cache.get(muteRevoke.channel);
-                    if (targetChannel) targetChannel.send({ embeds: [logMessage] });
-
-                }
-            }
         }
+
     }
 
     return;

@@ -6,13 +6,11 @@ const PermissionManager = require('../../utils/PermissionManager');
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
-
     //get and cache guild prefix, command permissions and module settings
     await PermissionManager.loadGuildPrefixes(client); //cache guild prefixes
     await PermissionManager.loadGuildConfiguration(client); //set guild roles
     await PermissionManager.loadCommandPermissions(client); //cache command permissions
     await PermissionManager.loadModuleSettings(client); //cache module settings
-
 
 }
 

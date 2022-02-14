@@ -33,16 +33,19 @@ module.exports = async (client) => {
         await DbManager.UpdateGuildTable(); //update (global) guild information table
         await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
         await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands
+        await DbManager.UpdateCustomCommandsTable(guild.id) //update (guild) custom command table
         await DbManager.UpdateLogTable(guild.id); //update (guild) log tables
         await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
         await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
         await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
+        await DbManager.UpdateAwayTable(guild.id); //update (guild) away tables
 
         await insertGuild(guild); //double check guild in global guild information
 
         await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes
         await PermissionManager.loadGuildConfiguration(guild); //set guild config
         await PermissionManager.loadCommandPermissions(guild); //cache command permissions
+        await PermissionManager.loadCustomCommands(guild); //cache custom commands
         await PermissionManager.loadModuleSettings(guild); //cache module settings
     }
 

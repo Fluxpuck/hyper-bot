@@ -121,6 +121,6 @@ module.exports = {
         } else { //if no timer is set, just return error message
             return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
         }
-    }
+    },
 
 }

@@ -5,6 +5,7 @@
 //get credentials through dot envoirement
 require('dotenv').config({ path: './config/.env' });
 var cron = require('node-cron');
+const NodeCache = require("node-cache");
 
 //get Intents BitField from config
 const { INTENTS_BITFIELD } = require('./config/Intents');
@@ -19,6 +20,7 @@ const client = new Client({
 //set Client information 
 client.commands = new Collection();
 client.events = new Collection();
+client.cooldowns = new NodeCache();
 client.dependencies = require('./package.json').dependencies
 client.version = require('./package.json').version
 

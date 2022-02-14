@@ -86,37 +86,43 @@ module.exports = {
         //setup empty values
         let logReason, logDate, targetStatus
 
-        //if target username is undefined, fetch info from logs
+        //filter for simularities between ban and hyper logs
+        const HyperBan = HyperLogs.filter(log => { return log.type === 'ban' && log.target.id == BanLogs.target.id && log.reason == BanLogs.reason })
+        const HyperKick = HyperLogs.filter(log => { return log.type === 'kick' })
+
+        //if username is undefined, fetch info from logs
         if (target.user.username == undefined) {
-            //filter for simularities between ban and hyper logs
-            const HyperBan = HyperLogs.filter(log => { return log.type === 'ban' && log.target.id == BanLogs.target.id && log.reason == BanLogs.reason })
-            const HyperKick = HyperLogs.filter(log => { return log.type === 'kick' })
+            //get username from logs!
+            if (HyperBan.length >= 1) target.user.username = HyperBan[0].target.username
+            if (HyperKick.length >= 1) target.user.username = HyperKick[0].target.username
+            if (BanLogs) target.user.username = BanLogs.target.username
+        }
 
-            //if target username is unpresent, fetch form Audits
-            if (target.user.username == undefined) {
-                target.user.username = HyperLogs[0].target.username || HyperKick[0].target.username
-            }
+        //setup or alter target status
+        if (HyperBan.length >= 1) { targetStatus = 'banned' }
+        else if (BanLogs) { targetStatus = 'banned' }
+        else if (HyperKick.length >= 1) { targetStatus = 'kicked' }
+        else { targetStatus = 'left' }
 
-            //setup or alter target status
-            if (HyperBan.length >= 1) { targetStatus = 'banned', BanLogs.date = HyperBan[0].date }
-            else if (HyperKick.length >= 1) { targetStatus = 'kicked' }
-            else { targetStatus = 'left' }
+        //set information
+        switch (targetStatus) {
+            case 'banned':
+                //setup log Reason & log Date
+                logReason = BanLogs.reason
+                logDate = HyperBan.length >= 1 ? HyperBan[0].date.create : undefined
+                break;
 
-            switch (targetStatus) {
-                case 'banned':
-                    logReason = BanLogs.reason
-                    logDate = HyperBan.length >= 1 ? HyperBan[0].date.create : undefined
-                    break;
-                case 'kicked':
-                    logReason = HyperKick[0].reason
-                    logDate = HyperKick[0].date.create
-                    break;
-                case 'left':
-                    logReason = undefined
-                    logDate = undefined
-                    break;
-            }
+            case 'kicked':
+                //setup log Reason & log Date
+                logReason = HyperKick[0].reason
+                logDate = HyperKick[0].date.create
+                break;
 
+            case 'left':
+                //setup log Reason & log Date
+                logReason = undefined
+                logDate = undefined
+                break;
         }
 
         //return value
