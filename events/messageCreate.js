@@ -12,8 +12,9 @@ module.exports = async (client, message) => {
     if (message.channel.type === 'dm') return
     if (message.author.bot) return
 
-    //check for away feature
+    //check for away, and status features
     client.emit('guildMemberAway', message);
+    client.emit('guildMemberStatus', message);
 
     //get prefix  
     const prefix = message.guild.prefix;

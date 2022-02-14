@@ -49,7 +49,7 @@ module.exports.slash = {
     options: [{
         name: 'amount',
         type: 'NUMBER',
-        description: 'Amount of messages',
+        description: 'Time in minutes',
         required: true,
     }],
     permission: [],

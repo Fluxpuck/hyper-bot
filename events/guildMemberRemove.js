@@ -8,6 +8,7 @@ const embed = require('../assets/embed.json');
 const { getModuleSettings } = require("../utils/PermissionManager");
 const { FetchHyperLogs, getAuditLogDetails } = require('../utils/AuditManager');
 const { MessageEmbed } = require('discord.js');
+const { removeAway, removeStatus } = require('../database/QueryManager');
 
 module.exports = async (client, member) => {
 
@@ -63,8 +64,9 @@ module.exports = async (client, member) => {
         }
     }
 
-    //remove user from status table
-    //remove user from away table
+    //remove user from away, and status table
+    await removeAway(member.guild.id, member.id);
+    await removeStatus(member.guild.id, member.id);
 
     return;
 }
