@@ -32,3 +32,4 @@ yarn.lock
 FAQ.md
 fetchGuildDetails.js
 autoReport.js
+transfer.js

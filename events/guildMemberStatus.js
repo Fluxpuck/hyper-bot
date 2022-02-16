@@ -1,5 +1,5 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
-    This event is triggers by Discord and does processing of data  */
+    This private-event is triggers by Discord and does processing of data  */
 
 //import styling from assets
 const { MessageEmbed } = require('discord.js');
@@ -34,7 +34,7 @@ module.exports = async (client, message) => {
         const cooldownKey = `${mention.id}_status`
         //check if author has cooldown, else setup cooldown
         if (client.cooldowns.has(cooldownKey)) return;
-        else client.cooldowns.set(cooldownKey, pendingStatus, 20); //20 seconds cooldown
+        else client.cooldowns.set(cooldownKey, pendingStatus, 60); //60 seconds cooldown
 
         //setup embed message
         const messageEmbed = new MessageEmbed()

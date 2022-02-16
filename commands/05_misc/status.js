@@ -34,12 +34,14 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .setColor(embed.color);
 
     //save or update status feature
-    await saveStatus(message.guild.id, message.author.id, statusMessage);
+    await saveStatus(message.guild.id, message.author, statusMessage);
 
     //return message to the user
-    return message.reply({ content: `Your status has been set to:`, embeds: [messageEmbed] })
+    await message.reply({ content: `Your status has been set to:`, embeds: [messageEmbed] })
     // .then(msg => { setTimeout(() => msg.delete(), 2800) }); //delete message after
 
+    //update status Dashboard
+    return client.emit('statusDashboard');
 }
 
 //command information
