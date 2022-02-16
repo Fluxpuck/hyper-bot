@@ -17,8 +17,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (arguments.length < 1) {
         //remove status from database
         await removeStatus(message.guild.id, message.author.id);
-        //delete command message
-        return setTimeout(() => message.delete().catch((err) => { }), 100)
+        //update status Dashboard
+        client.emit('statusDashboard');
+        //return message to user
+        return message.reply(`Your status has been removed`)
     }
 
     //check for status message length

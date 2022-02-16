@@ -36,7 +36,6 @@ module.exports = async (client) => {
 
         //await for statusses from database
         const pendingStatus = await getAllStatus(guild.id);
-        if (pendingStatus.length <= 0) return;
 
         //setup embed message
         const messageEmbed = new MessageEmbed()
@@ -46,25 +45,30 @@ module.exports = async (client) => {
             .setTimestamp()
             .setFooter({ text: `Last update` })
 
+        //empty all fields, before updating it again
+        messageEmbed.fields = []
+
         //go over all statusses and insert into embed message
         for await (let status of pendingStatus) {
-
             //setup away time date
+            const now = moment(new Date());
             const awaySince = moment(status.date);
-            const awayFor = (awaySince.fromNow()).toString();
+            const awayFor = awaySince.fromNow(now);
 
             //add individual status to dashboard
-            messageEmbed
-                .addField(`${status.memberName} :     ${awayFor}`, `\`\`\`${clean(client, status.status)}\`\`\``, false)
+            messageEmbed.addField(`${status.memberName} :     ${awayFor}`, `\`\`\`${clean(client, status.status)}\`\`\``, false)
+        }
 
+        //add message if pendingStatus array is empty
+        if (pendingStatus.length <= 0) {
+            //add individual status to dashboard
+            messageEmbed.addField(`It's kinda empty in here...`, `Seems like no one has set a status`, false)
         }
 
         //if no messageId is unavailable, send a message
         if (!messageId) {
-
             //send status dashboard
             message = await channel.send({ embeds: [messageEmbed] });
-
             //update statusId in database
             const statusId = `${guild.statusId}/${message.id}`
             await updateStatusDashboard(guild.id, statusId)
