@@ -3,7 +3,7 @@
 
 //require packages
 const { HandshakeMessage } = require("../utils/MessageManager");
-const { getCommandPermissions, checkCommandPermissions, getCustomCommand } = require("../utils/PermissionManager");
+const { getCommandPermissions, checkCommandPermissions } = require("../utils/PermissionManager");
 
 //exports "message" event
 module.exports = async (client, message) => {
@@ -70,7 +70,7 @@ module.exports = async (client, message) => {
                 }
                 //reply with server info
                 message.reply(`Hello, your current server prefix is \`${prefix}\``)
-                    .then(msg => { setTimeout(() => msg.delete(), 5000) })
+                    .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
             }
         }
     }

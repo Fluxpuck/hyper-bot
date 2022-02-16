@@ -37,7 +37,7 @@ module.exports = {
         if (message.slashinteraction == true) {
             return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
         } else if (timer) { //if timer is set return error message and remove
-            return message.channel.send({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete(), timer); })
+            return message.channel.send({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
         } else { //if no timer is set, just return error message
             return message.channel.send({ embeds: [ErrorEmbed] })
         }
@@ -57,7 +57,7 @@ module.exports = {
             return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
         } else if (timer) { //if timer is set return error message and remove
             return message.reply({ embeds: [ErrorEmbed] })
-                .then(msg => { setTimeout(() => msg.delete(), timer); })
+                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
         } else { //if no timer is set, just return error message
             return message.reply({ embeds: [ErrorEmbed] })
         }
@@ -117,7 +117,7 @@ module.exports = {
         //check if a remove timer is set!
         if (timer) { //if timer is set return error message and remove
             return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
-                .then(msg => { setTimeout(() => msg.delete(), timer); })
+                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
         } else { //if no timer is set, just return error message
             return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
         }

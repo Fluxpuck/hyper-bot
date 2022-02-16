@@ -18,7 +18,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //remove status from database
         await removeStatus(message.guild.id, message.author.id);
         //delete command message
-        return setTimeout(() => message.delete(), 100);
+        return setTimeout(() => message.delete().catch((err) => { }), 100)
     }
 
     //check for status message length
@@ -38,7 +38,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //return message to the user
     await message.reply({ content: `Your status has been set to:`, embeds: [messageEmbed] })
-    // .then(msg => { setTimeout(() => msg.delete(), 2800) }); //delete message after
+    // .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 2800) }); //delete message after
 
     //update status Dashboard
     return client.emit('statusDashboard');

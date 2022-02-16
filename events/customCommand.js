@@ -23,7 +23,7 @@ module.exports = async (client, message, commandName) => {
     if (verification.status === true) {
 
         //delete message
-        setTimeout(() => message.delete(), 100);
+        setTimeout(() => message.delete().catch((err) => { }), 100)
 
         //get command details
         var { customResponse, embed, cooldown } = customCommand

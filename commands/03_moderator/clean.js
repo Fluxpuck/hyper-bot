@@ -15,7 +15,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //delete command message
-    if (!interaction) setTimeout(() => message.delete(), 100);
+    if (!interaction) setTimeout(() => message.delete().catch((err) => { }), 100)
 
     //if there are no arguments, no amount has been defined
     if (arguments.length < 1) return ReplyErrorMessage(oldMessage, 'Amount was not provided', 4800);

@@ -93,9 +93,9 @@ module.exports = {
         //if username is undefined, fetch info from logs
         if (target.user.username == undefined) {
             //get username from logs!
-            if (HyperBan.length >= 1) target.user.username = HyperBan[0].target.username
-            if (HyperKick.length >= 1) target.user.username = HyperKick[0].target.username
-            if (BanLogs) target.user.username = BanLogs.target.username
+            if (HyperBan.length >= 1) target.user.username = HyperBan[0].target.username, targetStatus = 'banned'
+            if (HyperKick.length >= 1) target.user.username = HyperKick[0].target.username, targetStatus = 'kicked'
+            if (BanLogs) target.user.username = BanLogs.target.username, targetStatus = 'banned'
         }
 
         //setup or alter target status

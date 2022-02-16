@@ -9,7 +9,7 @@ const { ReplyErrorMessage } = require("../../utils/MessageManager");
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 100);
+    setTimeout(() => message.delete().catch((err) => { }), 100)
 
     //if there are no arguments, no duration has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, 'No away duration was provided', 4800);
@@ -29,7 +29,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
         //return message to the user
         return message.channel.send(`**${message.author.tag}** is away for **${awayDuration}** minutes`)
-            .then(msg => { setTimeout(() => msg.delete(), 2800) }); //delete message after
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 2800) }); //delete message after
 
     }
     return;

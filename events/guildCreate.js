@@ -2,12 +2,12 @@
     This event is triggers by Discord and does processing of data  */
 
 //import styling from assets
+const { MessageEmbed } = require('discord.js');
 const embed = require('../assets/embed.json');
 
 //require modules
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
-const { MessageEmbed } = require('discord.js');
 
 //require config
 const { reportChannel } = require('../config/config.json');

@@ -14,7 +14,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (interaction) message = await interaction.fetchReply();
 
     //delete command message
-    if (!interaction) setTimeout(() => message.delete(), 100);
+    if (!interaction) setTimeout(() => message.delete().catch((err) => { }), 100)
 
     //divide the input {amount, user}
     const { amount, member } = input = await inputType(message.guild, arguments.slice(0, 2))

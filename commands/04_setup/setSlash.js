@@ -31,7 +31,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 module.exports.info = {
     name: 'slash',
     alias: [],
-    category: '',
+    category: 'setup',
     desc: 'Enable or Disable slash commands',
     usage: '{prefix}test',
 }

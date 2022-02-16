@@ -4,7 +4,7 @@
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
-
+    setTimeout(() => message.delete().catch((err) => { }), 5000)
 
 }
 

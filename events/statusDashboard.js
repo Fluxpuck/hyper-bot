@@ -19,9 +19,16 @@ module.exports = async (client) => {
         //check if dashboard has been setup
         if (guild.statusId === null) return;
 
-        //get channelId and messageId
-        const channelId = guild.statusId.split('/')[0];
-        const messageId = guild.statusId.split('/')[1];
+        //if value can be split
+        var channelId, messageId;
+        if (guild.statusId.includes('/')) {
+            //set channelId and messageId
+            channelId = guild.statusId.split('/')[0];
+            messageId = guild.statusId.split('/')[1];
+        } else {
+            //set channelId
+            channeldId = guild.statusId;
+        }
 
         //get channel and message
         const channel = await guild.channels.cache.get(channelId);
