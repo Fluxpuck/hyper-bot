@@ -9,7 +9,7 @@ const { ReplyErrorMessage } = require("../../utils/MessageManager");
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //delete command message
-    setTimeout(() => message.delete(), 100);
+    setTimeout(() => message.delete().catch((err) => { }), 100)
 
     //if there are no arguments, no duration has been defined
     if (arguments.length < 1) return ReplyErrorMessage(message, 'No away duration was provided', 4800);
@@ -28,8 +28,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         await saveAway(message.guild.id, message.author.id, awayDuration);
 
         //return message to the user
-        return message.channel.send(`**${message.author.tag}** has gone away for **${awayDuration}** minutes`)
-            .then(msg => { setTimeout(() => msg.delete(), 2800) }); //delete message after
+        return message.channel.send(`**${message.author.tag}** is away for **${awayDuration}** minutes`)
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 2800) }); //delete message after
 
     }
     return;
@@ -41,12 +41,17 @@ module.exports.info = {
     alias: ['brb', 'afk'],
     category: 'misc',
     desc: 'Set an AFK (away from keyboard) timer',
-    usage: '{prefix}away',
+    usage: '{prefix}away [minutes]',
 }
 //slash setup
 module.exports.slash = {
     slash: false,
-    options: [],
+    options: [{
+        name: 'amount',
+        type: 'NUMBER',
+        description: 'Time in minutes',
+        required: true,
+    }],
     permission: [],
     defaultPermission: false,
 }

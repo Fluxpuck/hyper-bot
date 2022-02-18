@@ -2,12 +2,12 @@
     This event is triggers by Discord and does processing of data  */
 
 //import styling from assets
+const { MessageEmbed } = require('discord.js');
 const embed = require('../assets/embed.json');
 
 //require modules
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
-const { MessageEmbed } = require('discord.js');
 
 //require config
 const { reportChannel } = require('../config/config.json');
@@ -63,7 +63,7 @@ module.exports = async (client, guild) => {
             .setTitle(`Thank you for adding me!`)
             .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, and more!`)
             .addFields(
-                { name: `Activation`, value: `A notification has been send to \`Fluxpuck#0001\`. Please wait for his approval, before the bot becomes activated.`, inline: false },
+                { name: `Activation`, value: `A notification has been sent to \`Fluxpuck#0001\`. Please wait for his approval, before the bot becomes activated.`, inline: false },
                 { name: `\u200b`, value: `Developed with ❤️ by Fluxpuck#0001`, inline: false }
             )
             .setColor(embed.color)

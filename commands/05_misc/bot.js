@@ -3,10 +3,10 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { web_button } = require('../../assets/buttons');
+const { WEB_button } = require('../../assets/buttons');
 
 //load required modules
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageActionRow } = require('discord.js');
 const { msToTime } = require('../../utils/functions');
 
 //require info
@@ -29,6 +29,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         )
         .setThumbnail(embed.thumbnail)
         .setColor(embed.color)
+
+    //construct website button
+    const web_button = new MessageActionRow()
+        .addComponents(WEB_button);
 
     //reply to message with embed
     return message.reply({

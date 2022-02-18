@@ -33,5 +33,10 @@ cron.schedule('* * * * *', () => {
     client.emit('pendingMutes');
 })
 
+//update Status Dashboard, every 1 minute
+cron.schedule('*/15 * * * *', () => {
+    client.emit('statusDashboard');
+})
+
 //client login to discord
 client.login(process.env.TOKEN);

@@ -7,7 +7,8 @@ const embed = require('../assets/embed.json');
 
 //load required modules
 const moment = require('moment');
-const { getAway, removeAway } = require('../database/QueryManager');
+const { getStatus } = require('../database/QueryManager');
+const { clean } = require('../utils/functions');
 
 module.exports = async (client, message) => {
 
@@ -16,37 +17,34 @@ module.exports = async (client, message) => {
     const target = (message.mentions.members.size > 0 && message.mentions.members.size < 2) ? message.mentions.users.first() : member.user
 
     //get pending Away
-    const pendingAway = await getAway(guild.id, target.id)
-    if (pendingAway === false) return;
+    const pendingStatus = await getStatus(guild.id, target.id)
+    if (pendingStatus === false) return;
 
     //setup away time date
-    const awaySince = moment(pendingAway.create_date).subtract(1, 'h');
-    const backIn = moment(pendingAway.create_date).add(pendingAway.awayDuration, 'm');
+    const awaySince = moment(pendingStatus.create_date);
     const awayFor = (awaySince.fromNow()).toString();
 
     //check if member is mentioned, else remove away
     if (message.mentions.members.size > 0 && message.mentions.members.size < 2) {
+
+        //get mentioned user
+        const mention = message.mentions.users.first();
+
+        //check, and set cooldown
+        const cooldownKey = `${mention.id}_status`
+        //check if author has cooldown, else setup cooldown
+        if (client.cooldowns.has(cooldownKey)) return;
+        else client.cooldowns.set(cooldownKey, pendingStatus, 60); //60 seconds cooldown
+
         //setup embed message
         const messageEmbed = new MessageEmbed()
-            .setAuthor({ name: `${target.tag} is away and will be back ${backIn.fromNow()}...`, iconURL: target.displayAvatarURL({ dynamic: false }) })
+            .setAuthor({ name: `${target.tag}:   ${awayFor}`, iconURL: target.displayAvatarURL({ dynamic: false }) })
+            .setDescription(`${clean(client, pendingStatus.status)}`)
             .setColor(embed.color);
-
-        //return message to user
-        return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }); //delete message after
-
-    } else {
-        //setup embed message
-        const messageEmbed = new MessageEmbed()
-            .setAuthor({ name: `Welcome back ${target.username}`, iconURL: target.displayAvatarURL({ dynamic: false }) })
-            .setDescription(`You've been away for ${(awayFor.replace('ago', ''))}`)
-            .setColor(embed.color);
-
-        //remove away from database
-        await removeAway(guild.id, member.id);
 
         //return message to user
         return message.reply({ embeds: [messageEmbed] })
             .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }); //delete message after
     }
+    return;
 }

@@ -42,11 +42,11 @@ module.exports = async (client, oldMessage, newMessage) => {
             .setFooter({ text: `${oldMessage.author.id}` })
 
         //don't log in channels that are excepted from logging
-        if (messageChange.exceptions.includes(oldMessage.channelId)) return;
-        //get target channel and send message embed
-        const targetChannel = oldMessage.guild.channels.cache.get(messageChange.channel);
-        if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
-
+        if (messageChange.exceptions.includes(oldMessage.channelId) == false) {
+            //get target channel and send message embed
+            const targetChannel = oldMessage.guild.channels.cache.get(messageChange.channel);
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+        }
     }
     return;
 }

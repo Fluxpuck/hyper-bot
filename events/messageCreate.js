@@ -3,7 +3,7 @@
 
 //require packages
 const { HandshakeMessage } = require("../utils/MessageManager");
-const { getCommandPermissions, checkCommandPermissions, getCustomCommand } = require("../utils/PermissionManager");
+const { getCommandPermissions, checkCommandPermissions } = require("../utils/PermissionManager");
 
 //exports "message" event
 module.exports = async (client, message) => {
@@ -12,8 +12,9 @@ module.exports = async (client, message) => {
     if (message.channel.type === 'dm') return
     if (message.author.bot) return
 
-    //check for away feature
+    //check for away, and status features
     client.emit('guildMemberAway', message);
+    client.emit('guildMemberStatus', message);
 
     //get prefix  
     const prefix = message.guild.prefix;
@@ -43,8 +44,8 @@ module.exports = async (client, message) => {
         //if a commandFile has been found, check permissions and execute
         if (commandFile) {
             //get command permissions from cache
-            const permissions = await getCommandPermissions(message.guild, messageCommand);
-            const verification = await checkCommandPermissions(message, messageCommand, permissions);
+            const permissions = await getCommandPermissions(message.guild, commandFile.info.name);
+            const verification = await checkCommandPermissions(message, commandFile.info.name, permissions);
 
             //execute commandfile if user has permission
             if (verification.status === true) {
@@ -69,7 +70,7 @@ module.exports = async (client, message) => {
                 }
                 //reply with server info
                 message.reply(`Hello, your current server prefix is \`${prefix}\``)
-                    .then(msg => { setTimeout(() => msg.delete(), 5000) })
+                    .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
             }
         }
     }

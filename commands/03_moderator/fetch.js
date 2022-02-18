@@ -3,10 +3,10 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { log_button } = require('../../assets/buttons');
+const { LOGS_button } = require('../../assets/buttons');
 
 //load required modules
-const { MessageEmbed, InteractionCollector } = require("discord.js");
+const { MessageEmbed, InteractionCollector, MessageActionRow } = require("discord.js");
 const { FetchHyperLogs, FetchBanLog, FilterTargetLogs } = require("../../utils/AuditManager");
 const { convertSnowflake, capitalize } = require("../../utils/functions");
 const { ReplyErrorMessage, SendModerationActionMessage, ErrorMessage } = require("../../utils/MessageManager");
@@ -29,22 +29,28 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target == false) {
         //filter input from user
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
-        let item = filter != null ? filter[1] : arguments[0].trim();
+        let userId = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
-        if (convertSnowflake(item) === false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
+        if (convertSnowflake(userId) === false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
         //set target letiables
-        target = { key: null, id: item, user: { id: item, username: undefined } };
+        target = { left: true, id: userId, user: { id: userId, username: undefined } };
     }
 
-    //fetch Audit & Hyper logs
-    const HyperLogs = await FetchHyperLogs(message.guild, target);
+    //get target logs from database
+    const UserLogs = await FetchHyperLogs(message.guild, target);
     const BanLogs = await FetchBanLog(message.guild, target);
 
-    //return error if no information was found
-    if (target.key === null && HyperLogs === false && BanLogs === false) return ReplyErrorMessage(oldMessage, '@user nor any logs were found', 4800);
+    //check if user is not in the server no more
+    //and no logs or ban has been found
+    if (target.left == true
+        && UserLogs.length <= 0
+        && BanLogs === false) {
+        //return error message
+        return ReplyErrorMessage(oldMessage, '@user nor any logs were found', 4800);
+    }
 
-    //filter all log information from both Audit and Hyper logs
-    const FilterLogs = await FilterTargetLogs(target, HyperLogs, BanLogs)
+    //filter all log information from both UserLogs and AuditBans
+    const FilterLogs = await FilterTargetLogs(target, UserLogs, BanLogs)
 
     //modify timestamp
     let date_number = new Number(FilterLogs.date);
@@ -52,7 +58,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //construct Embed message
     const messageEmbed = new MessageEmbed()
-        .setTitle(`Member information :     ${target.user.username}     (${HyperLogs.length})`)
+        .setTitle(`Member information :     ${target.user.username}     (${UserLogs.length})`)
         .setDescription(`<@${target.user.id}>  -  ${target.user.id}`)
         .setColor(embed.color)
         .setTimestamp()
@@ -83,7 +89,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         default:
             //setup message embed
             messageEmbed
-                .setTitle(`Member information :     ${target.user.tag}     (${HyperLogs.length})`)
+                .setTitle(`Member information :     ${target.user.tag}     (${UserLogs.length})`)
                 .setThumbnail(target.user.avatarURL())
                 .addFields(
                     { name: 'Avatar', value: target.user.displayAvatarURL(), inline: false },
@@ -95,9 +101,14 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //check if user has logs and add log button if needed
     let fetch_message;
-    if (HyperLogs.length >= 1) {
+    if (UserLogs.length >= 1) {
+
+        //construct log button
+        const log_button = new MessageActionRow()
+            .addComponents(LOGS_button);
+
         //setup logbutton label with amount of Userlogs
-        log_button.components[0].setLabel(`Show ${HyperLogs.length} logs`);
+        log_button.components[0].setLabel(`Show ${UserLogs.length} logs`);
         log_button.components[0].setDisabled(false);
 
         //send messageEmbed
