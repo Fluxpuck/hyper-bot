@@ -44,8 +44,8 @@ module.exports = async (client, message) => {
         //if a commandFile has been found, check permissions and execute
         if (commandFile) {
             //get command permissions from cache
-            const permissions = await getCommandPermissions(message.guild, messageCommand);
-            const verification = await checkCommandPermissions(message, messageCommand, permissions);
+            const permissions = await getCommandPermissions(message.guild, commandFile.info.name);
+            const verification = await checkCommandPermissions(message, commandFile.info.name, permissions);
 
             //execute commandfile if user has permission
             if (verification.status === true) {

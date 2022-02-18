@@ -9,8 +9,12 @@ const { getModuleSettings } = require("../utils/PermissionManager");
 const { FetchHyperLogs } = require('../utils/AuditManager');
 const { MessageEmbed } = require('discord.js');
 const { checkPendingMute } = require('../database/QueryManager');
+const { getUserFromInput } = require('../utils/Resolver');
 
 module.exports = async (client, member) => {
+
+    //fetch member
+    await getUserFromInput(member.guild, member.id);
 
     //get module settings, proceed if true
     const guildJoin = await getModuleSettings(member.guild, 'guildJoin');

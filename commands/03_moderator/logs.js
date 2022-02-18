@@ -7,7 +7,7 @@ const { PREVIOUS_button, NEXT_button } = require('../../assets/buttons');
 
 //load required modules
 const { MessageEmbed, InteractionCollector, MessageActionRow } = require("discord.js");
-const { FetchHyperLogs, FilterTargetLogs } = require("../../utils/AuditManager");
+const { FetchHyperLogs, FilterTargetLogs, FetchBanLog } = require("../../utils/AuditManager");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getUserFromInput } = require("../../utils/Resolver");
 const { chunk, time, convertSnowflake } = require('../../utils/functions');
@@ -29,21 +29,28 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target == false) {
         //filter input from user
         let filter = new RegExp('<@!?([0-9]+)>', 'g').exec(arguments[0]);
-        let item = filter != null ? filter[1] : arguments[0].trim();
+        let userId = filter != null ? filter[1] : arguments[0].trim();
         //return if input was not a snowflake
-        if (convertSnowflake(item) === false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
+        if (convertSnowflake(userId) === false) return ReplyErrorMessage(oldMessage, '@user was not found', 4800);
         //set target letiables
-        target = { key: null, id: item, user: { id: item, username: undefined } };
+        target = { left: true, id: userId, user: { id: userId, username: undefined } };
     }
 
     //get target logs from database
     const UserLogs = await FetchHyperLogs(message.guild, target);
+    const BanLogs = await FetchBanLog(message.guild, target);
 
-    //return error if no information was found
-    if (target.key === null && UserLogs === false) return ReplyErrorMessage(oldMessage, '@user nor any logs were found', 4800);
+    //check if user is not in the server no more
+    //and no logs or ban has been found
+    if (target.left == true
+        && UserLogs.length <= 0
+        && BanLogs === false) {
+        //return error message
+        return ReplyErrorMessage(oldMessage, '@user nor any logs were found', 4800);
+    }
 
-    //filter all log information from both Audit and Hyper logs
-    const FilterLogs = await FilterTargetLogs(target, UserLogs, [])
+    //filter all log information from both Hyperlogs and AuditBans
+    const FilterLogs = await FilterTargetLogs(target, UserLogs, BanLogs)
 
     //construct Embed message
     const messageEmbed = new MessageEmbed()

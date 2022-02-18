@@ -27,7 +27,7 @@ module.exports = async (client) => {
             messageId = guild.statusId.split('/')[1];
         } else {
             //set channelId
-            channeldId = guild.statusId;
+            channelId = guild.statusId;
         }
 
         //get channel and message
@@ -36,6 +36,8 @@ module.exports = async (client) => {
 
         //await for statusses from database
         const pendingStatus = await getAllStatus(guild.id);
+        //order array based on date
+        const sortedStatus = pendingStatus.sort((a, b) => b.date - a.date);
 
         //setup embed message
         const messageEmbed = new MessageEmbed()
@@ -49,11 +51,10 @@ module.exports = async (client) => {
         messageEmbed.fields = []
 
         //go over all statusses and insert into embed message
-        for await (let status of pendingStatus) {
+        for await (let status of sortedStatus) {
             //setup away time date
-            const now = moment(new Date());
-            const awaySince = moment(status.date);
-            const awayFor = awaySince.fromNow(now);
+            const awaySince = moment(status.date).subtract(1, 'h');
+            const awayFor = awaySince.fromNow();
 
             //add individual status to dashboard
             messageEmbed.addField(`${status.memberName} :     ${awayFor}`, `\`\`\`${clean(client, status.status)}\`\`\``, false)
@@ -68,7 +69,7 @@ module.exports = async (client) => {
         //if no messageId is unavailable, send a message
         if (!messageId) {
             //send status dashboard
-            message = await channel.send({ embeds: [messageEmbed] });
+            message = await channel.send({ embeds: [messageEmbed] }).catch((err) => { })
             //update statusId in database
             const statusId = `${guild.statusId}/${message.id}`
             await updateStatusDashboard(guild.id, statusId)
@@ -78,7 +79,7 @@ module.exports = async (client) => {
         //if messageId is available, update message
         if (messageId) {
             //edit message
-            return message.edit({ embeds: [messageEmbed] });
+            return message.edit({ embeds: [messageEmbed] }).catch((err) => { })
         }
     })
     return;

@@ -29,10 +29,11 @@ module.exports = async (client, oldMember, newMember) => {
                 .setFooter({ text: `${logMember.user.id}` })
 
             //don't log in channels that are excepted from logging
-            if (voiceJoin.exceptions.includes(newMember.channelId)) return;
-            //get target channel and send message embed
-            const targetChannel = oldMember.guild.channels.cache.get(voiceJoin.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (voiceJoin.exceptions.includes(newMember.channelId) == false) {
+                //get target channel and send message embed
+                const targetChannel = oldMember.guild.channels.cache.get(voiceJoin.channel);
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            }
         }
         return;
     }
@@ -54,9 +55,13 @@ module.exports = async (client, oldMember, newMember) => {
             //don't log in channels that are excepted from logging
             if (voiceChange.exceptions.includes(oldMember.channelId)) return;
             if (voiceChange.exceptions.includes(newMember.channelId)) return;
-            //get target channel and send message embed
-            const targetChannel = oldMember.guild.channels.cache.get(voiceChange.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+
+            //don't log in channels that are excepted from logging
+            if (voiceChange.exceptions.includes(newMember.channelId) == false) {
+                //get target channel and send message embed
+                const targetChannel = oldMember.guild.channels.cache.get(voiceChange.channel);
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            }
         }
         return;
     }
@@ -76,10 +81,11 @@ module.exports = async (client, oldMember, newMember) => {
                 .setFooter({ text: `${logMember.user.id}` })
 
             //don't log in channels that are excepted from logging
-            if (voiceLeave.exceptions.includes(oldMember.channelId)) return;
-            //get target channel and send message embed
-            const targetChannel = oldMember.guild.channels.cache.get(voiceLeave.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (voiceLeave.exceptions.includes(oldMember.channelId) == false) {
+                //get target channel and send message embed
+                const targetChannel = oldMember.guild.channels.cache.get(voiceLeave.channel);
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            }
         }
         return;
     }

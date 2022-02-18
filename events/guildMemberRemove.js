@@ -17,7 +17,7 @@ module.exports = async (client, member) => {
     if (guildLeave.state === 1 && guildLeave.channel != null) {
 
         //fetch Audit & Hyper logs
-        const HyperLogs = await FetchHyperLogs(message, member);
+        const HyperLogs = await FetchHyperLogs(member.guild, member);
 
         //construct message
         const logMessage = new MessageEmbed()
