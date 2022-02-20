@@ -3,10 +3,10 @@
 
 //import styling from assets
 const embed = require('../../assets/embed.json');
-const { verify_buttons } = require('../../assets/buttons');
+const { CROSS_button, CHECK_button } = require('../../assets/buttons');
 
 //require modules
-const { MessageEmbed, InteractionCollector } = require('discord.js');
+const { MessageEmbed, InteractionCollector, MessageActionRow } = require('discord.js');
 const { getMemberLog, removeMemberLog } = require("../../database/QueryManager");
 const { ReplyErrorMessage } = require("../../utils/MessageManager");
 
@@ -28,7 +28,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         .setDescription(`Verify removing the log by clicking on the button below`)
         .setColor(embed.color)
 
-    //reset buttons into their default state
+    //construct verification buttons
+    const verify_buttons = new MessageActionRow()
+        .addComponents(CROSS_button, CHECK_button);
+    //reset values
     verify_buttons.components[0].setDisabled(false);
     verify_buttons.components[1].setDisabled(false);
 

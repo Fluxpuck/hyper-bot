@@ -166,8 +166,12 @@ module.exports = {
                     break;
                 case 'MEMBER_ROLE_UPDATE': action = 'mute'
                     break;
+                default:
+                    action = false
             }
 
+            //if action is neither, return
+            if (action == false) return;
             //if action is mute
             if (!reason && action == 'mute') reason = 'Foreign mute';
             //set reason if not provided

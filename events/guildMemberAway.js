@@ -33,8 +33,8 @@ module.exports = async (client, message) => {
 
         //return message to user
         return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }); //delete message after
-
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
+            .catch((err) => { });
     } else {
         //setup embed message
         const messageEmbed = new MessageEmbed()
@@ -47,6 +47,7 @@ module.exports = async (client, message) => {
 
         //return message to user
         return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }); //delete message after
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
+            .catch((err) => { });
     }
 }
