@@ -24,7 +24,7 @@ module.exports = async (client, ban) => {
 
             //construct message
             const logMessage = new MessageEmbed()
-                .setTitle(`${AuditLog.target.username} is Banned`)
+                .setTitle(`${user.username} is Banned`)
                 .setDescription(`Ban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
                 .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
                 .setColor(embed.colour__red)

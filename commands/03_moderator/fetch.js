@@ -180,9 +180,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     } else {
         //send messageEmbed
         if (interaction) {
-            return interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
+            interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
         } else {
-            return message.reply({ embeds: [messageEmbed] })
+            message.reply({ embeds: [messageEmbed] })
         }
     }
 

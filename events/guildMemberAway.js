@@ -35,7 +35,9 @@ module.exports = async (client, message) => {
         return message.reply({ embeds: [messageEmbed] })
             .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
             .catch((err) => { });
+
     } else {
+
         //setup embed message
         const messageEmbed = new MessageEmbed()
             .setAuthor({ name: `Welcome back ${target.username}`, iconURL: target.displayAvatarURL({ dynamic: false }) })

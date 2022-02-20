@@ -18,6 +18,7 @@ module.exports = async (client) => {
 
         //check if dashboard has been setup
         if (guild.statusId === null) return;
+        if (guild.statusId === undefined) return;
 
         //if value can be split
         var channelId, messageId;
