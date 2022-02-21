@@ -17,14 +17,11 @@ module.exports = async (client, guild) => {
     await deactivateGuild(guild.id);
     await emptyPendingMutes(guild.id);
 
-    //fetch guild owner
-    const owner = await guild.fetchOwner({ force: true });
-
     //create reportEmbed
     const reportEmbed = new MessageEmbed()
         .setTitle(`${client.user.tag} left ${guild.name}`)
         .addFields(
-            { name: 'Guild Owner', value: `\`\`\`${owner.user.tag} | ${owner.user.id}\`\`\``, inline: false },
+            { name: 'Guild Owner', value: `<@${guild.ownerId}> | ${guild.ownerId}`, inline: false },
             { name: 'Member Count', value: `\`\`\`${guild.memberCount}\`\`\``, inline: true },
             { name: 'Region', value: `\`\`\`${guild.region}\`\`\``, inline: true },
             { name: 'Guild Created at', value: `\`\`\`${guild.createdAt.toLocaleString()}\`\`\``, inline: false },

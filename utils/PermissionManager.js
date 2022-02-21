@@ -85,6 +85,7 @@ module.exports = {
      */
     async getCustomCommand(guild, messageCommand) {
         const CustomCommandCache = await guildCustomCommandCache.get(guild.id) //get the custom command values from cache
+        if (CustomCommandCache == false) return false
         const filter = CustomCommandCache.filter(c => c.customName === messageCommand);
         if (filter.length > 0) {
             var role_perms = filter[0].rolePerms != null ? filter[0].rolePerms.split(',') : null

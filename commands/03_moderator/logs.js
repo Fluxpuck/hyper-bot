@@ -119,7 +119,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
             }
         });
 
-        //slice Userlogs in chunks of 5
+        //slice Userlogs in chunks of 3
         const descriptionPages = chunk(descriptionArray, 3);
         let page = 0, maxpages = descriptionPages.length - 1;
 

@@ -150,6 +150,19 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
+    //double check time out
+    if (newMember.isCommunicationDisabled() == false) {
+        //check if there is a pending mute available
+        const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
+        if (pendingMute == false) {
+            //remove jail role to member, if available
+            if (jailId != null) { //give jail role to member
+                try { await member.roles.remove(jailId, `Timeout revoked`); }
+                catch (error) { }
+            }
+        }
+    }
+
     //check if member got Muted (old ways)
     if (newMember.isCommunicationDisabled() == false
         && oldMember.roles.cache.has(jailId) == false

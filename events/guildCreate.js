@@ -11,6 +11,7 @@ const PermissionManager = require('../utils/PermissionManager');
 
 //require config
 const { reportChannel } = require('../config/config.json');
+const { ownerIds } = require('../config/config.json');
 
 module.exports = async (client, guild) => {
 
@@ -63,7 +64,7 @@ module.exports = async (client, guild) => {
             .setTitle(`Thank you for adding me!`)
             .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, and more!`)
             .addFields(
-                { name: `Activation`, value: `A notification has been sent to \`Fluxpuck#0001\`. Please wait for his approval, before the bot becomes activated.`, inline: false },
+                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. Please contact <@${ownerIds}> `, inline: false },
                 { name: `\u200b`, value: `Developed with ❤️ by Fluxpuck#0001`, inline: false }
             )
             .setColor(embed.color)

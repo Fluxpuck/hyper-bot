@@ -38,5 +38,10 @@ cron.schedule('*/15 * * * *', () => {
     client.emit('statusDashboard');
 })
 
+//check if guild is activated, every 1 minute
+cron.schedule('0 0 1 * * *', () => {
+    client.emit('guildLeave');
+})
+
 //client login to discord
 client.login(process.env.TOKEN);
