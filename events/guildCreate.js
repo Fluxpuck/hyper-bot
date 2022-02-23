@@ -24,6 +24,8 @@ module.exports = async (client, guild) => {
     await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
     await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
     await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
+    await DbManager.UpdateAwayTable(guild.id); //update (guild) away tables
+    await DbManager.UpdateStatusTable(guild.id); //update (guild) status tables
 
     //update and cache guild prefix, config, command permissions and module settings
     await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes
@@ -37,7 +39,8 @@ module.exports = async (client, guild) => {
     const channels = textchannels.filter(channel => channel.type == 'GUILD_TEXT').map(channel => channel)
     const channel = channels.sort((a, b) => a.rawPosition - b.rawPosition)[0]
     const roles = await guild.roles.fetch()
-    const owner = await guild.fetchOwner({ force: true });
+    const fetchOwner = await guild.fetchOwner();
+    const owner = (fetchOwner) ? fetchOwner : { id: guild.ownerId, tag: undefined }
 
     //check if guild has handshake
     if (guild.handshake != null) {
@@ -64,7 +67,7 @@ module.exports = async (client, guild) => {
             .setTitle(`Thank you for adding me!`)
             .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, and more!`)
             .addFields(
-                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. Please contact <@${ownerIds}> `, inline: false },
+                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. Please contact <@${ownerIds[0]}> for any inquiry.`, inline: false },
                 { name: `\u200b`, value: `Developed with ❤️ by Fluxpuck#0001`, inline: false }
             )
             .setColor(embed.color)

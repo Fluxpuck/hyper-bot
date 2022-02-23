@@ -8,7 +8,6 @@ const embedStyle = require('../assets/embed.json');
 const { MessageEmbed } = require("discord.js");
 const { separateFlags } = require("../utils/functions");
 const { getCustomCommand, checkCommandPermissions } = require("../utils/PermissionManager");
-const messageCreate = require("./messageCreate");
 
 module.exports = async (client, message, commandName) => {
 
@@ -153,14 +152,11 @@ module.exports = async (client, message, commandName) => {
                         break;
                 }
             }
-
             //return message
             return message.channel.send({ embeds: [messageEmbed] })
-
         }
         //if it's not an embed, 
         else {
-
             //return message
             return message.channel.send(customResponse)
 

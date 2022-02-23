@@ -30,6 +30,6 @@ PermissionManager.js
 package.json
 yarn.lock
 FAQ.md
-fetchGuildDetails.js
+guildFetch.js
 autoReport.js
 transfer.js

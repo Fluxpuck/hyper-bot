@@ -11,12 +11,10 @@ const { getAuditLogDetails } = require('../utils/AuditManager');
 const { savePendingMute, removePendingMute, checkPendingMute } = require('../database/QueryManager');
 const { getUserFromInput } = require('../utils/Resolver');
 
-module.exports = async (client, oldMember, newMember) => {
+module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
     //get all member details
     const member = await getUserFromInput(oldMember.guild, oldMember.user.id);
-    const newTimeout = newMember.communicationDisabledUntilTimestamp != null ? new Date(newMember.communicationDisabledUntilTimestamp) : null;
-    const jailId = oldMember.guild.jailId;
 
     //check if member changed their nickname
     if (oldMember.nickname !== newMember.nickname) {
@@ -64,9 +62,82 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //check if member got Timed Out
+    //setup member roles
+    const oldMember_roles = oldMember._roles;
+    const newMember_roles = newMember._roles;
+    const jailId = oldMember.guild.jailId;
+
+    //check if member got muted (old way)
+    if (oldMember_roles.length < newMember_roles.length
+        && newMember.isCommunicationDisabled() === false) {
+        //check if newMember has jailId, and oldMember doesn't
+        if (!oldMember_roles.includes(jailId) && newMember_roles.includes(jailId)) {
+
+            //fetch log, and if nessesary, save to database
+            const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_ROLE_UPDATE', 10);
+
+            //get module settings, proceed if true
+            const mute = await getModuleSettings(oldMember.guild, 'mute');
+            if (mute.state === 1 && mute.channel != null) {
+
+                //if auditlog is not false, log time out
+                if (AuditLog != false) {
+
+                    //construct message
+                    const logMessage = new MessageEmbed()
+                        .setTitle(`${AuditLog.target.username} is Muted for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
+                        .setDescription(`Mute was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
+                        .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
+                        .setColor(embed.colour__red)
+                        .setTimestamp()
+                        .setFooter({ text: `${AuditLog.log.id}` })
+
+                    //get target channel and send message embed
+                    const targetChannel = oldMember.guild.channels.cache.get(mute.channel);
+                    if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+
+                }
+            }
+
+        }
+    }
+
+    //check if member unmuted (old way)
+    if (oldMember_roles.length > newMember_roles.length
+        && oldMember.isCommunicationDisabled() === true) {
+        //check if newMember has jailId, and oldMember doesn't
+        if (!newMember_roles.includes(jailId) && oldMember_roles.includes(jailId)) {
+
+            //get module settings, proceed if true
+            const muteRevoke = await getModuleSettings(oldMember.guild, 'muteRevoke');
+            if (muteRevoke.state === 1 && muteRevoke.channel != null) {
+
+                //construct message
+                const logMessage = new MessageEmbed()
+                    .setTitle(`${oldMember.user.tag} Mute is revoked`)
+                    .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
+                    .setColor(embed.colour__blue)
+                    .setTimestamp()
+                    .setFooter({ text: `${oldMember.user.id}` })
+
+                //get target channel and send message embed
+                const targetChannel = oldMember.guild.channels.cache.get(muteRevoke.channel);
+                if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+
+            }
+
+        }
+    }
+
+    //setup timeout values
+    const newTimeout = newMember.communicationDisabledUntilTimestamp != null ? new Date(newMember.communicationDisabledUntilTimestamp) : null;
+    const oldTimeout = oldMember.communicationDisabledUntilTimestamp != null ? new Date(oldMember.communicationDisabledUntilTimestamp) : null;
+
+    //check if member got TimedOut
     if (oldMember.isCommunicationDisabled() == false
         && newMember.isCommunicationDisabled() == true) {
+
+        console.log('Timeout!')
 
         //check if there is a pending mute available
         const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
@@ -113,13 +184,13 @@ module.exports = async (client, oldMember, newMember) => {
 
     }
 
-    //check if Time Out is removed
+    //check if TimeOut is removed Manually
     if (oldMember.isCommunicationDisabled() == true
         && newMember.isCommunicationDisabled() == false) {
 
         //remove jail role to member, if available
         if (jailId != null) { //give jail role to member
-            try { await member.roles.remove(jailId, `Timeout revoked`); }
+            try { await member.roles.remove(jailId, `Timeout revoked manually`); }
             catch (error) { }
         }
 
@@ -136,7 +207,7 @@ module.exports = async (client, oldMember, newMember) => {
 
                 //construct message
                 const logMessage = new MessageEmbed()
-                    .setTitle(`${oldMember.user.tag} Time out is revoked`)
+                    .setTitle(`${oldMember.user.tag} Time out is revoked manually`)
                     .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
                     .setColor(embed.colour__blue)
                     .setTimestamp()
@@ -150,75 +221,41 @@ module.exports = async (client, oldMember, newMember) => {
         }
     }
 
-    //double check time out
-    if (newMember.isCommunicationDisabled() == false) {
+    //check if TimeOut is removed Automatically
+    if (pendingTimeout != undefined &&
+        new Date(pendingTimeout) - Date.now() < 0) {
+
+        //remove jail role to member, if available
+        if (jailId != null) { //give jail role to member
+            try { await member.roles.remove(jailId, `Timeout revoked automatically`); }
+            catch (error) { }
+        }
+
         //check if there is a pending mute available
         const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
-        if (pendingMute == false) {
-            //remove jail role to member, if available
-            if (jailId != null) { //give jail role to member
-                try { await member.roles.remove(jailId, `Timeout revoked`); }
-                catch (error) { }
-            }
-        }
-    }
+        if (pendingMute != false) {
 
-    //check if member got Muted (old ways)
-    if (newMember.isCommunicationDisabled() == false
-        && oldMember.roles.cache.has(jailId) == false
-        && newMember.roles.cache.has(jailId) == true) {
+            //remove pending mute from database
+            await removePendingMute(oldMember.guild.id, oldMember.user.id);
 
-        //fetch log, and if nessesary, save to database
-        const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_ROLE_UPDATE', 10);
-
-        //get module settings, proceed if true
-        const mute = await getModuleSettings(oldMember.guild, 'mute');
-        if (mute.state === 1 && mute.channel != null) {
-
-            //if auditlog is not false, log time out
-            if (AuditLog != false) {
+            //get module settings, proceed if true
+            const timeoutRevoke = await getModuleSettings(oldMember.guild, 'timeoutRevoke');
+            if (timeoutRevoke.state === 1 && timeoutRevoke.channel != null) {
 
                 //construct message
                 const logMessage = new MessageEmbed()
-                    .setTitle(`${AuditLog.target.username} is Muted for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
-                    .setDescription(`Mute was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
-                    .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
-                    .setColor(embed.colour__red)
+                    .setTitle(`${oldMember.user.tag} Time out is revoked automatically`)
+                    .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
+                    .setColor(embed.colour__blue)
                     .setTimestamp()
-                    .setFooter({ text: `${AuditLog.log.id}` })
+                    .setFooter({ text: `${oldMember.user.id}` })
 
                 //get target channel and send message embed
-                const targetChannel = oldMember.guild.channels.cache.get(mute.channel);
+                const targetChannel = oldMember.guild.channels.cache.get(timeoutRevoke.channel);
                 if (targetChannel) targetChannel.send({ embeds: [logMessage] });
 
             }
         }
-
-    }
-
-    //check if Mute is removed (old ways)
-    if (oldMember.isCommunicationDisabled() == false
-        && oldMember.roles.cache.has(jailId) == true
-        && newMember.roles.cache.has(jailId) == false) {
-
-        //get module settings, proceed if true
-        const muteRevoke = await getModuleSettings(oldMember.guild, 'muteRevoke');
-        if (muteRevoke.state === 1 && muteRevoke.channel != null) {
-
-            //construct message
-            const logMessage = new MessageEmbed()
-                .setTitle(`${oldMember.user.tag} Time out is revoked`)
-                .setDescription(`<@${oldMember.user.id}> - ${oldMember.user.tag}`)
-                .setColor(embed.colour__blue)
-                .setTimestamp()
-                .setFooter({ text: `${oldMember.user.id}` })
-
-            //get target channel and send message embed
-            const targetChannel = oldMember.guild.channels.cache.get(muteRevoke.channel);
-            if (targetChannel) targetChannel.send({ embeds: [logMessage] });
-
-        }
-
     }
 
     return;

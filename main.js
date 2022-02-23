@@ -29,7 +29,7 @@ const events = require('./utils/EventManager');
 events.run(client); //run the events
 
 //listen to Pending mutes, every 1 minute
-cron.schedule('* * * * *', () => {
+cron.schedule('*/1 * * * *', () => {
     client.emit('pendingMutes');
 })
 
