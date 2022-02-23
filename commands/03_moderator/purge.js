@@ -1,7 +1,7 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License
     For more information on the commands, please visit hyperbot.cc  */
 
-const { createHyperLog } = require("../../utils/AuditManager");
+//load required modules
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
 const { inputType, getUserMessages } = require("../../utils/Resolver")

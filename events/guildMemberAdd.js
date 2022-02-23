@@ -35,7 +35,7 @@ module.exports = async (client, member) => {
 
         //get target channel and send message embed
         const targetChannel = member.guild.channels.cache.get(guildJoin.channel);
-        if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+        if (targetChannel) targetChannel.send({ embeds: [logMessage] });
 
     }
 
@@ -56,24 +56,22 @@ module.exports = async (client, member) => {
 
         //get target channel and send message embed
         const targetChannel = member.guild.channels.cache.get(guildWelcome.channel);
-        if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+        if (targetChannel) targetChannel.send({ embeds: [logMessage] });
 
     }
 
     //setup timeout value and check is member is still timed out
     const timeOut = member.communicationDisabledUntilTimestamp != null ? new Date(member.communicationDisabledUntilTimestamp) : null
     if (timeOut - Date.now() > 0) {
-
         //check if there is a pending mute available
         const pendingMute = await checkPendingMute(member.guild.id, member.user.id);
-        if (pendingMute != false) return;
-
-        //add jail role to member, if available
-        if (member.guild.jailId != null) { //give jail role to member
-            try { await member.roles.add(member.guild.jailId, `Re-added jail-role`); }
-            catch (error) { }
+        if (pendingMute == false) {
+            //add jail role to member, if available
+            if (member.guild.jailId != null) { //give jail role to member
+                try { await member.roles.add(member.guild.jailId, `Re-added jail-role`); }
+                catch (error) { }
+            }
         }
-
     }
     return;
 }

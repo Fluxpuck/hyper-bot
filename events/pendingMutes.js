@@ -1,6 +1,7 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This private-event is triggers by Discord and does processing of data  */
 
+//require modules
 const { getPendingMutes, removePendingMute } = require('../database/QueryManager');
 const { getUserFromInput } = require('../utils/Resolver');
 
@@ -20,11 +21,11 @@ module.exports = async (client) => {
             if (new Date(pendingTime) - Date.now() < 0) {
 
                 //get member details
-                const member = await getUserFromInput(guild, targetId);
-                if (member != false) {
-                    //change member value to null and trigger event
-                    member.communicationDisabledUntilTimestamp = pendingTime
-                    client.emit('guildMemberUpdate', member, member);
+                const oldMember = await getUserFromInput(guild, targetId);
+                const newMember = oldMember;
+                if (newMember != false) {
+                    //run guildMemberUpdate event
+                    client.emit('guildMemberUpdate', oldMember, newMember, pendingTime);
                 }
 
                 //remove from database

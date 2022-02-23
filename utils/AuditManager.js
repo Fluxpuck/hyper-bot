@@ -166,8 +166,12 @@ module.exports = {
                     break;
                 case 'MEMBER_ROLE_UPDATE': action = 'mute'
                     break;
+                default:
+                    action = false
             }
 
+            //if action is neither, return
+            if (action == false) return;
             //if action is mute
             if (!reason && action == 'mute') reason = 'Foreign mute';
             //set reason if not provided
@@ -178,6 +182,7 @@ module.exports = {
                 //get all member logs from database
                 const HyperLogs = await getMemberLogs(guild.id, target.id, action);
                 if (HyperLogs.length <= 0) return //if no logs are found, return
+                if (HyperLogs == false) return
 
                 //calculate log that is closest to current date
                 let temp = HyperLogs.map(d => Math.abs(new Date() - new Date(d.date.create)));

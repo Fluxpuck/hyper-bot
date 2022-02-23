@@ -13,20 +13,23 @@ const { reportChannel } = require('../config/config.json');
 
 module.exports = async (client, guild) => {
 
+    //setup guild's first text channel
+    const roles = await guild.roles.fetch();
+    const fetchOwner = await guild.fetchOwner();
+    const owner = (fetchOwner) ? fetchOwner : { id: guild.ownerId, tag: undefined }
+
     //remove handshake & empty pending mutes
     await deactivateGuild(guild.id);
     await emptyPendingMutes(guild.id);
-
-    //fetch guild owner
-    const owner = await guild.fetchOwner({ force: true });
 
     //create reportEmbed
     const reportEmbed = new MessageEmbed()
         .setTitle(`${client.user.tag} left ${guild.name}`)
         .addFields(
-            { name: 'Guild Owner', value: `\`\`\`${owner.user.tag} | ${owner.user.id}\`\`\``, inline: false },
+            { name: 'Guild Owner', value: `<@${owner.user.id}> | ${owner.user.tag} | ${owner.user.id}`, inline: false },
+            { name: 'Channels', value: `\`\`\`${guild.channels.channelCountWithoutThreads}\`\`\``, inline: true },
+            { name: 'Roles', value: `\`\`\`${roles.size}\`\`\``, inline: true },
             { name: 'Member Count', value: `\`\`\`${guild.memberCount}\`\`\``, inline: true },
-            { name: 'Region', value: `\`\`\`${guild.region}\`\`\``, inline: true },
             { name: 'Guild Created at', value: `\`\`\`${guild.createdAt.toLocaleString()}\`\`\``, inline: false },
         )
         .setThumbnail(guild.iconURL())

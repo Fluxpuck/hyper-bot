@@ -89,9 +89,9 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
         //send messageEmbed
         if (interaction) {
-            return interaction.followUp({ embeds: [messageEmbed] })
+            interaction.followUp({ embeds: [messageEmbed] })
         } else {
-            return message.reply({ embeds: [messageEmbed] });
+            message.reply({ embeds: [messageEmbed] });
         }
     }
 
@@ -119,7 +119,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
             }
         });
 
-        //slice Userlogs in chunks of 5
+        //slice Userlogs in chunks of 3
         const descriptionPages = chunk(descriptionArray, 3);
         let page = 0, maxpages = descriptionPages.length - 1;
 
@@ -238,6 +238,14 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
             if (moderationAction.exceptions.includes(message.channel.id)) return;
             return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
         }
+    }
+
+    //get module settings, proceed if true
+    const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
+    if (moderationAction.state === 1 && moderationAction.channel != null) {
+        //don't log in channels that are excepted from logging
+        if (moderationAction.exceptions.includes(message.channel.id)) return;
+        return SendModerationActionMessage(oldMessage, module.exports.info.name, moderationAction.channel)
     }
     return;
 }

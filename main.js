@@ -29,13 +29,18 @@ const events = require('./utils/EventManager');
 events.run(client); //run the events
 
 //listen to Pending mutes, every 1 minute
-cron.schedule('* * * * *', () => {
+cron.schedule('*/1 * * * *', () => {
     client.emit('pendingMutes');
 })
 
 //update Status Dashboard, every 1 minute
 cron.schedule('*/15 * * * *', () => {
     client.emit('statusDashboard');
+})
+
+//check if guild is activated, every 1 minute
+cron.schedule('0 0 1 * * *', () => {
+    client.emit('guildLeave');
 })
 
 //client login to discord
