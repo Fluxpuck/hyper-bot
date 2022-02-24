@@ -34,7 +34,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     await channel.send({
         embeds: [collect_message],
         components: [apply_button],
-    })
+    }).catch((err) => { });
 
     //update database & permissions
     await updateApplication(message.guild.id, channel.id)

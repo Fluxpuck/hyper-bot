@@ -32,7 +32,7 @@ module.exports = async (client, oldMember, newMember) => {
             if (voiceJoin.exceptions.includes(newMember.channelId) == false) {
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(voiceJoin.channel);
-                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
             }
         }
         return;
@@ -60,7 +60,7 @@ module.exports = async (client, oldMember, newMember) => {
             if (voiceChange.exceptions.includes(newMember.channelId) == false) {
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(voiceChange.channel);
-                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
             }
         }
         return;
@@ -84,7 +84,7 @@ module.exports = async (client, oldMember, newMember) => {
             if (voiceLeave.exceptions.includes(oldMember.channelId) == false) {
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(voiceLeave.channel);
-                if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
             }
         }
         return;

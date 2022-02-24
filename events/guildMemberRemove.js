@@ -34,7 +34,7 @@ module.exports = async (client, member) => {
 
         //get target channel and send message embed
         const targetChannel = member.guild.channels.cache.get(guildLeave.channel);
-        if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+        if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
     }
 
@@ -59,7 +59,7 @@ module.exports = async (client, member) => {
 
             //get target channel and send message embed
             const targetChannel = member.guild.channels.cache.get(kick.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
         }
     }

@@ -39,10 +39,10 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //verify that the user has been warned
     if (warning.status === false) {
         (interaction) ? interaction.editReply({ content: `${warning.message}, but warning has been logged`, ephemeral: true })
-            : message.reply(`${warning.message}, but warning has been logged`);
+            : message.reply(`${warning.message}, but warning has been logged`).catch((err) => { });
     } else if (warning.status === true) {
         (interaction) ? interaction.editReply({ content: `${warning.message}, and it has been logged`, ephemeral: true })
-            : message.reply(`${warning.message}, and it has been logged`);
+            : message.reply(`${warning.message}, and it has been logged`).catch((err) => { });
     }
 
     //save log to database and log event

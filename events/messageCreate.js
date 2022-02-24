@@ -51,7 +51,7 @@ module.exports = async (client, message) => {
             if (verification.status === true) {
                 await message.react('701401045473165352'); //react to command
                 commandFile.run(client, message, messageArgs, prefix, verification); //execute command
-            } // else message.reply(verification.message);
+            } // else message.reply(verification.message).catch((err) => { });
         } else {
             //fire custom command event
             client.emit('customCommand', message, messageCommand);
@@ -71,6 +71,7 @@ module.exports = async (client, message) => {
                 //reply with server info
                 message.reply(`Hello, your current server prefix is \`${prefix}\``)
                     .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+                    .catch((err) => { });
             }
         }
     }

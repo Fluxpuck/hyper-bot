@@ -40,7 +40,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (ban != false) {
         //verify that the user has been banned
         if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been banned from the server`, ephemeral: true });
-        else message.reply(`**${target.user.tag}** has been banned from the server`);
+        else message.reply(`**${target.user.tag}** has been banned from the server`).catch((err) => { });
         //save log to database and log event
         await createHyperLog(message, 'ban', null, target, reason);
         //get module settings, proceed if true

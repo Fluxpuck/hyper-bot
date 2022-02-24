@@ -32,7 +32,7 @@ module.exports = async (client, unban) => {
 
             //get target channel and send message embed
             const targetChannel = guild.channels.cache.get(banRevokeModule.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
         }
     }

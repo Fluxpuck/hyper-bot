@@ -45,7 +45,7 @@ module.exports = async (client, oldMessage, newMessage) => {
         if (messageChange.exceptions.includes(oldMessage.channelId) == false) {
             //get target channel and send message embed
             const targetChannel = oldMessage.guild.channels.cache.get(messageChange.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
         }
     }
     return;

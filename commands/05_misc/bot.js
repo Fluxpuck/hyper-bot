@@ -38,7 +38,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     return message.reply({
         embeds: [infoEmbed],
         components: [web_button]
-    })
+    }).catch((err) => { });
 
 }
 

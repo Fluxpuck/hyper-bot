@@ -40,6 +40,6 @@ module.exports = async (client, guild) => {
     //get report channel and send report embed
     client.channels.fetch(reportChannel)
         .then(channel => channel.send({ embeds: [reportEmbed] }))
-
+        .catch((err) => { });
     return;
 }

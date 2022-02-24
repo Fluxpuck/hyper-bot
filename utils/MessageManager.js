@@ -37,9 +37,12 @@ module.exports = {
         if (message.slashinteraction == true) {
             return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
         } else if (timer) { //if timer is set return error message and remove
-            return message.channel.send({ embeds: [ErrorEmbed] }).then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
+            return message.channel.send({ embeds: [ErrorEmbed] })
+                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
+                .catch((err) => { });
         } else { //if no timer is set, just return error message
             return message.channel.send({ embeds: [ErrorEmbed] })
+                .catch((err) => { });
         }
     },
 
@@ -54,12 +57,15 @@ module.exports = {
 
         //if interaction return emphameral
         if (message.slashinteraction == true) {
-            return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true });
+            return message.interaction.editReply({ embeds: [ErrorEmbed], ephemeral: true })
+                .catch((err) => { });
         } else if (timer) { //if timer is set return error message and remove
             return message.reply({ embeds: [ErrorEmbed] })
                 .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
+                .catch((err) => { });
         } else { //if no timer is set, just return error message
-            return message.reply({ embeds: [ErrorEmbed] })
+            return message.reply({ embeds: [ErrorEmbed] }).catch((err) => { })
+                .catch((err) => { });
         }
     },
 
@@ -105,7 +111,7 @@ module.exports = {
 
         //get target channel and send message embed
         const targetChannel = message.guild.channels.cache.get(channel);
-        if (targetChannel) return targetChannel.send({ embeds: [embedMessage] });
+        if (targetChannel) return targetChannel.send({ embeds: [embedMessage] }).catch((err) => { });
     },
 
     /** Send No Activation message to guild
@@ -118,8 +124,10 @@ module.exports = {
         if (timer) { //if timer is set return error message and remove
             return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
                 .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), timer); })
+                .catch((err) => { });
         } else { //if no timer is set, just return error message
             return message.reply(`**Hold up!** I've not been \`activated\` yet.`)
+                .catch((err) => { });
         }
     },
 

@@ -50,7 +50,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (mute != false) {
         //verify that the user has been timed out
         if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been timed out for ${muteTime} minutes.`, ephemeral: true });
-        else message.reply(`**${target.user.tag}** has been timed out for ${muteTime} minutes.`);
+        else message.reply(`**${target.user.tag}** has been timed out for ${muteTime} minutes.`).catch((err) => { });
         //save log to database and log event
         await createHyperLog(message, 'timeout', muteTime, target, reason);
         //get module settings, proceed if true

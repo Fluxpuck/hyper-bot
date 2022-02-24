@@ -42,7 +42,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //delete message and verify that the messages have been deleted
     if (interaction) interaction.editReply({ content: `**${collection.size}** messages have been deleted`, ephemeral: true });
-    // else message.reply(`**${collection.size}** messages have been deleted`);
+    // else message.reply(`**${collection.size}** messages have been deleted`).catch((err) => { });
 
     //get module settings, proceed if true
     const moderationAction = await getModuleSettings(message.guild, 'moderationAction');

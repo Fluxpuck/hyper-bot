@@ -44,7 +44,8 @@ module.exports = async (client, message) => {
 
         //return message to user
         return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }); //delete message after
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+            .catch((err) => { });
     }
     return;
 }

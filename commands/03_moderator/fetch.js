@@ -121,7 +121,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             fetch_message = await message.reply({
                 embeds: [messageEmbed],
                 components: [log_button]
-            })
+            }).catch((err) => { });
         }
 
         //start collecting button presses for paginator
@@ -148,12 +148,12 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
                 interaction.editReply({
                     embeds: [messageEmbed],
                     ephemeral: false
-                });
+                })
             } else {
                 fetch_message.edit({
                     embeds: [messageEmbed],
                     components: [log_button]
-                });
+                }).catch((err) => { });
             }
 
         })
@@ -173,7 +173,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
                 fetch_message.edit({
                     embeds: [messageEmbed],
                     components: [log_button]
-                });
+                }).catch((err) => { });
             }
         });
 
@@ -183,6 +183,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
         } else {
             message.reply({ embeds: [messageEmbed] })
+                .catch((err) => { });
         }
     }
 
