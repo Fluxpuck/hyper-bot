@@ -35,6 +35,30 @@ module.exports = {
 
     },
 
+    /** Get Role information from input
+     * @param {*} guild 
+     * @param {*} input 
+     */
+    async getRoleFromInput(guild, input) {
+        if (!input) return false;
+
+        //filter input [1]
+        let mention = new RegExp('<@&!?([0-9]+)>', 'g').exec(input)
+        let item = mention != null ? mention[1] : input.trim()
+
+        // fetch role from guild
+        try {
+            let role = await guild.roles.fetch(item) // Fetch directly from role manager
+            || await guild.roles.cache.get(item) // Get item directly from cache
+            || await guild.roles.cache.find(role => role.id == item) // Attempt to find it in the entire cache
+
+            if (role) return role
+            else return false
+        } catch (err) {
+            return false
+        }
+    },
+
     /** Get channel information from input
      * @param {*} guild 
      * @param {*} input 
