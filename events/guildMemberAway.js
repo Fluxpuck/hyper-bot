@@ -33,7 +33,7 @@ module.exports = async (client, message) => {
 
         //reply to message
         return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
             .catch((err) => { });
 
     } else {
@@ -49,7 +49,7 @@ module.exports = async (client, message) => {
 
         //reply to message
         return message.reply({ embeds: [messageEmbed] })
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
             .catch((err) => { });
 
     }

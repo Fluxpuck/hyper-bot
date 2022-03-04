@@ -38,7 +38,7 @@ cron.schedule('*/15 * * * *', () => {
     client.emit('statusDashboard');
 })
 
-//check if guild is activated, every 1 minute
+//check if guild is activated, every day
 cron.schedule('0 0 1 * * *', () => {
     client.emit('guildLeave');
 })

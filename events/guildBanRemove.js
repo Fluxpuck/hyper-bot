@@ -24,9 +24,10 @@ module.exports = async (client, unban) => {
 
             //construct message
             const logMessage = new MessageEmbed()
-                .setTitle(`${AuditLog.target.username} is Unbanned`)
+                .setTitle(`${user.username} is Unbanned`)
                 .setDescription(`Unban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
                 .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
+                .setColor(embed.colour__blue)
                 .setTimestamp()
                 .setFooter({ text: `${AuditLog.log.id}` })
 

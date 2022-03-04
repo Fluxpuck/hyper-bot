@@ -20,12 +20,15 @@ module.exports = async (client, ban) => {
 
         //fetch log, and if nessesary, save to database
         const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_ADD', null);
+
+        console.log(AuditLog)
+
         if (AuditLog != false) {
 
             //construct message
             const logMessage = new MessageEmbed()
                 .setTitle(`${user.username} is Banned`)
-                .setDescription(`Ban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
+                .setDescription(`Ban was executed by <@${(AuditLog.executor) ? AuditLog.executor.id : client.user.id}> - ${(AuditLog.executor) ? AuditLog.executor.id : client.user.id}`)
                 .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
                 .setColor(embed.colour__red)
                 .setTimestamp()

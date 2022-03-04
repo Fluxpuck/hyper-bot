@@ -26,9 +26,9 @@ module.exports = async (client) => {
                 })
                 .catch(err => { });
             //deactivate guild
-            await deactivateGuild(guildId);
+            await deactivateGuild(guild.id);
             //drop all guild tables
-            await dropGuildTables(guildId)
+            await dropGuildTables(guild.id)
         }
     })
     return;

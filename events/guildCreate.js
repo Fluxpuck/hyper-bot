@@ -12,6 +12,7 @@ const PermissionManager = require('../utils/PermissionManager');
 //require config
 const { reportChannel } = require('../config/config.json');
 const { ownerIds } = require('../config/config.json');
+const { insertGuild } = require('../database/QueryManager');
 
 module.exports = async (client, guild) => {
 
@@ -26,6 +27,8 @@ module.exports = async (client, guild) => {
     await DbManager.UpdateModuleInformation(guild.id); //update (individual) modules
     await DbManager.UpdateAwayTable(guild.id); //update (guild) away tables
     await DbManager.UpdateStatusTable(guild.id); //update (guild) status tables
+
+    await insertGuild(guild); //double check guild in global guild information
 
     //update and cache guild prefix, config, command permissions and module settings
     await PermissionManager.loadGuildPrefixes(guild); //cache guild prefixes

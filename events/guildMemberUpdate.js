@@ -153,7 +153,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
             //add jail role to member, if available
             if (jailId != null) { //give jail role to member
-                try { await member.roles.add(jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`); }
+                try { await member.roles.add(jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`).catch((err) => { }); }
                 catch (error) { }
             }
 
@@ -188,7 +188,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
         //remove jail role to member, if available
         if (jailId != null) { //give jail role to member
-            try { await member.roles.remove(jailId, `Timeout revoked manually`); }
+            try { await member.roles.remove(jailId, `Timeout revoked manually`).catch((err) => { }); }
             catch (error) { }
         }
 
