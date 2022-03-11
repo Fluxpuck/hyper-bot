@@ -50,7 +50,7 @@ module.exports = async (client, message) => {
 
             //execute commandfile if user has permission
             if (verification.status === true) {
-                await message.react('701401045473165352'); //react to command
+                await message.react('701401045473165352').catch((err) => { }); //react to command
                 commandFile.run(client, message, messageArgs, prefix, verification); //execute command
             } // else message.reply(verification.message).catch((err) => { });
         } else {

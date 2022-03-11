@@ -155,8 +155,6 @@ module.exports = {
             //get details from Auditlog
             let { action, reason, executor, target } = firstLog
 
-            console.log(firstLog)
-
             //check for the correct logAction
             switch (action) {
                 case 'MEMBER_KICK': action = 'kick'

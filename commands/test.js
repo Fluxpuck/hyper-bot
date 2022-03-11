@@ -5,9 +5,6 @@
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
 
-    const member = message.member
-
-    console.log(member.permissions.has("MANAGE_GUILD"));
 
 
 }

@@ -28,14 +28,19 @@ client.version = require('./package.json').version
 const events = require('./utils/EventManager');
 events.run(client); //run the events
 
-//listen to Pending mutes, every 1 minute
+//listen to Pending mutes, every minute
 cron.schedule('*/1 * * * *', () => {
     client.emit('pendingMutes');
 })
 
-//update Status Dashboard, every 1 minute
+//update Status Dashboard, every 15 minute
 cron.schedule('*/15 * * * *', () => {
     client.emit('statusDashboard');
+})
+
+//update Status Dashboard, every hour
+cron.schedule('0 0 */1 * * *', () => {
+    client.emit('guildMemberCount');
 })
 
 //check if guild is activated, every day

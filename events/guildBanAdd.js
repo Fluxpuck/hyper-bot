@@ -20,10 +20,7 @@ module.exports = async (client, ban) => {
 
         //fetch log, and if nessesary, save to database
         const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_ADD', null);
-
-        console.log(AuditLog)
-
-        if (AuditLog != false) {
+        if (AuditLog != false && AuditLog != undefined) {
 
             //construct message
             const logMessage = new MessageEmbed()
