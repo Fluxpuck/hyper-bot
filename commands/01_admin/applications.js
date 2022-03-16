@@ -37,8 +37,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     }).catch((err) => { });
 
     //update database & permissions
-    await updateApplication(message.guild.id, channel.id)
-    await loadGuildConfiguration(message.guild)
+    await updateApplication(message.guild.id, channel.id);
+    await loadGuildConfiguration(message.guild);
     return;
 }
 

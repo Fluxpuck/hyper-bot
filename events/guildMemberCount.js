@@ -12,8 +12,14 @@ module.exports = async (client) => {
 
         //get channel & change name
         const channel = await guild.channels.cache.get(guild.membercountId);
-        var channelName = (channel.name).replace(new RegExp(/\d+/g), guild.memberCount);
-        if (channel) return channel.setName(channelName).catch((err) => { });
+        if (channel) {
+            //get number from channel name
+            let count = new RegExp(/\d+/g).exec(channel.name)[0]
+            if (count == guild.memberCount.toString()) return;
+            //set new channel name, and update
+            var channelName = (channel.name).replace(new RegExp(/\d+/g), guild.memberCount);
+            if (channel) return channel.setName(channelName).catch((err) => { });
+        }
 
     })
     return;

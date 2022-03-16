@@ -15,14 +15,6 @@ module.exports = async (client, message) => {
     //get prefix  
     const prefix = message.guild.prefix;
 
-    //check if bot has been activated, else return
-    if (message.guild.handshake == null) {
-        try { //if member is moderator, return handshake message
-            if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
-            else return;
-        } catch { return; }
-    }
-
     //check for away, and status features
     client.emit('guildMemberAway', message);
     client.emit('guildMemberStatus', message);
@@ -36,6 +28,14 @@ module.exports = async (client, message) => {
 
     //check if content starts with prefix, else return
     if (messagePrefix.startsWith(prefix)) {
+
+        //check if bot has been activated, else return
+        if (message.guild.handshake == null) {
+            try { //if member is moderator, return handshake message
+                if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
+                else return;
+            } catch { return; }
+        }
 
         //check for regular command (including alliasses)
         const commandFile = (client.commands.get(messageCommand)) ?

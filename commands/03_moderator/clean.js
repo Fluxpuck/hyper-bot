@@ -2,6 +2,7 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 const { createHyperLog } = require("../../utils/AuditManager");
+const { chunk } = require("../../utils/functions");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
 const { inputType, getUserMessages } = require("../../utils/Resolver")
@@ -23,16 +24,28 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check and parse amount/limit
     const limit = parseInt(arguments[0])
     if (isNaN(limit)) return ReplyErrorMessage(oldMessage, `Doesn't seem to be a valid number`, 4800)
-    if (limit > 100 || limit < 2) return ReplyErrorMessage(oldMessage, `Provide an amount between 1 and 100`, 4800)
+    if (limit > 1000 || limit < 2) return ReplyErrorMessage(oldMessage, `Provide an amount between 1 and 1000`, 4800)
 
     //get the message collection (limit 100)
     let collection = await getUserMessages(oldMessage, undefined, limit)
 
     //check if collection hold messages
     if (collection.size > 0) {
-        //try and delete collection
-        try { await message.channel.bulkDelete(collection, true); }
-        catch (err) { return ReplyErrorMessage(oldMessage, `An Error occured, could not delete ${collection.size} messages`, 4800) }
+        //check collection size, if above 100, bulkdelete in chunks of 100
+        if (collection.size > 100) {
+            //devide collection into chunks of 100 messages
+            const messageCollection = Array.from(collection.values());
+            const messageChunks = chunk(messageCollection, 100);
+            //bulk delete messages in chunks of 100 messages
+            for await (let chunk of messageChunks) {
+                try { await message.channel.bulkDelete(chunk, true); }
+                catch (err) { return ReplyErrorMessage(oldMessage, `An Error occured, could not delete ${collection.size} messages`, 4800) }
+            }
+        } else {
+            //try and delete collection
+            try { await message.channel.bulkDelete(collection, true); }
+            catch (err) { return ReplyErrorMessage(oldMessage, `An Error occured, could not delete ${collection.size} messages`, 4800) }
+        }
     } else {
         return ReplyErrorMessage(oldMessage, `Could not find any messages to delete`, 4800)
     }
