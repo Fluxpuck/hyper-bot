@@ -1,11 +1,10 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License
     For more information on the commands, please visit hyperbot.cc  */
 
-const { createHyperLog } = require("../../utils/AuditManager");
 const { chunk } = require("../../utils/functions");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
-const { inputType, getUserMessages } = require("../../utils/Resolver")
+const { getUserMessages } = require("../../utils/Resolver")
 
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {

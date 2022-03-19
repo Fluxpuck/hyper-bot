@@ -40,15 +40,12 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             //find username and details in guild
             const fetchMember = await findUserFromName(message.guild, name);
             if (fetchMember != false) {
-
                 //setup member value and add to collection
                 const member = fetchMember.first();
                 memberCollection.set(member.id, member);
-
                 //add role to member
                 member.roles.add(targetRole, `Add mass-role to member`)
                     .catch((err) => { });
-
                 //edit message
                 messageReply.edit(`<a:loading:746326030771421283> *Added role to ${memberCollection.size} of ${body.length} members...*`)
                     .catch((err) => { });

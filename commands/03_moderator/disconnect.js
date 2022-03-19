@@ -2,7 +2,6 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { createHyperLog } = require("../../utils/AuditManager");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
 const { getUserFromInput } = require("../../utils/Resolver");
