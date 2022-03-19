@@ -36,7 +36,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
             //get target channel and send message embed
             const targetChannel = oldMember.guild.channels.cache.get(changeNickname.channel);
-            if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
         }
     }
 
@@ -58,7 +58,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
             //get target channel and send message embed
             const targetChannel = oldMember.guild.channels.cache.get(changeAvatar.channel);
-            if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
         }
     }
 
@@ -94,7 +94,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                     //get target channel and send message embed
                     const targetChannel = oldMember.guild.channels.cache.get(mute.channel);
-                    if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+                    if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
                 }
             }
@@ -122,7 +122,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(muteRevoke.channel);
-                if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
             }
 
@@ -136,8 +136,6 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
     //check if member got TimedOut
     if (oldMember.isCommunicationDisabled() == false
         && newMember.isCommunicationDisabled() == true) {
-
-        console.log('Timeout!')
 
         //check if there is a pending mute available
         const pendingMute = await checkPendingMute(oldMember.guild.id, newMember.user.id);
@@ -155,7 +153,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
             //add jail role to member, if available
             if (jailId != null) { //give jail role to member
-                try { await member.roles.add(jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`); }
+                try { await member.roles.add(jailId, `Timeout for ${muteTime} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`).catch((err) => { }); }
                 catch (error) { }
             }
 
@@ -176,7 +174,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                     //get target channel and send message embed
                     const targetChannel = oldMember.guild.channels.cache.get(timeout.channel);
-                    if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+                    if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
                 }
             }
@@ -190,7 +188,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
         //remove jail role to member, if available
         if (jailId != null) { //give jail role to member
-            try { await member.roles.remove(jailId, `Timeout revoked manually`); }
+            try { await member.roles.remove(jailId, `Timeout revoked manually`).catch((err) => { }); }
             catch (error) { }
         }
 
@@ -215,7 +213,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(timeoutRevoke.channel);
-                if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
             }
         }
@@ -252,7 +250,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                 //get target channel and send message embed
                 const targetChannel = oldMember.guild.channels.cache.get(timeoutRevoke.channel);
-                if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+                if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
             }
         }

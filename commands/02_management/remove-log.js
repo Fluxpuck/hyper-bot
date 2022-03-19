@@ -39,7 +39,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     let verify_message = await message.reply({
         embeds: [messageEmbed],
         components: [verify_buttons]
-    })
+    }).catch((err) => { });
 
     //start collecting button presses for paginator
     let collector = new InteractionCollector(client, { message: verify_message, time: 120000, componentType: "BUTTON" })
@@ -66,7 +66,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             verify_message.edit({
                 embeds: [messageEmbed],
                 components: []
-            });
+            }).catch((err) => { });
 
             //remove member log
             return removeMemberLog(message.guild.id, logId)
@@ -83,7 +83,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
             verify_message.edit({
                 embeds: [messageEmbed],
                 components: []
-            });
+            }).catch((err) => { });
 
         }
 
@@ -104,7 +104,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         verify_message.edit({
             embeds: [messageEmbed],
             components: [verify_buttons]
-        });
+        }).catch((err) => { });
 
     });
     return;

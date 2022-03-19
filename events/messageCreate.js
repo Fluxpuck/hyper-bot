@@ -9,15 +9,15 @@ const { getCommandPermissions, checkCommandPermissions } = require("../utils/Per
 module.exports = async (client, message) => {
 
     //ignore private messages and messages from other bots
-    if (message.channel.type === 'dm') return
-    if (message.author.bot) return
+    if (message.channel.type === 'dm') return;
+    if (message.author.bot) return;
+
+    //get prefix  
+    const prefix = message.guild.prefix;
 
     //check for away, and status features
     client.emit('guildMemberAway', message);
     client.emit('guildMemberStatus', message);
-
-    //get prefix  
-    const prefix = message.guild.prefix;
 
     /** Message Handler
      * filter message content into workable elements */
@@ -31,9 +31,10 @@ module.exports = async (client, message) => {
 
         //check if bot has been activated, else return
         if (message.guild.handshake == null) {
-            //if member is moderator, return handshake message
-            if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
-            else return;
+            try { //if member is moderator, return handshake message
+                if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
+                else return;
+            } catch { return; }
         }
 
         //check for regular command (including alliasses)
@@ -49,9 +50,9 @@ module.exports = async (client, message) => {
 
             //execute commandfile if user has permission
             if (verification.status === true) {
-                await message.react('701401045473165352'); //react to command
+                await message.react('701401045473165352').catch((err) => { }); //react to command
                 commandFile.run(client, message, messageArgs, prefix, verification); //execute command
-            } // else message.reply(verification.message);
+            } // else message.reply(verification.message).catch((err) => { });
         } else {
             //fire custom command event
             client.emit('customCommand', message, messageCommand);
@@ -62,15 +63,10 @@ module.exports = async (client, message) => {
     if (message.content.startsWith('<@') && message.content.endsWith('>')) {
         if (message.mentions.user) { //check if mention is available
             if (message.mentions.users.first().id === client.user.id && messageArgs.length < 1) {
-                //check if bot has been activated, else return
-                if (message.guild.handshake == null) {
-                    //if member is moderator, return handshake message
-                    if (message.member.permissions.has("MANAGE_GUILD")) return await HandshakeMessage(message, 4800);
-                    else return;
-                }
                 //reply with server info
                 message.reply(`Hello, your current server prefix is \`${prefix}\``)
                     .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+                    .catch((err) => { });
             }
         }
     }

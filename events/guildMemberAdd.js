@@ -35,7 +35,7 @@ module.exports = async (client, member) => {
 
         //get target channel and send message embed
         const targetChannel = member.guild.channels.cache.get(guildJoin.channel);
-        if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+        if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
     }
 
@@ -56,7 +56,7 @@ module.exports = async (client, member) => {
 
         //get target channel and send message embed
         const targetChannel = member.guild.channels.cache.get(guildWelcome.channel);
-        if (targetChannel) targetChannel.send({ embeds: [logMessage] });
+        if (targetChannel) targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
     }
 
@@ -68,7 +68,7 @@ module.exports = async (client, member) => {
         if (pendingMute == false) {
             //add jail role to member, if available
             if (member.guild.jailId != null) { //give jail role to member
-                try { await member.roles.add(member.guild.jailId, `Re-added jail-role`); }
+                try { await member.roles.add(member.guild.jailId, `Re-added jail-role`).catch((err) => { }); }
                 catch (error) { }
             }
         }

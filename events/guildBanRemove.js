@@ -20,19 +20,20 @@ module.exports = async (client, unban) => {
 
         //fetch log, and if nessesary, save to database
         const AuditLog = await getAuditLogDetails(client, guild, 'GUILD_BAN_REMOVE', null);
-        if (AuditLog != false) {
+        if (AuditLog != false && AuditLog != undefined) {
 
             //construct message
             const logMessage = new MessageEmbed()
-                .setTitle(`${AuditLog.target.username} is Unbanned`)
+                .setTitle(`${user.username} is Unbanned`)
                 .setDescription(`Unban was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
                 .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
+                .setColor(embed.colour__blue)
                 .setTimestamp()
                 .setFooter({ text: `${AuditLog.log.id}` })
 
             //get target channel and send message embed
             const targetChannel = guild.channels.cache.get(banRevokeModule.channel);
-            if (targetChannel) return targetChannel.send({ embeds: [logMessage] });
+            if (targetChannel) return targetChannel.send({ embeds: [logMessage] }).catch((err) => { });
 
         }
     }

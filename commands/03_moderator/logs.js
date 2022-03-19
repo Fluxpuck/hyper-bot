@@ -91,7 +91,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (interaction) {
             interaction.followUp({ embeds: [messageEmbed] })
         } else {
-            message.reply({ embeds: [messageEmbed] });
+            message.reply({ embeds: [messageEmbed] })
+                .catch((err) => { });
         }
     }
 
@@ -147,7 +148,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
                 paginator_message = await message.reply({
                     embeds: [messageEmbed],
                     components: [page_buttons]
-                })
+                }).catch((err) => { });
             }
 
             //start collecting button presses for paginator
@@ -229,6 +230,7 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
                 return interaction.followUp({ embeds: [messageEmbed], ephemeral: false });
             } else {
                 return message.reply({ embeds: [messageEmbed] })
+                    .catch((err) => { });
             }
         }
         //get module settings, proceed if true

@@ -10,7 +10,7 @@ const { Collection } = require("discord.js");
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     //if there are no arguments or no attachments
-    if (arguments.length < 1 && message.attachments.size < 1) return message.reply('What should I say?');
+    if (arguments.length < 1 && message.attachments.size < 1) return message.reply('What should I say?').catch((err) => { });
 
     //get target channel
     const channel = message.guild.channels.cache.find(c => c.id == arguments[0].replace(/[^\w\s]/gi, ''))
@@ -26,13 +26,16 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         if (toSayMessage.length >= 1) {
             //send message and file to target channel
             channel.send(toSayMessage.join(' '), { files: Array.from(message.attachments.values()) })
+                .catch((err) => { });
         } else {
             //send file to target channel
             channel.send({ files: Array.from(message.attachments.values()) })
+                .catch((err) => { });
         }
     } else {
         //send message to target channel
         channel.send(toSayMessage.join(' '))
+            .catch((err) => { });
     }
     //if interaction, return message
     if (message.interaction) message.interaction.editReply({ content: `Message was send in <#${channel.id}>`, ephemeral: true });

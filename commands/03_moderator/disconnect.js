@@ -2,7 +2,6 @@
     For more information on the commands, please visit hyperbot.cc  */
 
 //load required modules
-const { createHyperLog } = require("../../utils/AuditManager");
 const { ReplyErrorMessage, SendModerationActionMessage } = require("../../utils/MessageManager");
 const { getModuleSettings } = require("../../utils/PermissionManager");
 const { getUserFromInput } = require("../../utils/Resolver");
@@ -31,7 +30,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (disconnect != false) {
         //verify that the user has been disconnected
         if (interaction) interaction.editReply({ content: `**${target.user.tag}** has been disconnected from the voice-channel`, ephemeral: true });
-        else message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`);
+        else message.reply(`**${target.user.tag}** has been disconnected from the voice-channel`).catch((err) => { });
         //get module settings, proceed if true
         const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
         if (moderationAction.state === 1 && moderationAction.channel != null) {

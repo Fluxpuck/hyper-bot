@@ -7,6 +7,39 @@ const { MessageMentions: { USERS_PATTERN, CHANNELS_PATTERN, ROLES_PATTERN }, Col
 
 module.exports = {
 
+    /** Get user information from name
+     * @param {*} guild 
+     * @param {*} input 
+     */
+    async findUserFromName(guild, input) {
+        if (!input) return false;
+
+        //setup item array and member collection
+        let item = input.includes('#') ? input.split('#') : [input];
+        let target = item.length > 1 ? { username: item[0], discriminator: item[1] } : { username: item[0], discriminator: false }
+        let member = new Collection;
+
+        //if there is no discriminator, return false
+        if (target.discriminator === false) return false;
+
+        //collect members with (simular) usernames
+        const memberCollection = await guild.members.fetch({ query: item[0], limit: 6 })
+            .catch((err) => { });
+
+        //loop through all entries
+        for (const [key, value] of memberCollection.entries()) {
+            //check if username and discriminator match
+            if (value.user.username === target.username &&
+                value.user.discriminator === target.discriminator) {
+                member.set(key, value);
+            }
+        }
+
+        //check if member collection has value(s)
+        if (member.size > 0) return member;
+        else return false;
+    },
+
     /** Get user information from input
      * @param {Collection} guild 
      * @param {String} input 
@@ -87,10 +120,15 @@ module.exports = {
         //keep fetching messages, till collection is full or last message is null
         while (messageCollection.size < limit) {
 
-            //collect messages in chunks of 50
-            const options = { before: LastMessage.id, limit: 50 } //set filter options
+            //collect messages in chunks of 100
+            const options = { before: LastMessage.id, limit: 100 } //set filter options
             let FetchMessages = await message.channel.messages.fetch(options); //collect messages from target channel
-            if (member != undefined) FetchMessages.sweep(message => message.author.id != member.user.id); //remove messages not from target member
+
+            //remove messages not from target member
+            if (member != undefined) FetchMessages.sweep(message => message.author.id != member.user.id);
+
+            //remove pinned messages from collection
+            FetchMessages.sweep(message => message.pinned === true);
 
             //filter messages for NOT older than two weeks and within limit
             await FetchMessages.map(message => {

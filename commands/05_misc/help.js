@@ -55,7 +55,7 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
 
         //reply to message
         message.reply({ embeds: [helpMessage] })
-
+            .catch((err) => { });
     }
 
     //if argument is command, give command help
@@ -86,7 +86,7 @@ ${commandsByGroup[category].map(c => c.info.name).join('\n')}
 
         //reply to message
         message.reply({ embeds: [helpMessage] })
-
+            .catch((err) => { });
     }
 
 }

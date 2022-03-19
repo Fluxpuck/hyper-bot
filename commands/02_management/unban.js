@@ -37,7 +37,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     //check if action was succesfull
     if (unban != false) {
         //verify that the user has been unbanned
-        message.reply(`**${BanLogs.target.username}** has been unbanned from the server`);
+        message.reply(`**${BanLogs.target.username}** has been unbanned from the server`).catch((err) => { });
         //get module settings, proceed if true
         const moderationAction = await getModuleSettings(message.guild, 'moderationAction');
         if (moderationAction.state === 1 && moderationAction.channel != null) {

@@ -29,8 +29,8 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
         //return message to the user
         return message.channel.send(`**${message.author.tag}** is away for **${awayDuration}** minutes`)
-            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 2800) }); //delete message after
-
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 2800) })
+            .catch((err) => { });
     }
     return;
 }

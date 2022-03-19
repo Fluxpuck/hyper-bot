@@ -21,13 +21,14 @@ module.exports = async (client) => {
             await guild.leave()
                 .then(g => { //get report channel and send report embed
                     client.channels.fetch(reportChannel)
-                        .then(channel => channel.send(`**${client.user.username}** left ${g}, because it has been one week without activation!`));
+                        .then(channel => channel.send(`**${client.user.username}** left ${g}, because it has been one week without activation!`))
+                        .catch((err) => { });
                 })
                 .catch(err => { });
             //deactivate guild
-            await deactivateGuild(guildId);
+            await deactivateGuild(guild.id);
             //drop all guild tables
-            await dropGuildTables(guildId)
+            await dropGuildTables(guild.id)
         }
     })
     return;

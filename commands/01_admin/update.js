@@ -15,6 +15,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
 
     //return message
     return message.reply(`All **permissions** have been fetched and the caches have been updated.`)
+        .catch((err) => { });
 
 }
 

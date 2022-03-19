@@ -14,7 +14,6 @@ const { reportChannel } = require('../config/config.json');
 module.exports = async (client, guild) => {
 
     //setup guild's first text channel
-    const roles = await guild.roles.fetch();
     const fetchOwner = await guild.fetchOwner();
     const owner = (fetchOwner) ? fetchOwner : { id: guild.ownerId, tag: undefined }
 
@@ -27,8 +26,6 @@ module.exports = async (client, guild) => {
         .setTitle(`${client.user.tag} left ${guild.name}`)
         .addFields(
             { name: 'Guild Owner', value: `<@${owner.user.id}> | ${owner.user.tag} | ${owner.user.id}`, inline: false },
-            { name: 'Channels', value: `\`\`\`${guild.channels.channelCountWithoutThreads}\`\`\``, inline: true },
-            { name: 'Roles', value: `\`\`\`${roles.size}\`\`\``, inline: true },
             { name: 'Member Count', value: `\`\`\`${guild.memberCount}\`\`\``, inline: true },
             { name: 'Guild Created at', value: `\`\`\`${guild.createdAt.toLocaleString()}\`\`\``, inline: false },
         )
@@ -40,6 +37,6 @@ module.exports = async (client, guild) => {
     //get report channel and send report embed
     client.channels.fetch(reportChannel)
         .then(channel => channel.send({ embeds: [reportEmbed] }))
-
+        .catch((err) => { });
     return;
 }

@@ -31,15 +31,10 @@ module.exports = async (client, message) => {
             .setAuthor({ name: `${target.tag} is away and will be back ${backIn.fromNow()}...`, iconURL: target.displayAvatarURL({ dynamic: false }) })
             .setColor(embed.color);
 
-        try { //return message to user
-            return message.reply({ embeds: [messageEmbed] })
-                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
-                .catch((err) => { });
-        } catch (err) {
-            return message.channel.send({ embeds: [messageEmbed] })
-                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
-                .catch((err) => { });
-        }
+        //reply to message
+        return message.reply({ embeds: [messageEmbed] })
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+            .catch((err) => { });
 
     } else {
 
@@ -52,14 +47,10 @@ module.exports = async (client, message) => {
         //remove away from database
         await removeAway(guild.id, member.id);
 
-        try { //return message to user
-            return message.reply({ embeds: [messageEmbed] })
-                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
-                .catch((err) => { });
-        } catch (err) {
-            return message.channel.send({ embeds: [messageEmbed] })
-                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) }) //delete message after
-                .catch((err) => { });
-        }
+        //reply to message
+        return message.reply({ embeds: [messageEmbed] })
+            .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+            .catch((err) => { });
+
     }
 }

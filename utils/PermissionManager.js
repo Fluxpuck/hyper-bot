@@ -27,12 +27,13 @@ module.exports = {
      * @param {Object} guild
      */
     async loadGuildConfiguration(guild) {
-        const { modId, jailId, applyId, reportId, statusId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
+        const { modId, jailId, applyId, reportId, statusId, membercountId, handshake, slash } = await getGuildConfig(guild.id); //get roles from database
         //set custom Hyper values and save in guild
         guild.modId = modId;
         guild.jailId = jailId;
         guild.applyId = applyId;
         guild.reportId = reportId;
+        guild.membercountId = membercountId;
         guild.statusId = statusId;
         guild.handshake = handshake;
         guild.slash = slash;
@@ -151,6 +152,7 @@ module.exports = {
      */
     async getModuleSettings(guild, module) {
         const ModuleCache = await guildModulePermsCache.get(guild.id) //get the module perms from the cache
+        if (!ModuleCache) return { "state": 0, "channel": null, "exceptions": [] };
         const filter = ModuleCache.filter(m => m.moduleName === module);
         if (filter.length > 0) {
             return { "state": filter[0].state, "channel": filter[0].channel, "exceptions": filter[0].exceptions }

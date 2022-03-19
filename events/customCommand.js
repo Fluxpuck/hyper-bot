@@ -154,11 +154,13 @@ module.exports = async (client, message, commandName) => {
             }
             //return message
             return message.channel.send({ embeds: [messageEmbed] })
+                .catch((err) => { });
         }
         //if it's not an embed, 
         else {
             //return message
             return message.channel.send(customResponse)
+                .catch((err) => { });
 
         }
     } // else message.reply(verification.message);

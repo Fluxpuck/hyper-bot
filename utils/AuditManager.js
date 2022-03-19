@@ -148,12 +148,13 @@ module.exports = {
             this.executor = executor;
         }
         //fetch AuditLog(s)
-        const fetchLogs = await guild.fetchAuditLogs({ limit: 5, type: auditType })
+        const fetchLogs = await guild.fetchAuditLogs({ limit: 2, type: auditType })
         const firstLog = fetchLogs.entries.first();
 
         if (firstLog) { //if a log is found
             //get details from Auditlog
             let { action, reason, executor, target } = firstLog
+
             //check for the correct logAction
             switch (action) {
                 case 'MEMBER_KICK': action = 'kick'
