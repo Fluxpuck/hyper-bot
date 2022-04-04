@@ -54,7 +54,7 @@ module.exports = async (client) => {
         //go over all statusses and insert into embed message
         for await (let status of sortedStatus) {
             //setup away time date
-            const awaySince = moment(status.date).subtract(1, 'h');
+            const awaySince = moment(status.date).subtract(2, 'h');
             const awayFor = awaySince.fromNow();
 
             //add individual status to dashboard

@@ -18,6 +18,7 @@ const client = new Client({
 });
 
 //set Client information 
+client.crons = new Collection();
 client.commands = new Collection();
 client.events = new Collection();
 client.cooldowns = new NodeCache();
