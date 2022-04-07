@@ -70,7 +70,7 @@ module.exports = async (client) => {
         //check if there are timed messages setup
         if (timedMessageCollection.length >= 1) {
             //add timed message to 
-            client.emit('guildTimedMessage', guild.id, timedMessageCollection);
+            client.emit('TimedMessage', guild, timedMessageCollection);
         }
     }
 
