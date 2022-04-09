@@ -1,6 +1,9 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License  
     This private-event is triggers by Discord and does processing of data  */
 
+//import styling from assets
+const embedStyle = require('../assets/embed.json');
+
 //load required modules
 const { MessageEmbed } = require('discord.js');
 const { separateFlags } = require('../utils/functions');
@@ -10,6 +13,7 @@ module.exports = async (client, guild, timedMessage) => {
 
     //go over all cron tasks and add them to the collection
     for await (let msg of timedMessage) {
+
         //setup cron name
         var cronName = `${guild.id}_${msg.name}`;
         //setup the cron task
@@ -19,6 +23,10 @@ module.exports = async (client, guild, timedMessage) => {
             const targetChannel = guild.channels.cache.get(msg.channel);
             if (!targetChannel) return;
 
+            //fetch previous messages and check content
+            const LastMessages = await targetChannel.messages.fetch({ limit: 10, force: true });
+            if (msg.lastMessage != null && LastMessages.has(msg.lastMessage)) return;
+
             //check if reponse needs embeds
             if (msg.embed === 1) {
 
@@ -27,8 +35,8 @@ module.exports = async (client, guild, timedMessage) => {
                     .setColor(embedStyle.color)
 
                 //seperate response
-                const flags = ['title', 'author', 'url', 'desc', 'color', 'field', 'image', 'time', 'footer']
-                const separatedResponse = await separateFlags(msg.reponse, { separator: '--', allowDuplicates: true }, flags)
+                const flags = ['title', 'author', 'url', 'thumb', 'desc', 'color', 'field', 'image', 'time', 'footer']
+                const separatedResponse = await separateFlags(msg.response, { separator: '--', allowDuplicates: true }, flags)
                 for await (let flag of separatedResponse) {
                     switch (flag.name) {
                         case 'title':
@@ -124,14 +132,18 @@ module.exports = async (client, guild, timedMessage) => {
                 }
 
                 //return message
-                targetChannel.send({ embeds: [messageEmbed] })
+                var lastMsg = await targetChannel.send({ embeds: [messageEmbed] })
                     .catch((err) => { });
+                //set new last message
+                msg.lastMessage = lastMsg.id;
 
             } else {
 
                 //return message
-                targetChannel.send(msg.response)
-
+                var lastMsg = await targetChannel.send(msg.response)
+                    .catch((err) => { });
+                //set new last message
+                msg.lastMessage = lastMsg.id;
             }
 
         }, {
