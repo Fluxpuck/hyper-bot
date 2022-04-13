@@ -20,7 +20,7 @@ module.exports = async (client, message) => {
     if (pendingAway === false) return;
 
     //setup away time date
-    const awaySince = moment(pendingAway.create_date).subtract(1, 'h');
+    const awaySince = moment(pendingAway.create_date).subtract(2, 'h');
     const backIn = moment(pendingAway.create_date).add(pendingAway.awayDuration, 'm');
     const awayFor = (awaySince.fromNow()).toString();
 

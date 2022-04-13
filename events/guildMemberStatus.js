@@ -21,7 +21,7 @@ module.exports = async (client, message) => {
     if (pendingStatus === false) return;
 
     //setup away time date
-    const awaySince = moment(pendingStatus.create_date).subtract(1, 'h');
+    const awaySince = moment(pendingStatus.create_date).subtract(2, 'h');
     const awayFor = (awaySince.fromNow()).toString();
 
     //check if member is mentioned, else remove away

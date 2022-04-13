@@ -124,6 +124,9 @@ Date:           ${date_convert.toDateString()} - ${time(date_convert)} CET\`\`\`
         const descriptionPages = chunk(descriptionArray, 3);
         let page = 0, maxpages = descriptionPages.length - 1;
 
+        //add user to each chunk
+        descriptionPages.forEach(page => { page.unshift(`<@${target.user.id}>  -  ${target.user.id} \n`); });
+
         //setup embedded message
         messageEmbed.setDescription(descriptionPages[page].join("\n"))
         messageEmbed.setFooter({ text: `${target.user.id} | Page ${page + 1} of ${descriptionPages.length}` });

@@ -10,7 +10,7 @@ const ClientConsole = require('../utils/ConsoleManager');
 const ClientManager = require('../utils/ClientManager');
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
-const { insertGuild } = require('../database/QueryManager');
+const { insertGuild, getTimedMessages } = require('../database/QueryManager');
 const { updateSlashCommands, removeSlashCommands } = require('../utils/ClientManager');
 
 //exports "ready" event
@@ -33,7 +33,8 @@ module.exports = async (client) => {
         await DbManager.UpdateGuildTable(); //update (global) guild information table
         await DbManager.UpdateCommandTable(guild.id); //update (guild) command permission tables
         await DbManager.UpdateCommandInformation(guild.id, client.commands); //update (individual) commands
-        await DbManager.UpdateCustomCommandsTable(guild.id) //update (guild) custom command table
+        await DbManager.UpdateCustomCommandsTable(guild.id); //update (guild) custom command table
+        await DbManager.UpdateTimedMessagesTable(guild.id); //update (guild) timed message table
         await DbManager.UpdateLogTable(guild.id); //update (guild) log tables
         await DbManager.UpdateMutesTable(guild.id); //update (guild) pending mutes table
         await DbManager.UpdateModulesTable(guild.id); //update (guild) module table
@@ -59,6 +60,17 @@ module.exports = async (client) => {
             updateSlashCommands(client, guild, slashCommands); //update slash commands
         } else { //if slash commands are disabled
             removeSlashCommands(client, guild)
+        }
+    }
+
+    //get and initialize timed messages per guild
+    for await (let guild of guilds) {
+        //get timed messages from database
+        var timedMessageCollection = await getTimedMessages(guild.id);
+        //check if there are timed messages setup
+        if (timedMessageCollection.length >= 1) {
+            //add timed message to 
+            client.emit('TimedMessage', guild, timedMessageCollection);
         }
     }
 
