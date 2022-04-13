@@ -24,7 +24,7 @@ module.exports = async (client, guild, timedMessage) => {
             if (!targetChannel) return;
 
             //fetch previous messages and check content
-            const LastMessages = await targetChannel.messages.fetch({ limit: 10, force: true });
+            const LastMessages = await targetChannel.messages.fetch({ limit: 50, force: true });
             if (msg.lastMessage != null && LastMessages.has(msg.lastMessage)) return;
 
             //check if reponse needs embeds

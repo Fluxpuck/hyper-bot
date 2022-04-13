@@ -11,7 +11,6 @@ const PermissionManager = require('../utils/PermissionManager');
 
 //require config
 const { reportChannel } = require('../config/config.json');
-const { ownerIds } = require('../config/config.json');
 const { insertGuild } = require('../database/QueryManager');
 
 module.exports = async (client, guild) => {
@@ -68,9 +67,9 @@ module.exports = async (client, guild) => {
         //construct message
         const handshakeMessage = new MessageEmbed()
             .setTitle(`Thank you for adding me!`)
-            .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, and more!`)
+            .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, custom commands, timed messages, applications and more (custom) features!`)
             .addFields(
-                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. Please contact <@${ownerIds[0]}> for any inquiry.`, inline: false },
+                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. My intended use is for medium to large community servers. Please contact Fluxpuck#0001 for any inquiry.`, inline: false },
                 { name: `\u200b`, value: `Developed with ❤️ by Fluxpuck#0001`, inline: false }
             )
             .setColor(embed.color)
