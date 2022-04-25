@@ -1,14 +1,21 @@
 /*  Fluxpuck © Creative Commons Attribution-NoDerivatives 4.0 International Public License
     For more information on the commands, please visit hyperbot.cc  */
 
+const { getChannelfromInput } = require("../utils/Resolver");
+
 //construct the command and export
 module.exports.run = async (client, message, arguments, prefix, permissions) => {
 
     // //get channel information
     // const channel = await getChannelfromInput(message.guild, message.guild.applyId);
-    // const thread = channel.threads.cache.find(x => x.name === 'Application - Holy Ultra');
+    // const thread = channel.threads.cache.find(x => x.name.startsWith('Application'));
 
     // console.log(thread)
+    // console.log(channel.threads.cache.map(t => t.name))
+
+
+
+
 
 
 }

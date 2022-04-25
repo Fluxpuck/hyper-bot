@@ -16,7 +16,7 @@ module.exports = async (client) => {
 
         //if guild is not activated, check if guild joined longer than 1 week
         const date = await getGuildDate(guild.id)
-        if (OlderThanOneWeeks(date) == true) {
+        if (OlderThanX(date) == true) {
             //leave guild
             await guild.leave()
                 .then(g => { //get report channel and send report embed
@@ -35,12 +35,12 @@ module.exports = async (client) => {
 }
 
 //small function to check if message timestamp is older than two weeks or not
-function OlderThanOneWeeks(timestamp) {
+function OlderThanX(timestamp) {
     //setup the times 
     const now = +new Date()
     const dateTime = +new Date((timestamp))
-    const OneWeeks = 7 * 60 * 60 * 24 * 1000
+    const X = 3 * 60 * 60 * 24 * 1000 //3 days
 
     //return true or false
-    return (now - dateTime) > OneWeeks
+    return (now - dateTime) > X
 }

@@ -61,13 +61,11 @@ module.exports = async (client, message) => {
 
     //if client is mentioned, but no content is given return info
     if (message.content.startsWith('<@') && message.content.endsWith('>')) {
-        if (message.mentions.user) { //check if mention is available
-            if (message.mentions.users.first().id === client.user.id && messageArgs.length < 1) {
-                //reply with server info
-                message.reply(`Hello, your current server prefix is \`${prefix}\``)
-                    .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
-                    .catch((err) => { });
-            }
+        if (message.mentions.users.first().id === client.user.id && messageArgs.length < 1) {
+            //reply with server info
+            message.reply(`Hello, your current server prefix is \`${prefix}\``)
+                .then(msg => { setTimeout(() => msg.delete().catch((err) => { }), 4800) })
+                .catch((err) => { });
         }
     }
 

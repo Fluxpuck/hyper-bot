@@ -143,7 +143,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
             //calculate timeout time, rounded to nearest 1000's
             const duration = ((newTimeout - Date.now()) / 1000).toFixed() * 1000;
-            const muteTime = new Number(duration) / 1000 / 60;
+            const muteTime = Math.round(new Number(duration) / 1000 / 60);
 
             //fetch log, and if nessesary, save to database
             const AuditLog = await getAuditLogDetails(client, oldMember.guild, 'MEMBER_UPDATE', muteTime);

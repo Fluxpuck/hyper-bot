@@ -44,7 +44,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
         //go over each result and add to MessageEmbed
         for await (let result of results) {
             descriptionArray.push(`${moment(result.create_date).format("dddd, MMMM Do YYYY")}\`\`\`yaml
-Messages:      ${result.total_messages} ${result.total_messages === '1' ? 'message' : 'minutes'}             
+Messages:      ${result.total_messages} ${result.total_messages === '1' ? 'message' : 'messages'}             
 Activity:      ${result.uniq_messages} ${result.uniq_messages === '1' ? 'minute' : 'minutes'}\`\`\` `);
         }
 

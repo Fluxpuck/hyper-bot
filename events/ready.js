@@ -4,6 +4,7 @@
 //load required modules
 const { join } = require('path');
 const commandFolder = join(__dirname, '..', 'commands');
+const { Collection } = require('discord.js');
 
 //require Managers
 const ClientConsole = require('../utils/ConsoleManager');
@@ -72,6 +73,11 @@ module.exports = async (client) => {
             //add timed message to 
             client.emit('TimedMessage', guild, timedMessageCollection);
         }
+    }
+
+    //get and initialize guild specific collections
+    for await (let guild of guilds) {
+        guild.newMembers = new Collection();
     }
 
     //set client activity
