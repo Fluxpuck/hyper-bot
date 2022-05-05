@@ -29,12 +29,6 @@ client.version = require('./package.json').version
 const events = require('./utils/EventManager');
 events.run(client); //run the events
 
-
-//check member collection every minute
-cron.schedule('*/1 * * * *', () => {
-    client.emit('raidDetection');
-})
-
 //listen to Pending mutes, every minute
 cron.schedule('*/1 * * * *', () => {
     client.emit('pendingMutes');

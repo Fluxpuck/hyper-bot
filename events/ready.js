@@ -12,7 +12,6 @@ const ClientManager = require('../utils/ClientManager');
 const DbManager = require('../database/DbManager');
 const PermissionManager = require('../utils/PermissionManager');
 const { insertGuild, getTimedMessages } = require('../database/QueryManager');
-const { updateSlashCommands, removeSlashCommands } = require('../utils/ClientManager');
 
 //exports "ready" event
 module.exports = async (client) => {
@@ -52,16 +51,24 @@ module.exports = async (client) => {
         await PermissionManager.loadModuleSettings(guild); //cache module settings
     }
 
-    //get and initialize interactive commands per guild
+    // get and initialize interactive commands per guild
     for await (let guild of guilds) {
-        if (guild.slash === 1) { //if slash commands are enabled
-            //get slash commands
-            const slashCommands = await ClientManager.getSlashCommands(client.commands, guild)
-            await ClientManager.registerSlashCommands(client, slashCommands, guild.id);
-            updateSlashCommands(client, guild, slashCommands); //update slash commands
-        } else { //if slash commands are disabled
-            removeSlashCommands(client, guild)
-        }
+        //get slash commands
+        const slashCommands = await ClientManager.getSlashCommands(client.commands, guild)
+        await guild.commands.fetch().then(async commandlist => {
+            if (commandlist.size <= 0) {
+                if (guild.slash === 1) {
+                    //register Slash Commands if enabled in guild
+                    return ClientManager.registerSlashCommands(client, slashCommands, guild.id);
+                } else {
+                    //delete Slash Commands if disabled in guild
+                    return ClientManager.removeSlashCommands(client, guild);
+                }
+            } else {
+                //update slash commands
+                return ClientManager.updateSlashCommands(client, guild, slashCommands); //update slash commands
+            }
+        });
     }
 
     //get and initialize timed messages per guild
@@ -73,11 +80,6 @@ module.exports = async (client) => {
             //add timed message to 
             client.emit('TimedMessage', guild, timedMessageCollection);
         }
-    }
-
-    //get and initialize guild specific collections
-    for await (let guild of guilds) {
-        guild.newMembers = new Collection();
     }
 
     //set client activity
