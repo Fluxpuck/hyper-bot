@@ -26,6 +26,7 @@ module.exports.run = async (client, message, arguments, prefix, permissions) => 
     if (target.permissions.has('KICK_MEMBERS')) return ReplyErrorMessage(oldMessage, '@user is a moderator', 4800);
 
     //check if time is in valid format & if time is 
+    if (!arguments[1]) return ReplyErrorMessage(oldMessage, 'Time out duration was not provided', 4800);
     if (/([0-9]+)\s{0,}m\W|/ig.test(arguments[1]) == false) return ReplyErrorMessage(message, 'Provide mute time in the following format \`10m\`.', 4800)
     const muteTime = (interaction) ? arguments[1] : Number(arguments[1].replace('m', ''))
     const duration = Number.isInteger(muteTime) ? muteTime * 60 * 1000 : false

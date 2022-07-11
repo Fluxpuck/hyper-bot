@@ -165,7 +165,7 @@ module.exports = async (client, oldMember, newMember, pendingTimeout) => {
 
                     //construct message
                     const logMessage = new MessageEmbed()
-                        .setTitle(`${AuditLog.target.username} is Timed out for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
+                        .setTitle(`${oldMember.user.tag} is Timed out for ${AuditLog.duration} ${AuditLog.duration > 1 ? 'minutes' : 'minute'}`)
                         .setDescription(`Time out was executed by <@${AuditLog.executor.id}> - ${AuditLog.executor.id}`)
                         .addFields({ name: `Reason`, value: `\`\`\`${AuditLog.reason}\`\`\``, inline: false })
                         .setColor(embed.colour__red)

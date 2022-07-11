@@ -148,7 +148,7 @@ module.exports = {
             this.executor = executor;
         }
         //fetch AuditLog(s)
-        const fetchLogs = await guild.fetchAuditLogs({ limit: 2, type: auditType })
+        const fetchLogs = await guild.fetchAuditLogs({ limit: 2, type: auditType }).catch((err) => { })
         const firstLog = fetchLogs.entries.first();
 
         if (firstLog) { //if a log is found
