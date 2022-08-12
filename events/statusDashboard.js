@@ -58,13 +58,13 @@ module.exports = async (client) => {
             const awayFor = awaySince.fromNow();
 
             //add individual status to dashboard
-            messageEmbed.addField(`${status.memberName} :     ${awayFor}`, `\`\`\`${clean(client, status.status)}\`\`\``, false)
+            messageEmbed.addFields({ name: `${status.memberName} :     ${awayFor}`, value: `\`\`\`${clean(client, status.status)}\`\`\``, inline: false })
         }
 
         //add message if pendingStatus array is empty
         if (pendingStatus.length <= 0) {
             //add individual status to dashboard
-            messageEmbed.addField(`It's kinda empty in here...`, `Seems like no one has set a status`, false)
+            messageEmbed.addFields({ name: `It's kinda empty in here...`, value: `Seems like no one has set a status`, inline: false })
         }
 
         //if no messageId is unavailable, send a message

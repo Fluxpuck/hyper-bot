@@ -102,7 +102,7 @@ module.exports = async (client, guild, timedMessage) => {
                             if (fieldName.length == 0 || fieldDesc.length == 0) return // Avoid errors
 
                             //setup multiple Fields for embed
-                            messageEmbed.addField(fieldName, fieldDesc)
+                            messageEmbed.addFields({ name: fieldName, value: fieldDesc, inline: false })
                             break;
 
                         case 'image':

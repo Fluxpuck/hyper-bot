@@ -4,6 +4,10 @@
 //import styling from assets
 const embedStyle = require('../assets/embed.json');
 
+//import exluded members
+const exclusions = require('../config/cc_exclusions.json');
+const { ownerIds } = require('../config/config.json');
+
 //require packages
 const { MessageEmbed } = require("discord.js");
 const { separateFlags } = require("../utils/functions");
@@ -20,7 +24,6 @@ module.exports = async (client, message, commandName) => {
 
     //execute commandfile if user has permission
     if (verification.status === true) {
-
         //delete message
         setTimeout(() => message.delete().catch((err) => { }), 100)
 
@@ -42,7 +45,13 @@ module.exports = async (client, message, commandName) => {
             if (match) { //check if there is a match
                 //check if {mention} is present and if the author mentioned an user
                 if (match[0] == '{mention}'
-                    && message.mentions.users.size < 1) return
+                    && message.mentions.users.size < 1) return;
+
+                //check if excluded member is mentioning botowner
+                if (exclusions.commands.includes(commandName) &&
+                    exclusions.members.includes(message.author.id) &&
+                    ownerIds.includes(message.mentions.users.first().id)) return;
+
                 //replace tags from string
                 if (match[0] == '{author}') customResponse = await customResponse.replace(replacement, `<@${message.author.id}>`)
                 if (match[0] == '{mention}') customResponse = await customResponse.replace(replacement, `<@${message.mentions.users.first().id}>`)
@@ -124,8 +133,7 @@ module.exports = async (client, message, commandName) => {
                         if (fieldName.length == 0 || fieldDesc.length == 0) return // Avoid errors
 
                         //setup multiple Fields for embed
-                        messageEmbed.addField(fieldName, fieldDesc)
-                        break;
+                        messageEmbed.addFields({ name: fieldName, value: fieldDesc, inline: false })
 
                     case 'image':
                         //check if flag has valid args

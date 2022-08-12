@@ -31,9 +31,9 @@ exports.LOGS_button = new MessageButton()
 //website link button
 exports.WEB_button = new MessageButton()
     .setStyle('LINK')
-    .setURL('https://hyperbot.cc/')
+    .setURL('https://github.com/Fluxpuck/Hyper')
     .setEmoji('🌐')
-    .setLabel('Website')
+    .setLabel('Github')
     .setDisabled(false)
 
 /*----------------------*/

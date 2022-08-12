@@ -27,7 +27,7 @@ module.exports = async (client, member) => {
         const logMessage = new MessageEmbed()
             .setTitle(`Member Joined :     ${member.user.tag}     (${HyperLogs.length})`)
             .setDescription(`<@${member.user.id}>  -  ${member.user.id}`)
-            .addField(`Account created on`, `${new Date(member.user.createdAt).toUTCString()}`)
+            .addFields({ name: `Account created on`, value: `${new Date(member.user.createdAt).toUTCString()}`, inline: false })
             .setThumbnail(member.user.displayAvatarURL())
             .setColor(embed.colour__blue)
             .setTimestamp()

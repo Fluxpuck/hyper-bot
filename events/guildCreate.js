@@ -69,7 +69,7 @@ module.exports = async (client, guild) => {
             .setTitle(`Thank you for adding me!`)
             .setDescription(`Hello! I am <@${client.user.id}>, a comprehensive server management bot, that allows for basic moderation, logging events, custom commands, timed messages, applications and more (custom) features!`)
             .addFields(
-                { name: `Activation`, value: `I was developed for private use, therefor I am not standard activated. My intended use is for medium to large community servers. Please contact Fluxpuck#0001 for any inquiry.`, inline: false },
+                { name: `Activation`, value: `I was developed for private use, therefor I am not activated by default. Please contact Fluxpuck#0001 for any inquiry.`, inline: false },
                 { name: `\u200b`, value: `Developed with ❤️ by Fluxpuck#0001`, inline: false }
             )
             .setColor(embed.color)
